@@ -1,0 +1,26 @@
+@media (min-width: 576px) {
+  .ant-drawer-wrapper-body {
+    max-width: 540px;
+  }
+}
+@media (min-width: 768px) {
+  .ant-drawer-wrapper-body {
+    max-width: 720px;
+  }
+}
+@media (min-width: 992px) {
+  .ant-drawer-wrapper-body {
+    max-width: 960px;
+  }
+}
+@media (min-width: 1200px) {
+  .ant-drawer-wrapper-body {
+    max-width: 1140px;
+  }
+}
+.ant-drawer .ant-drawer-body {
+  padding-block: 0;
+}
+.ant-drawer-wrapper-body {
+  padding-inline: 0.75em;
+}

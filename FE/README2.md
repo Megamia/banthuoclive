@@ -1,0 +1,6 @@
+-   Đặt tên:
+    -   folder: ExampleFolder
+    -   file: exampleFile
+    -   router:
+        -   path: examplePath
+        -   name: exampleName

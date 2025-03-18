@@ -1,0 +1,48 @@
+@media (min-width: 576px) {
+  .a {
+    max-width: 540px;
+  }
+}
+@media (min-width: 768px) {
+  .a {
+    max-width: 720px;
+  }
+}
+@media (min-width: 992px) {
+  .a {
+    max-width: 960px;
+  }
+}
+@media (min-width: 1200px) {
+  .a {
+    max-width: 1140px;
+  }
+}
+
+.icon {
+  cursor: pointer;
+  color: white;
+  font-size: 20px;
+}
+.icon:hover {
+  color: white;
+
+  opacity: 75;
+}
+.iconHidden {
+  display: none;
+}
+.iconShow {
+  font-size: 30px;
+}
+@media (max-width: 992px) {
+  .iconHidden {
+    display: block;
+  }
+  .iconShow {
+    font-size: 20px;
+  }
+  .hidden-mobie {
+    display: none;
+  }
+}
