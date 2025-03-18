@@ -2,7 +2,7 @@
   <!-- eslint-disable vue/no-v-model-argument -->
   <a-flex vertical align="center" class="w-full">
     <h1 class="text-[24px] font-semibold text-[#02b6ac] text-center">
-      Livotec - Công nghệ thông minh, sống khỏe mỗi ngày
+      Live - Vì một cuộc sống tươi đẹp hơn
     </h1>
     <a-flex class="max-w-[100%]">
       <a-tabs
@@ -140,11 +140,11 @@ import { getDataFromIndexedDB } from "@/store/indexedDB";
 
 const modules = [Navigation];
 const slugsToFilter = [
-  "bep-tu",
-  "quat-dieu-hoa",
-  "may-loc-nuoc",
-  "binh-nuoc-nong",
-  "linh-kien-loi-loc",
+  "thuc-pham-chuc-nang",
+  "duoc-my-pham",
+  "thuoc",
+  "thiet-bi-y-te",
+  "cham-soc-ca-nhan",
 ];
 
 const data = ref([]);
@@ -155,11 +155,11 @@ const dataChil = ref([]);
 const validateCategory = ref([]);
 
 const categoryOrder = {
-  "bep-tu": 1,
-  "quat-dieu-hoa": 2,
-  "may-loc-nuoc": 3,
-  "binh-nuoc-nong": 4,
-  "linh-kien-loi-loc": 5,
+  "thuc-pham-chuc-nang": 1,
+  "duoc-my-pham": 2,
+  "thuoc": 3,
+  "thiet-bi-y-te": 4,
+  "cham-soc-ca-nhan": 5,
 };
 
 const fetchDataCategory = async () => {

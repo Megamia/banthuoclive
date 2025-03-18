@@ -8,29 +8,29 @@
   >
     <swiper-slide>
       <img
-        src="https://livotec.com/wp-content/uploads/2025/01/bep-dien-tu-livotec-banner-pc.jpg"
+        src="https://media-cdn-v2.laodong.vn/storage/newsportal/2022/6/9/1054566/Thuc-Pham-Chuc-Nang.jpg"
       />
     </swiper-slide>
     <swiper-slide>
       <img
-        src="https://livotec.com/wp-content/uploads/2025/02/banner-quat-dieu-hoa-livotec.jpg"
+        src="https://cdyhn.vn/wp-content/uploads/2022/01/thuc-pham-chuc-nang-va-thuoc-1.jpg"
       />
     </swiper-slide>
     <swiper-slide>
       <img
-        src="https://livotec.com/wp-content/uploads/2025/02/KV-May-loc-nuoc-Livotec.jpg"
+        src="https://images.baodantoc.vn/uploads/2021/Th%C3%A1ng_12/Ng%C3%A0y_25/NGOC/1.jpg"
       /> </swiper-slide
     ><swiper-slide>
       <img
-        src="https://livotec.com/wp-content/uploads/2025/02/KV-Binh-tam-nuoc-nong-Livotec.jpg"
+        src="https://soyt.vinhphuc.gov.vn/noidung/PublishingImages/T2.2023/thuoc-chua-benh_2023169824.jpg"
       /> </swiper-slide
     ><swiper-slide>
       <img
-        src="https://livotec.com/wp-content/uploads/2024/08/QCVN-Livotec-PC.jpg"
+        src="https://www.vinmec.com/static/uploads/20211106_132340_139604_vitamin_tot_cho_phu_max_1800x1800_jpg_6d6667a55e.jpg"
       /> </swiper-slide
     ><swiper-slide>
       <img
-        src="https://livotec.com/wp-content/uploads/2024/05/Bao-hanh-livotec-PC.jpg.webp"
+        src="https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2024/3/29/photo-1711704199580-17117042002282045391232.jpeg"
       />
     </swiper-slide>
   </swiper>
@@ -71,5 +71,7 @@ const modules = [Pagination];
 
 .mySlide img {
   cursor: pointer;
+  width: 100%;
+  height: 550px;
 }
 </style>
