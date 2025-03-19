@@ -52,7 +52,10 @@
           :key="index"
           class="flex flex-row items-center gap-1 font-semibold hover:text-white text-nowrap basis-1/7"
         >
-          <a class="ant-dropdown-link" :href="`/category/${item.category.slug}`">
+          <a
+            class="ant-dropdown-link"
+            :href="`/category/${item.category.slug}`"
+          >
             {{ item.category.name }}
             <AnFilledCaretDown v-if="item.products.length >= 1" />
           </a>

@@ -1,4 +1,5 @@
-<?php namespace RainLab\User\Models;
+<?php
+namespace RainLab\User\Models;
 
 use Str;
 use Event;
@@ -7,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use October\Rain\Auth\AuthException;
+
 
 /**
  * User record
@@ -156,10 +158,16 @@ class User extends Model implements Authenticatable, CanResetPassword
     public $hasMany = [
         'activity_log' => [UserLog::class, 'delete' => true],
     ];
-
+    /**
+     * @var array hasOne relations
+     */
+    public $hasOne = [
+        'additional_user' => 'Betod\Livotec\Models\AdditionalUser',
+    ];
     /**
      * @var array belongsTo
      */
+
     public $belongsTo = [
         'primary_group' => UserGroup::class
     ];
@@ -203,8 +211,7 @@ class User extends Model implements Authenticatable, CanResetPassword
     {
         if (is_string($options)) {
             $options = ['default' => $options];
-        }
-        elseif (!is_array($options)) {
+        } elseif (!is_array($options)) {
             $options = [];
         }
 
@@ -213,8 +220,7 @@ class User extends Model implements Authenticatable, CanResetPassword
 
         if ($this->avatar) {
             return $this->avatar->getThumb($size, $size, $options);
-        }
-        else {
+        } else {
             $emailHash = md5(strtolower(trim($this->email)));
             $defaultUrl = urlencode($default);
             return "//www.gravatar.com/avatar/{$emailHash}?s={$size}&d={$defaultUrl}";
@@ -291,8 +297,7 @@ class User extends Model implements Authenticatable, CanResetPassword
     {
         if ($this->is_guest) {
             $this->primary_group = UserGroup::getGuestGroup();
-        }
-        elseif (!$this->primary_group_id) {
+        } elseif (!$this->primary_group_id) {
             $this->primary_group = UserGroup::getRegisteredGroup();
         }
     }
@@ -440,7 +445,7 @@ class User extends Model implements Authenticatable, CanResetPassword
      */
     public function generatePassword()
     {
-        $this->password = $this->password_confirmation = Str::random(12).rand(10, 99);
+        $this->password = $this->password_confirmation = Str::random(12) . rand(10, 99);
     }
 
     /**

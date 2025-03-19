@@ -3,7 +3,7 @@
 use RainLab\User\Models\User as UserModel;
 use Vdomah\JWTAuth\Models\Settings;
 
-Route::group(['prefix' => 'api'], function() {
+Route::group(['prefix' => 'api'], function () {
 
     Route::post('login', function (Request $request) {
         if (Settings::get('is_login_disabled'))
@@ -15,8 +15,8 @@ Route::group(['prefix' => 'api'], function() {
 
         try {
             // verify the credentials and create a token for the user
-            if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'invalid_credentials'], 401);
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'Sai tài khoản hoặc mật khẩu'], 205);
             }
         } catch (JWTException $e) {
             // something went wrong
@@ -30,15 +30,24 @@ Route::group(['prefix' => 'api'], function() {
         } else {
             $user = [
                 'id' => $userModel->id,
-                'name' => $userModel->name,
-                'surname' => $userModel->surname,
-                'username' => $userModel->username,
+                'first_name' => $userModel->first_name,
+                'last_name' => $userModel->last_name,
                 'email' => $userModel->email,
-                'is_activated' => $userModel->is_activated,
+                'additional_user' => $userModel->additional_user,
             ];
         }
+
+        $cookie = cookie(
+            name: 'token',
+            value: $token,
+            minutes: 1440,
+            path: '/',
+            sameSite: 'Lax',
+            secure: true,
+            httpOnly: true,
+        );
         // if no errors are encountered we can return a JWT
-        return response()->json(compact('token', 'user'));
+        return response()->json(compact('user'))->cookie(cookie: $cookie);
     });
 
     Route::post('refresh', function (Request $request) {
@@ -79,6 +88,19 @@ Route::group(['prefix' => 'api'], function() {
         return response()->json('token_invalidated');
     });
 
+    Route::post('logout', function (Request $request) {
+        $cookie = cookie(
+            name: 'token',
+            value: '',
+            minutes: -1,
+            path: '/',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true,
+        );
+        return response()->json(['message' => 'logged_out'])->cookie($cookie);
+    });
+
     Route::post('signup', function (Request $request) {
         if (Settings::get('is_signup_disabled'))
             App::abort(404, 'Page not found');
@@ -94,7 +116,7 @@ Route::group(['prefix' => 'api'], function() {
             } else {
                 $user = [
                     'id' => $userModel->id,
-                    'name' => $userModel->name,
+                    'first_name' => $userModel->first_name,
                     'surname' => $userModel->surname,
                     'username' => $userModel->username,
                     'email' => $userModel->email,
@@ -109,4 +131,23 @@ Route::group(['prefix' => 'api'], function() {
 
         return Response::json(compact('token', 'user'));
     });
+
+    Route::post('check-token', function (Request $request) {
+        Log::info('Check token endpoint hit');
+        $token = Request::cookie('token');
+
+        if (!$token) {
+            Log::error('Token not found in cookie');
+            return response()->json(['message' => 'Token not found'], 401);
+        }
+
+        try {
+            $user = JWTAuth::setToken($token)->toUser();
+            return response()->json(['message' => 'Token is valid', 'user' => $user], 200);
+        } catch (Exception $e) {
+            Log::error('Error validating token: ' . $e->getMessage());
+            return response()->json(['message' => 'Token is invalid or expired'], 500);
+        }
+    });
+
 });

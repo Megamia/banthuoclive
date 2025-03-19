@@ -1,4 +1,5 @@
-<?php namespace RainLab\User;
+<?php
+namespace RainLab\User;
 
 use App;
 use Event;
@@ -6,6 +7,7 @@ use Config;
 use Backend;
 use System\Classes\PluginBase;
 use System\Classes\SettingsManager;
+use RainLab\User\Classes\UserRedirector;
 use RainLab\User\Classes\UserProvider;
 
 /**
@@ -36,6 +38,7 @@ class Plugin extends PluginBase
         $this->registerAuthConfiguration();
         $this->registerSingletons();
         $this->registerAuthProvider();
+        $this->registerCustomRedirector();
         $this->registerMailBlocker();
 
         $this->registerConsoleCommand('user.migratev1', \RainLab\User\Console\MigrateV1Command::class);
@@ -46,6 +49,7 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
+        require_once(__DIR__ . '/helpers.php');
     }
 
     /**
@@ -70,8 +74,8 @@ class Plugin extends PluginBase
         $this->app->alias('auth', \Illuminate\Contracts\Auth\Factory::class);
         $this->app->alias('auth.driver', \Illuminate\Contracts\Auth\Guard::class);
 
-        $this->app->singleton('auth', fn ($app) => new \RainLab\User\Classes\AuthManager($app));
-        $this->app->singleton('auth.driver', fn ($app) => $app['auth']->guard());
+        $this->app->singleton('auth', fn($app) => new \RainLab\User\Classes\AuthManager($app));
+        $this->app->singleton('auth.driver', fn($app) => $app['auth']->guard());
     }
 
     /**
@@ -81,6 +85,28 @@ class Plugin extends PluginBase
     {
         $this->app->auth->provider('user', function ($app, array $config) {
             return new UserProvider($app['hash'], $config['model']);
+        });
+    }
+
+    /**
+     * registerCustomRedirector extends the redirector session state to use
+     * a unique key for the frontend
+     */
+    protected function registerCustomRedirector()
+    {
+        // Overrides with our own extended version of Redirector to support
+        // separate url.intended session variable for frontend
+        App::singleton('redirect', function ($app) {
+            $redirector = new UserRedirector($app['url']);
+
+            // If the session is set on the application instance, we'll inject it into
+            // the redirector instance. This allows the redirect responses to allow
+            // for the quite convenient "with" methods that flash to the session.
+            if (isset($app['session.store'])) {
+                $redirector->setSession($app['session.store']);
+            }
+
+            return $redirector;
         });
     }
 
@@ -105,16 +131,6 @@ class Plugin extends PluginBase
             \RainLab\User\Components\ResetPassword::class => 'resetPassword',
             \RainLab\User\Components\Authentication::class => 'authentication',
             \RainLab\User\Components\Registration::class => 'registration',
-        ];
-    }
-
-    /**
-     * registerContentFields
-     */
-    public function registerContentFields()
-    {
-        return [
-            \RainLab\User\ContentFields\UsersField::class => 'users'
         ];
     }
 
