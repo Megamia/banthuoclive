@@ -1,16 +1,48 @@
 <div data-control="toolbar">
-    <a
-        href="<?= Backend::url('betod/livotec/product/create') ?>"
-        class="btn btn-primary oc-icon-plus">
+    <a href="<?= Backend::url('betod/livotec/product/create') ?>" class="btn btn-primary oc-icon-plus">
         <?= e(trans('backend::lang.form.create')) ?>
     </a>
-    <button
-        class="btn btn-default oc-icon-trash-o"
-        data-request="onDelete"
-        data-request-confirm="<?= e(trans('backend::lang.list.delete_selected_confirm')) ?>"
-        data-list-checked-trigger
-        data-list-checked-request
-        data-stripe-load-indicator>
+
+    <form id="importCsvForm" enctype="multipart/form-data" style="display: inline-block; margin-left: 10px;">
+        <?= csrf_field() ?>
+        <input type="file" name="csv_file" accept=".csv" style="display: none;" id="importCsvInput">
+        <button type="button" class="btn btn-primary oc-icon-upload"
+            onclick="document.getElementById('importCsvInput').click();">
+            Import CSV
+        </button>
+    </form>
+
+    <button class="btn btn-default oc-icon-trash-o" data-request="onDelete"
+        data-request-confirm="<?= e(trans('backend::lang.list.delete_selected_confirm')) ?>" data-list-checked-trigger
+        data-list-checked-request data-stripe-load-indicator>
         <?= e(trans('backend::lang.list.delete_selected')) ?>
     </button>
+
+
+    <script>
+        document.getElementById('importCsvInput').addEventListener('change', function () {
+            event.preventDefault();
+            let formData = new FormData();
+            formData.append('csv_file', this.files[0]);
+
+            fetch('<?= url('apiImport/import') ?>', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '<?= csrf_token() ?>'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert("Import thất bại: " + data.error);
+                    }
+                })
+                .catch(error => console.error('Lỗi:', error));
+        });
+    </script>
+
 </div>

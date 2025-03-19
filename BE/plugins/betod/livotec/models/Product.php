@@ -10,21 +10,29 @@ class Product extends Model
 {
     use \October\Rain\Database\Traits\Validation;
 
-
-
     /**
      * @var string table in the database used by the model.
      */
-    public $table = 'betod_livotec_product';
+    protected $table = 'betod_livotec_product';
+
+    /**
+     * @var array Các trường có thể cập nhật bằng mass assignment
+     */
+    protected $fillable = [
+        'name',
+        'slug',
+        'available',
+        'sold_out',
+        'stock'
+    ];
 
     protected $jsonable = ['thongso'];
-    /**Relations */
+
     public $belongsTo = [
         'category' => 'Betod\Livotec\Models\Category',
         'post' => 'RainLab\Blog\Models\Post'
     ];
 
-    /* image preview*/
     public $attachOne = [
         'image' => 'System\Models\File'
     ];
@@ -35,7 +43,5 @@ class Product extends Model
     /**
      * @var array rules for validation.
      */
-    public $rules = [
-    ];
-
+    public $rules = [];
 }

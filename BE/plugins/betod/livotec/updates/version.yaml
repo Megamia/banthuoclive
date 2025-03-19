@@ -156,3 +156,15 @@ v1.0.58:
 v1.0.59:
     - 'Updated table betod_livotec_additional_user'
     - builder_table_update_betod_livotec_additional_user_3.php
+v1.0.60:
+    - 'Updated table betod_livotec_product'
+    - builder_table_update_betod_livotec_product_28.php
+v1.0.61:
+    - 'Updated table betod_livotec_product'
+    - builder_table_update_betod_livotec_product_29.php
+v1.0.62:
+    - 'Updated table betod_livotec_product'
+    - builder_table_update_betod_livotec_product_30.php
+v1.0.63:
+    - 'Updated table betod_livotec_product'
+    - builder_table_update_betod_livotec_product_31.php

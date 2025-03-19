@@ -6,7 +6,7 @@ plugin:
     homepage: ''
 navigation:
     main-menu-item:
-        label: Livotec
+        label: Live
         url: /
         icon: icon-flash
         sideMenu:

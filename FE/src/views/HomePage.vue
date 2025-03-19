@@ -5,6 +5,7 @@
     <ProductComponent :categorySlug="'thuc-pham-chuc-nang'" />
     <ProductComponent :categorySlug="'duoc-my-pham'" />
     <ProductComponent :categorySlug="'thuoc'" />
+    <ProductComponent :categorySlug="'thiet-bi-y-te'" />
   </a-flex>
 </template>
 

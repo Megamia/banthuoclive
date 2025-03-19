@@ -8,6 +8,11 @@
   >
     <swiper-slide>
       <img
+        src="https://images.baodantoc.vn/uploads/2021/Th%C3%A1ng_12/Ng%C3%A0y_25/NGOC/1.jpg"
+      />
+    </swiper-slide>
+    <swiper-slide>
+      <img
         src="https://media-cdn-v2.laodong.vn/storage/newsportal/2022/6/9/1054566/Thuc-Pham-Chuc-Nang.jpg"
       />
     </swiper-slide>
@@ -18,17 +23,15 @@
     </swiper-slide>
     <swiper-slide>
       <img
-        src="https://images.baodantoc.vn/uploads/2021/Th%C3%A1ng_12/Ng%C3%A0y_25/NGOC/1.jpg"
-      /> </swiper-slide
-    ><swiper-slide>
-      <img
         src="https://soyt.vinhphuc.gov.vn/noidung/PublishingImages/T2.2023/thuoc-chua-benh_2023169824.jpg"
-      /> </swiper-slide
-    ><swiper-slide>
+      />
+    </swiper-slide>
+    <swiper-slide>
       <img
         src="https://www.vinmec.com/static/uploads/20211106_132340_139604_vitamin_tot_cho_phu_max_1800x1800_jpg_6d6667a55e.jpg"
-      /> </swiper-slide
-    ><swiper-slide>
+      />
+    </swiper-slide>
+    <swiper-slide>
       <img
         src="https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2024/3/29/photo-1711704199580-17117042002282045391232.jpeg"
       />
