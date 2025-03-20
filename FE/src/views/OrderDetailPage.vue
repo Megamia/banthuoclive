@@ -1,10 +1,10 @@
 <template>
     <div class="w-full mb-[3rem]">
       <div class="w-full border-b-[1px] border-gray-300 py-3">
-        <span class="text-[#38B6AC] font-bold">Thanh toán</span>
+        <span class="text-[#2268DE] font-bold">Thanh toán</span>
       </div>
       <div>
-        <h1 class="text-3xl text-[#38B6AC] font-bold my-3">Thanh toán</h1>
+        <h1 class="text-3xl text-[#2268DE] font-bold my-3">Thanh toán</h1>
         <p class="font-medium">Thank you. Your order has been received.</p>
         <div v-if="IsorderCode" class="flex flex-col gap-4">
           <div class="flex flex-col gap-5 md:flex-row items-center my-4 mx-8">
@@ -22,7 +22,7 @@
             <div class="separator hidden md:flex"></div>
             <div class="flex flex-col items-center md:items-start mb-4 md:mb-0">
               <span class="text-[10px] font-bold">TOTAL:</span>
-              <span class="font-bold text-teal-500">{{
+              <span class="font-bold text-[#2268DE]">{{
                 formatCurrency(OrderData.price)
               }}</span>
             </div>
@@ -78,7 +78,7 @@
                   </a-flex>
                 </template>
                 <template v-else-if="column.key === 'subtotal'">
-                  <span class="text-[#02B6AC] text-[16px] font-bold">{{
+                  <span class="text-[#2268DE] text-[16px] font-bold">{{
                     formatCurrency(record.price)
                   }}</span>
                 </template>
@@ -91,7 +91,7 @@
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
-                    <span class="text-[#02B6AC] text-[16px] font-bold">{{
+                    <span class="text-[#2268DE] text-[16px] font-bold">{{
                       formatCurrency(OrderData.price)
                     }}</span>
                   </a-table-summary-cell>
@@ -123,7 +123,7 @@
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
-                    <span class="text-[#02B6AC] text-[16px] font-bold">{{
+                    <span class="text-[#2268DE] text-[16px] font-bold">{{
                       formatCurrency(OrderData.price)
                     }}</span>
                   </a-table-summary-cell>
@@ -205,7 +205,7 @@ const formatDate = (dateString) => {
   border-left: 1px dashed gray;
 }
 .a-product {
-  color: #38b6ac;
+  color: #2268DE;
   font-weight: bold;
 }
 .a-product:hover {

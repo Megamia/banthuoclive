@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable vue/no-v-model-argument -->
   <a-flex vertical align="center" class="w-full">
-    <h1 class="text-[24px] font-semibold text-[#02b6ac] text-center">
+    <h1 class="text-[24px] font-semibold text-[#2268DE] text-center">
       Live - Vì một cuộc sống tươi đẹp hơn
     </h1>
     <a-flex class="max-w-[100%]">
@@ -80,12 +80,12 @@
                 <a-flex gap="12" vertical class="flex-1 max-w-[100%]">
                   <a
                     :href="`/product/${itemChil.slug}`"
-                    class="text-[16px] text-center font-bold w-[100%] hover:bg-[#F3F4F6] hover:text-[#02B6AC] cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
+                    class="text-[16px] text-center font-bold w-[100%] hover:bg-[#F3F4F6] hover:text-[#2268DE] cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
                   >
                     {{ itemChil.name ? itemChil.name : "Chưa có tên" }}
                   </a>
                   <span
-                    class="text-[16px] text-center font-bold text-[#02B6AC] cursor-pointer"
+                    class="text-[16px] text-center font-bold text-[#2268DE] cursor-pointer"
                   >
                     {{ formatCurrency(itemChil.price) }}
                   </span>
@@ -98,7 +98,7 @@
                     </button>
 
                     <button
-                      class="flex-1 font-sans border-[1px] border-[#4fa8e7] px-[12px] py-[10px] rounded-full text-white bg-[#02b6ac] hover:bg-[linear-gradient(270deg,_#ccf7fb_2.05%,_#fff_100%)] hover:text-[#424242]"
+                      class="flex-1 font-sans border-[1px] border-[#4fa8e7] px-[12px] py-[10px] rounded-full text-white bg-[#2268DE] hover:bg-[linear-gradient(270deg,_#ccf7fb_2.05%,_#fff_100%)] hover:text-[#424242]"
                       @click="handleProductDetail(itemChil.slug)"
                     >
                       Chi tiết

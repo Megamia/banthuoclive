@@ -10,7 +10,7 @@
   >
     <a-flex class="items-center flex-1 gap-[10px]">
       <a-flex
-        class="flex-1 border-b border-[#ebebeb] focus-within:border-[#02b6ac]"
+        class="flex-1 border-b border-[#ebebeb] focus-within:border-[#2268DE]"
       >
         <a-input
           placeholder="Chúng tôi có thể giúp bạn tìm kiếm?"
@@ -20,14 +20,14 @@
         >
           <template #suffix>
             <BxSearch
-              class="cursor-pointer text-[24px] text-black hover:text-[#02b6ac]"
+              class="cursor-pointer text-[24px] text-black hover:text-[#2268DE]"
             />
           </template>
         </a-input>
       </a-flex>
       <ClCloseLg
         @click="closeSearch"
-        class="cursor-pointer text-[20px] hover:text-[#02b6ac]"
+        class="cursor-pointer text-[20px] hover:text-[#2268DE]"
       />
     </a-flex>
 

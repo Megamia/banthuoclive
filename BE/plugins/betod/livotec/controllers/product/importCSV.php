@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Str;
 
-class ImportXLSM extends Controller
+class ImportCSV extends Controller
 {
     public function importCsv()
     {
@@ -26,41 +26,53 @@ class ImportXLSM extends Controller
                 throw new \Exception('Không thể đọc file.');
             }
 
-            // Chỉ cho phép file .xlsm
             $extension = $file->getClientOriginalExtension();
-            if ($extension !== 'xlsm') {
-                throw new \Exception('Chỉ hỗ trợ file XLSM.');
-            }
-
-            $spreadsheet = IOFactory::load($file->getPathname());
-            $worksheet = $spreadsheet->getActiveSheet();
-            $rows = $worksheet->toArray(null, true, true, true);
-
-            $headers = array_map('trim', $rows[1] ?? []);
-            unset($rows[1]);
-
-            $data = [];
-            foreach ($rows as $row) {
-                $rowData = [];
-                foreach ($headers as $index => $header) {
-                    $rowData[$header] = trim($row[$index] ?? '');
-                }
-                $data[] = $rowData;
-            }
-
             $updatedOrCreatedCount = 0;
+
+            if ($extension === 'csv') {
+                $csv = Reader::createFromPath($file->getPathname(), 'r');
+                $csv->setHeaderOffset(0);
+                $data = iterator_to_array($csv->getRecords());
+            } elseif (in_array($extension, ['xls', 'xlsx', 'xlsm'])) {
+                $spreadsheet = IOFactory::load($file->getPathname());
+                $worksheet = $spreadsheet->getActiveSheet();
+                $rows = $worksheet->toArray(null, true, true, true);
+
+                $headers = array_map('trim', $rows[1] ?? []);
+                unset($rows[1]);
+
+                $data = [];
+                foreach ($rows as $row) {
+                    $rowData = [];
+                    foreach ($headers as $index => $header) {
+                        $rowData[$header] = trim($row[$index] ?? '');
+                    }
+                    $data[] = $rowData;
+                }
+            } else {
+                throw new \Exception('Chỉ hỗ trợ file CSV, XLS, XLSX, XLSM.');
+            }
+
             foreach ($data as $row) {
                 $row = array_map('trim', $row);
                 $row['name'] = strtolower($row['name'] ?? '');
                 $row['slug'] = strtolower($row['slug'] ?? '');
 
                 $product = null;
+
                 if (!empty($row['id'])) {
                     $product = Product::find($row['id']);
                 }
 
                 if (!$product && !empty($row['name'])) {
                     $product = Product::whereRaw('LOWER(name) = ?', [$row['name']])->first();
+                }
+
+                if (!$product) {
+                    $existingProduct = Product::whereRaw('LOWER(name) = ?', [$row['name']])->first();
+                    if ($existingProduct) {
+                        continue;
+                    }
                 }
 
                 $thongso = isset($row['thongso']) ? json_decode($row['thongso'], true) : null;
@@ -123,7 +135,6 @@ class ImportXLSM extends Controller
             ], 500);
         }
     }
-
 
     private function generateUniqueSlug($name, $id = null)
     {

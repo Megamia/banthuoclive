@@ -2,10 +2,10 @@
   <!-- eslint-disable vue/no-v-model-argument -->
   <div class="w-full flex flex-1 flex-col">
     <div class="w-full border-b-[1px] border-gray-300 py-3 mb-4">
-      <span class="text-[#38B6AC] font-bold">Giỏ hàng</span>
+      <span class="text-[#2268DE] font-bold">Giỏ hàng</span>
     </div>
     <div class="w-full flex items-center">
-      <h1 class="text-[#38B6AC] font-bold text-3xl">Giỏ hàng</h1>
+      <h1 class="text-[#2268DE] font-bold text-3xl">Giỏ hàng</h1>
     </div>
     <div class="product-comparison p-[10px] overflow-x-auto" v-if="haveData">
       <table>

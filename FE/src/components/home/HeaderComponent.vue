@@ -129,13 +129,13 @@
           >
             <RouterLink
               to="/profile"
-              class="hover:bg-[#02B6AC] hover:text-white px-3"
+              class="hover:bg-[#2268DE] hover:text-white px-3"
               >Profile</RouterLink
             >
             <RouterLink
               to="#"
               @click="showLogoutConfirm"
-              class="hover:bg-[#02B6AC] hover:text-white px-3"
+              class="hover:bg-[#2268DE] hover:text-white px-3"
             >
               Logout
             </RouterLink>
@@ -143,7 +143,7 @@
         </a-flex>
         <RouterLink to="/login" v-else>
           <a-flex
-            class="px-4 py-2 justify-center items-center bg-white text-[#02B6AC] font-bold rounded-md cursor-pointer peer-hover:animate-ping transition-transform hover:scale-105"
+            class="px-4 py-2 justify-center items-center bg-white text-[#2268DE] font-bold rounded-md cursor-pointer peer-hover:animate-ping transition-transform hover:scale-105"
             >Đăng nhập</a-flex
           >
         </RouterLink>

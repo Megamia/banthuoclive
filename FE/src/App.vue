@@ -149,7 +149,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <a-config-provider :theme="{ token: { colorPrimary: '#02B6AC' } }">
+  <a-config-provider :theme="{ token: { colorPrimary: '#2267DF' } }">
     <component :is="layout">
       <router-view />
     </component>

@@ -51,13 +51,13 @@
               </li>
               <li>
                 Email:
-                <span class="hover:text-[#02b6ac] cursor-pointer">
+                <span class="hover:text-[#2268DE] cursor-pointer">
                   livotecvn@gmail.com
                 </span>
               </li>
               <li>
                 Điện thoại:
-                <span class="hover:text-[#02b6ac] cursor-pointer">
+                <span class="hover:text-[#2268DE] cursor-pointer">
                   1800 2298</span
                 >
               </li>
@@ -76,7 +76,7 @@
           <a-flex class="flex gap-[10px]" vertical>
             <ul v-for="data in item.data" :key="data.id">
               <li>
-                <span class="hover:text-[#02b6ac] cursor-pointer">
+                <span class="hover:text-[#2268DE] cursor-pointer">
                   {{ data.name }}
                 </span>
               </li>

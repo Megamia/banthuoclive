@@ -34,11 +34,11 @@
       <a-flex class="px-[10px] w-[70%] h-full text-center">
         <a-flex gap="12" vertical class="flex-1">
           <span
-            class="text-[16px] font-bold w-[100%] hover:text-[#02B6AC] cursor-pointer line-clamp-2 h-[48px] mt-[10px]"
+            class="text-[16px] font-bold w-[100%] hover:text-[#2268DE] cursor-pointer line-clamp-2 h-[48px] mt-[10px]"
           >
             {{ product.name ? product.name : "Chưa có tên" }}
           </span>
-          <span class="text-[16px] font-bold text-[#02B6AC]">
+          <span class="text-[16px] font-bold text-[#2268DE]">
             {{ product.price ? formatCurrency(product.price) : "Chưa có giá" }}
           </span>
           <a-flex vertical class="gap-[10px] text-[16px]">
@@ -49,7 +49,7 @@
             </button>
 
             <button
-              class="flex-1 font-sans border-[1px] border-[#4fa8e7] px-[12px] py-[10px] rounded-full text-white bg-[#02b6ac] hover:bg-[linear-gradient(270deg,_#ccf7fb_2.05%,_#fff_100%)] hover:text-[#424242]"
+              class="flex-1 font-sans border-[1px] border-[#4fa8e7] px-[12px] py-[10px] rounded-full text-white bg-[#2268DE] hover:bg-[linear-gradient(270deg,_#ccf7fb_2.05%,_#fff_100%)] hover:text-[#424242]"
               @click="handleProductDetail(product.slug)"
             >
               Chi tiết

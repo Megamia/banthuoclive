@@ -15,7 +15,7 @@
     >
       <a-flex vertical>
         <span
-          class="text-[28px] text-[#02b6ac] font-bold uppercase text-center"
+          class="text-[28px] text-[#2268DE] font-bold uppercase text-center"
           >{{ nameCategory ? nameCategory : props.categorySlug }}</span
         >
         <a-flex class="max-w-[100%] justify-center">
@@ -81,11 +81,11 @@
                 <a-flex gap="12" vertical class="flex-1 w-[100%]">
                   <a
                     :href="`/product/${itemChil.slug}`"
-                    class="text-[16px] font-bold max-w-[100%] hover:bg-[#F3F4F6] hover:text-[#02B6AC] cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
+                    class="text-[16px] font-bold max-w-[100%] hover:bg-[#F3F4F6] hover:text-[#2268DE] cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
                   >
                     {{ itemChil.name ? itemChil.name : "Chưa có tên" }}
                   </a>
-                  <span class="text-[16px] font-bold text-[#02B6AC]">
+                  <span class="text-[16px] font-bold text-[#2268DE]">
                     {{ formatCurrency(itemChil.price) }}
                   </span>
                   <a-flex vertical class="gap-[10px] text-[16px]">
@@ -97,7 +97,7 @@
                     </button>
 
                     <button
-                      class="flex-1 font-sans border-[1px] border-[#4fa8e7] px-[12px] py-[10px] rounded-full text-white bg-[#02b6ac] hover:bg-[linear-gradient(270deg,_#ccf7fb_2.05%,_#fff_100%)] hover:text-[#424242]"
+                      class="flex-1 font-sans border-[1px] border-[#4fa8e7] px-[12px] py-[10px] rounded-full text-white bg-[#2268DE] hover:bg-[linear-gradient(270deg,_#ccf7fb_2.05%,_#fff_100%)] hover:text-[#424242]"
                       @click="handleProductDetail(itemChil.slug)"
                     >
                       Chi tiết

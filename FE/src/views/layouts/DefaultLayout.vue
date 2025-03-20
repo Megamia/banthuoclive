@@ -2,7 +2,7 @@
   <!-- eslint-disable vue/no-v-model-argument -->
   <div>
     <a-flex
-      class="justify-center bg-[#02B6AC] sticky top-0 z-50 border-b-[1px] border-white"
+      class="justify-center bg-[#2268DE] sticky top-0 z-50 border-b-[1px] border-white"
     >
       <HeaderComponent />
     </a-flex>

@@ -1,10 +1,10 @@
 <template>
   <div class="w-full flex flex-1 flex-col">
     <div class="w-full border-b-[1px] border-gray-300 py-3 mb-4">
-      <span class="text-[#38B6AC] font-bold">So sánh sản phẩm</span>
+      <span class="text-[#2268DE] font-bold">So sánh sản phẩm</span>
     </div>
     <div class="w-full flex justify-center items-center">
-      <h1 class="text-[#38B6AC] font-bold text-3xl">SO SÁNH SẢN PHẨM</h1>
+      <h1 class="text-[#2268DE] font-bold text-3xl">SO SÁNH SẢN PHẨM</h1>
     </div>
     <div class="product-comparison p-[10px] overflow-x-auto" v-if="haveData">
       <table>

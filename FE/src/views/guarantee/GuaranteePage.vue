@@ -32,7 +32,7 @@
       </a-flex>
       <a-flex justify="center">
         <button
-          class="bg-[#01b6ac] text-white rounded-3xl w-[205px] py-[11px] text-[18px] font-semibold"
+          class="bg-[#2268DE] text-white rounded-3xl w-[205px] py-[11px] text-[18px] font-semibold"
         >
           Nhận tư vấn
         </button>
@@ -41,12 +41,12 @@
 
     <a-flex vertical class="contentDiv">
       <span
-        class="text-[#01b6ac] text-[32px] font-bold leading-[46px] text-center"
+        class="text-[#2268DE] text-[32px] font-bold leading-[46px] text-center"
       >
         MÁY LỌC NƯỚC LIVOTEC
       </span>
       <span
-        class="text-[#01b6ac] text-[32px] font-medium leading-[46px] text-center"
+        class="text-[#2268DE] text-[32px] font-medium leading-[46px] text-center"
       >
         07 LÝ DO NÊN LỰA CHỌN MÁY LỌC NƯỚC LIVOTEC
       </span>
@@ -73,14 +73,14 @@
       </a-flex>
       <a-flex justify="center">
         <button
-          class="bg-[#01b6ac] text-white rounded-3xl w-[205px] py-[11px] text-[18px] font-semibold"
+          class="bg-[#2268DE] text-white rounded-3xl w-[205px] py-[11px] text-[18px] font-semibold"
         >
           Nhận tư vấn
         </button>
       </a-flex>
     </a-flex>
     <a-flex vertical class="contentDiv">
-      <span class="text-[#01b6ac] text-[32px] font-bold text-center">
+      <span class="text-[#2268DE] text-[32px] font-bold text-center">
         Đăng ký nhận tư vấn ngay
       </span>
 
@@ -90,7 +90,7 @@
     </a-flex>
     <a-flex class="contentDiv justify-center">
       <a-flex
-        class="a bg-gradient-to-b from-[#c1edff] to-[#01b6ac] flex-1 justify-center py-[51px] rounded-[22px]"
+        class="a bg-gradient-to-b from-[#c1edff] to-[#2268DE] flex-1 justify-center py-[51px] rounded-[22px]"
       >
         <a-form
           :model="formState"
@@ -312,7 +312,7 @@ const handleChangeItem = (value) => {
   padding-top: 81px;
   padding-bottom: 27px;
   text-align: center;
-  color: #01b6ac;
+  color: #2268DE;
   font-size: 32px;
   font-weight: 600;
   text-transform: uppercase;

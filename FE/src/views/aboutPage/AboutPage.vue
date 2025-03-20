@@ -3,7 +3,7 @@
     <a-flex vertical class="w-[100%] px-[20px] pt-[60px] a">
       <a-flex class="w-full gap-[50px] mb-[80px]">
         <a-flex vertical class="flex-1">
-          <h1 class="text-[31px] text-[#02b6ac] font-bold mb-4 uppercase">
+          <h1 class="text-[31px] text-[#2268DE] font-bold mb-4 uppercase">
             Về chúng tôi
           </h1>
           <span class="text-[15px] leading-[25px] font-medium"

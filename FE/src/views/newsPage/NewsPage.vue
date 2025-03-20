@@ -2,7 +2,7 @@
   <!-- eslint-disable vue/no-v-model-argument -->
     <a-flex vertical class="w-full px-[125px] justify-center items-center">
       <a-flex
-        class="py-[1rem] w-full text-[#38b6ac] text-[18px] border-b-[1px] border-[#dbe0f0] mb-3"
+        class="py-[1rem] w-full text-[#2268DE] text-[18px] border-b-[1px] border-[#dbe0f0] mb-3"
       >
         <span class="font-medium">Tin tức</span>
       </a-flex>

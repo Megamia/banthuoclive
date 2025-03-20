@@ -2,7 +2,7 @@
   <!-- eslint-disable vue/no-v-model-argument -->
   <a-flex vertical class="w-full gap-[50px]">
     <a-flex vertical class="w-full justify-center">
-      <span class="text-[30px] text-[#02b6ac] mb-2 font-semibold text-center"
+      <span class="text-[30px] text-[#2268DE] mb-2 font-semibold text-center"
         >Tin nổi bật</span
       >
       <a-flex horizontal v-if="dataFake.length > 0" class="gap-[20px]">
@@ -33,7 +33,7 @@
               class="hover:bg-white p-0"
             >
               <span
-                class="text-[calc(1.275rem+0.3vw)] text-black text-start font-normal leading-[24px] min-h-[51.5px] hover:text-[#02B6AC] transition-all duration-300 whitespace-nowrap"
+                class="text-[calc(1.275rem+0.3vw)] text-black text-start font-normal leading-[24px] min-h-[51.5px] hover:text-[#2268DE] transition-all duration-300 whitespace-nowrap"
               >
                 {{ dataFake[0].title }}
               </span>
@@ -151,7 +151,7 @@
                   </span>
                   <a
                     :href="`/detailNews/${item.slug}`"
-                    class="text-[#0d6efd] hover:bg-[#ededed] hover:text-[#02B6AC] text-start"
+                    class="text-[#0d6efd] hover:bg-[#ededed] hover:text-[#2268DE] text-start"
                   >
                     Đọc tiếp</a
                   >

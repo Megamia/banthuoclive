@@ -30,7 +30,7 @@
             </RouterLink></a-breadcrumb-item
           >
           <a-breadcrumb-item
-            ><span class="text-[15px] font-semibold text-[#02B6AC]">{{
+            ><span class="text-[15px] font-semibold text-[#2267DF]">{{
               product.name
             }}</span></a-breadcrumb-item
           >
@@ -59,7 +59,7 @@
                   @click="setActiveImage(item.path)"
                   alt="Product Image"
                   :class="{
-                    'gallery-image ring-2 ring-[#38B6AC] scale-100 rounded-sm my-2':
+                    'gallery-image ring-2 ring-[#2268DE] scale-100 rounded-sm my-2':
                       item.path === activeImage,
                     'gallery-image rounded-sm border my-2':
                       item.path !== activeImage,
@@ -70,13 +70,13 @@
           </div>
           <div class="flex flex-1 justify-evenly items-center">
             <div class="flex flex-col justify-center items-center gap-2">
-              <img src="../assets/freeship.svg" class="h-[60px]" />
+              <MdLocalShipping class="w-[60px] h-[60px] text-[#2268DE]" />
               <span class="font-medium text-sm"
                 >Miễn phí vận chuyển toàn quốc</span
               >
             </div>
             <div class="flex flex-col justify-center items-center gap-2">
-              <img src="../assets/setup.svg" class="h-[60px]" />
+              <AnFilledSetting class="w-[60px] h-[60px] text-[#2268DE]" />
               <span class="font-medium text-sm"
                 >Miễn phí lắp đặt toàn quốc</span
               >
@@ -84,13 +84,13 @@
           </div>
         </div>
         <div class="flex-1 max-lg:w-full p-2 flex gap-2 flex-col">
-          <h1 class="text-[#38B6AC] max-md:text-center text-[30px] font-bold">
+          <h1 class="text-[#2268DE] max-md:text-center text-[30px] font-bold">
             {{ product.name }}
           </h1>
           <a-flex class="items-center gap-[10px]">
             <a-rate
               :value="5"
-              class="text-[25px] max-lg:text-center text-[#38B6AC]"
+              class="text-[25px] max-lg:text-center text-[#2268DE]"
             />
             <span class="text-[#a2a2a2] mt-[5px] text-[15px]"
               >(0 đánh giá)</span
@@ -114,7 +114,7 @@
           </div>
           <div class="flex flex-col gap-2">
             <div
-              class="w-full bg-[#38B6AC] py-2 flex justify-center items-center gap-2 rounded-md hover:opacity-80 cursor-pointer"
+              class="w-full bg-[#2268DE] py-2 flex justify-center items-center gap-2 rounded-md hover:opacity-80 cursor-pointer"
             >
               <span class="text-[#FFF833] font-bold text-[18px]"
                 >Gọi Đặt Mua: 1800 2298</span
@@ -134,7 +134,7 @@
                   >
                 </div>
                 <div
-                  class="flex-1 bg-[#38B6AC] py-2 flex justify-center items-center rounded-md hover:opacity-80 cursor-pointer"
+                  class="flex-1 bg-[#2268DE] py-2 flex justify-center items-center rounded-md hover:opacity-80 cursor-pointer"
                   @click="addToComparison(product)"
                 >
                   <span class="text-white text-[15px] font-medium"
@@ -178,6 +178,7 @@
 </template>
 
 <script setup>
+import { MdLocalShipping, AnFilledSetting } from "@kalimahapps/vue-icons";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ProductSpecifications from "@/components/ProductSpecifications.vue";
@@ -311,7 +312,7 @@ const imgSocialMedia = ref([
 
 .description ul li::before {
   content: "•";
-  color: #38b6ac;
+  color: #2268de;
   font-size: 1.5em;
   position: absolute;
   left: 0;

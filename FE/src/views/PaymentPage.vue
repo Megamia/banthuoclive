@@ -2,14 +2,16 @@
   <!-- eslint-disable vue/no-v-model-argument -->
   <div class="w-full mb-[3rem]">
     <div class="w-full border-b-[1px] border-gray-300 py-3">
-      <span class="text-[#38B6AC] font-bold">Thanh toán</span>
+      <span class="text-[#2268DE] font-bold">Thanh toán</span>
     </div>
     <div>
-      <h1 class="text-3xl text-[#38B6AC] font-bold my-3">Thanh toán</h1>
+      <h1 class="text-3xl text-[#2268DE] font-bold my-3">Thanh toán</h1>
       <div class="w-full">
         <div class="text-[14px] font-medium">
           Have a coupon?
-          <a class="text-blue-500 font-medium">Click here to enter your code</a>
+          <a class="text-blue-500 font-medium cursor-pointer hover:bg-white"
+            >Click here to enter your code</a
+          >
         </div>
         <a-form
           ref="formRef"
@@ -261,7 +263,7 @@
                   </a-flex>
                 </template>
                 <template v-else-if="column.key === 'subtotal'">
-                  <span class="text-[#02B6AC] text-[16px] font-bold">{{
+                  <span class="text-[#2267DF] text-[16px] font-bold">{{
                     formatCurrency(record.price * record.quantity)
                   }}</span>
                 </template>
@@ -274,7 +276,7 @@
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
-                    <span class="text-[#02B6AC] text-[16px] font-bold">{{
+                    <span class="text-[#2267DF] text-[16px] font-bold">{{
                       formatCurrency(totals.subtotal)
                     }}</span>
                   </a-table-summary-cell>
@@ -296,7 +298,7 @@
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
-                    <span class="text-[#02B6AC] text-[16px] font-bold">{{
+                    <span class="text-[#2267DF] text-[16px] font-bold">{{
                       formatCurrency(totals.subtotal)
                     }}</span>
                   </a-table-summary-cell>
@@ -351,7 +353,9 @@
               <a-form-item name="terms" :rules="rules.terms">
                 <a-checkbox v-model:checked="formState.terms">
                   I have read and agree to the website
-                  <a class="text-blue-500">terms and conditions</a>
+                  <a class="text-blue-500 cursor-pointer hover:bg-[#E9E6ED]"
+                    >terms and conditions</a
+                  >
                   <span class="text-red-500">*</span>
                 </a-checkbox>
               </a-form-item>
@@ -818,7 +822,7 @@ onMounted(() => {
 
 <style scoped>
 .a-product {
-  color: #38b6ac;
+  color: #2267df;
   font-weight: bold;
 }
 .a-product:hover {

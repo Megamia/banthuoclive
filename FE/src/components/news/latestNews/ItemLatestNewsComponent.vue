@@ -2,7 +2,7 @@
   <!-- eslint-disable vue/no-v-model-argument -->
   <a-flex vertical class="flex-1 justify-center items-center">
     <a-flex class="py-5 mb-1">
-      <span class="text-[28px] text-[#02b6ac] font-medium"> Tin mới nhất </span>
+      <span class="text-[28px] text-[#2268DE] font-medium"> Tin mới nhất </span>
     </a-flex>
     <a-flex
       class="w-[1086px] justify-center mb-[20px] border-b-[1px] border-[#dee2e6] tabList"
@@ -45,7 +45,7 @@
               </span>
               <a
                 :href="`/detailNews/${item.slug}`"
-                class="text-[#0d6efd] hover:bg-[#ededed] hover:text-[#02B6AC]"
+                class="text-[#0d6efd] hover:bg-[#ededed] hover:text-[#2268DE]"
               >
                 Đọc tiếp</a
               >
@@ -193,7 +193,7 @@ const filterData = (data) => {
 }
 
 :deep(.tabList .ant-tabs-tab-active) {
-  background-color: #02b6ac;
+  background-color: #2268DE;
   transition: all 0.5s ease-in-out;
 }
 
