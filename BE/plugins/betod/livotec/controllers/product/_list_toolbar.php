@@ -3,7 +3,7 @@
         <?= e(trans('backend::lang.form.create')) ?>
     </a>
 
-    <form id="importCsvForm" enctype="multipart/form-data" style="display: inline-block; margin-left: 10px;">
+    <form id="importCsvForm" enctype="multipart/form-data" style="display: inline-block; margin-left: 10px;margin-right: 20px;">
         <?= csrf_field() ?>
         <input type="file" name="csv_file" accept=".csv" style="display: none;" id="importCsvInput">
         <button type="button" class="btn btn-primary oc-icon-upload"

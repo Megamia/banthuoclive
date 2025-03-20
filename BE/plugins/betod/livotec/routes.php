@@ -162,7 +162,7 @@ Route::group(['prefix' => 'apiOrder'], function () {
     });
 });
 Route::group(['prefix' => 'apiImport'], function () {
-    Route::post('import', [\Betod\Livotec\Controllers\Product\ImportCSV::class, 'importCsv']);
+    Route::post('import', [\Betod\Livotec\Controllers\Product\ImportXLSM::class, 'importCsv']);
 });
 
 

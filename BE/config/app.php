@@ -117,6 +117,7 @@ return [
         App\Providers\EventServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         BeyondCode\LaravelWebSockets\WebSocketsServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         // Package Service Providers...
         // Illuminate\Html\HtmlServiceProvider::class, // Example
 
@@ -134,7 +135,7 @@ return [
     */
 
     'aliases' => array_merge(include(base_path('modules/system/aliases.php')), [
-
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         // 'Str' => Illuminate\Support\Str::class, // Example
 
     ]),
