@@ -168,3 +168,9 @@ v1.0.62:
 v1.0.63:
     - 'Updated table betod_livotec_product'
     - builder_table_update_betod_livotec_product_31.php
+v1.0.64:
+    - 'Created table betod_livotec_ingredients_instructions'
+    - builder_table_create_betod_livotec_ingredients_instructions.php
+v1.0.65:
+    - 'Updated table betod_livotec_ingredients_instructions'
+    - builder_table_update_betod_livotec_ingredientsandinstructions.php

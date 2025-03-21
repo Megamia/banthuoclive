@@ -1,5 +1,6 @@
 <?php
 
+use Betod\Livotec\Models\IngredientsAndInstructions;
 use Betod\Livotec\Models\Orders;
 use Betod\Livotec\Models\Product;
 use Betod\Livotec\Models\Category;
@@ -10,14 +11,17 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'apiProduct'], function () {
     Route::get("allProduct", function () {
         return Cache::remember('all_products', 3600, function () {
-            $allProduct = Product::with(['gallery', 'image', 'category.parent', 'post'])->get();
+            $allProduct = Product::with(['gallery', 'image', 'category.parent', 'post', 'ingredientsAndInstructions'])->get();
             return response()->json([
                 'allProduct' => $allProduct,
                 'status' => $allProduct->isNotEmpty() ? 1 : 0
             ]);
         });
     });
-
+    Route::get("testProduct", function () {
+        $product = Product::with('ingredientsAndInstructions')->find(75); // Lấy sản phẩm ID = 75
+        dd($product->toArray()); // ✅ Kiểm tra xem có dữ liệu không
+    });
     Route::get('navProducts/{slug}', function ($slug) {
         return Cache::remember("nav_products_{$slug}", 3600, function () use ($slug) {
             $category = Category::with(['children'])->where('slug', $slug)->first();

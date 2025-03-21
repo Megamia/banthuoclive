@@ -27,7 +27,7 @@
         v-if="searchInputHover"
         @mouseenter="searchInputHover = true"
         @mouseleave="handleMouseLeave"
-        class="max-h-[400px] overflow-hidden overflow-y-scroll rounded-[30px] w-[66%] absolute bg-white top-[50px] z-40 p-[20px]"
+        class="max-h-[400px] overflow-hidden overflow-y-scroll border-[1px] border-[gray] rounded-[30px] w-[66%] absolute bg-white top-[60px] z-40 p-[20px]"
       >
         <a-flex v-if="filteredData.length" vertical>
           <a-flex
@@ -384,18 +384,22 @@ const data1 = ref([
       {
         id: 1,
         name: "Viên nhai Borne Mineral New Nordic hỗ trợ phát triển xương, giúp tăng chiều cao, tăng đề kháng (120 viên)",
+        slug: "vien-nhai-borne-mineral-new-nordic-ho-tro-phat-trien-xuong-giup-tang-chieu-cao-tang-de-khang-120-vien",
       },
       {
         id: 2,
-        name: "Thực phẩm bảo vệ sức khỏe Calcium Premium JpanWell bổ sung canxi, giảm nguy cơ loãng xương (120 viên)",
+        name: "Siro brauer baby kids d3+k2 high potency mk-7 drops 10ml bổ sung vitamin d3 và vitamin k2",
+        slug: "siro-brauer-baby-kids-d3k2-high-potency-mk-7-drops-10ml-bo-sung-vitamin-d3-va-vitamin-k2",
       },
       {
         id: 3,
-        name: "Viên uống Ericllux Ocavill hỗ trợ tăng tiết dịch khớp, giúp khớp vận động linh hoạt (60 viên)",
+        name: "Hỗn dịch uống phospha gaspain bidiphar điều trị những bệnh lý về tiêu hóa (20 gói x 20g)",
+        slug: "hon-dich-uong-biviantac-khang-acid-10ml-reliv-dieu-tri-khong-tieu-day-hoi-20-goi",
       },
       {
         id: 4,
-        name: "Gel bôi trơn Durex K-Y Jelly giảm triệu chứng khô âm đạo khi quan hệ (50g)",
+        name: "khẩu trang 4d kids niva thoáng khí, ngăn chặn vi khuẩn, giọt bắn (25 cái)",
+        slug: "khau-trang-4d-kids-niva-thoang-khi-ngan-chan-vi-khuan-giot-ban-25-cai",
       },
     ],
   },

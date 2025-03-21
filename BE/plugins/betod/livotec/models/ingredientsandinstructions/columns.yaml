@@ -1,0 +1,10 @@
+columns:
+    id:
+        label: ID
+        type: number
+    product_id:
+        label: 'ID sản phẩm'
+        type: number
+    instructions:
+        label: 'Hướng dẫn sử dụng'
+        type: switch

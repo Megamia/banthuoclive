@@ -84,7 +84,9 @@
           </div>
         </div>
         <div class="flex-1 max-lg:w-full p-2 flex gap-2 flex-col">
-          <h1 class="text-[#2268DE] max-md:text-center text-[30px] font-bold">
+          <h1
+            class="text-[#2268DE] max-md:text-center text-[30px] font-bold capitalize"
+          >
             {{ product.name }}
           </h1>
           <a-flex class="items-center gap-[10px]">
@@ -168,7 +170,9 @@
               v-if="product.thongso != null"
               :items="product.thongso"
           /></a-tab-pane>
-          <a-tab-pane key="3" tab="Đánh giá">Content of Tab Pane 3 </a-tab-pane>
+          <a-tab-pane key="3" tab="Thành phần và HDSD">
+            <UseIngredientsAndInstructionsComponent />
+          </a-tab-pane>
         </a-tabs>
       </div>
     </main>
@@ -183,9 +187,9 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ProductSpecifications from "@/components/ProductSpecifications.vue";
 import ProductPosts from "@/components/ProductPosts.vue";
+import UseIngredientsAndInstructionsComponent from "../components/UseIngredientsAndInstructionsComponent.vue";
 import store from "@/store/store";
 import { getDataFromIndexedDB } from "@/store/indexedDB";
-
 const route = useRoute();
 const router = useRouter();
 const product = ref(null);

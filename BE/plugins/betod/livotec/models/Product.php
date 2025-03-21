@@ -37,8 +37,12 @@ class Product extends Model
 
     public $belongsTo = [
         'category' => 'Betod\Livotec\Models\Category',
-        'post' => 'RainLab\Blog\Models\Post'
+        'post' => 'RainLab\Blog\Models\Post',
     ];
+    public $hasMany = [
+        'ingredientsAndInstructions' => 'Betod\Livotec\Models\IngredientsAndInstructions'
+    ];
+
 
     public $attachOne = [
         'image' => 'System\Models\File'

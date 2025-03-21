@@ -26,3 +26,7 @@ navigation:
                 label: Filter
                 url: betod/livotec/filter
                 icon: icon-filter
+            side-menu-item5:
+                label: Ingredients_Instructions
+                url: betod/livotec/ingredients_instructions
+                icon: icon-sitemap

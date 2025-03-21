@@ -100,37 +100,25 @@ const deleteItem = async (itemId) => {
 };
 const allThongSoTitles = computed(() => {
   const dataStore = store.getters["product/getDataStoreProducts"];
+  if (!dataStore || dataStore.length <= 1) return null;
 
-  if (dataStore && dataStore.length > 1) {
-    const allTitles = new Set();
-    dataStore.forEach((item) => {
-      if (item.thongso && item.thongso != null) {
-        item.thongso.forEach((thongso) => {
-          allTitles.add(thongso.thuoc_tinh);
-        });
-      }
+  const allTitles = new Set();
+  dataStore.forEach((item) => {
+    item.thongso?.forEach((thongso) => {
+      allTitles.add(thongso.thuoc_tinh.trim()); // Chuẩn hóa key
     });
-    return [...allTitles];
-  } else {
-    return null;
-  }
+  });
+
+  return [...allTitles];
 });
 
 const getThongSoValue = (thongsoList, thuoc_tinh) => {
-  if (thongsoList && thongsoList != null) {
-    const found = thongsoList.find((t) => t.thuoc_tinh === thuoc_tinh);
-    if (found) {
-      if (found.gia_tri != "") {
-        return found.gia_tri;
-      } else {
-        return "-";
-      }
-    } else {
-      return "-";
-    }
-  } else {
-    return;
-  }
+  if (!thongsoList) return "-";
+
+  const found = thongsoList.find(
+    (t) => t.thuoc_tinh.trim() === thuoc_tinh.trim()
+  );
+  return found ? found.gia_tri.trim() || "-" : "-";
 };
 
 const formatCurrency = (value) => {
