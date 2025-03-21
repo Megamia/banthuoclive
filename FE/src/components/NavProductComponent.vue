@@ -80,7 +80,7 @@
                 <a-flex gap="12" vertical class="flex-1 max-w-[100%]">
                   <a
                     :href="`/product/${itemChil.slug}`"
-                    class="text-[16px] text-center font-bold w-[100%] hover:bg-[#F3F4F6] hover:text-[#2268DE] cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
+                    class="text-[16px] text-center font-bold w-[100%] capitalize hover:bg-[#F3F4F6] hover:text-[#2268DE] cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
                   >
                     {{ itemChil.name ? itemChil.name : "Chưa có tên" }}
                   </a>

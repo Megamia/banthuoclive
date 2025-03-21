@@ -6,8 +6,8 @@
     >
       <a-flex class="flex-2 justify-center items-center">
         <img
-          src="https://livotec.com/wp-content/uploads/2024/03/livotec.png"
-          class="h-[50px]"
+          src="https://img.pikbest.com/wp/202405/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483.jpg!w700wp"
+          class="h-[100px]"
         />
       </a-flex>
       <a-flex vertical class="flex-2 justify-end gap-[12px]">

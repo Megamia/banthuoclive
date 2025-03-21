@@ -43,7 +43,7 @@
             >
               <a
                 :href="`/product/${item.slug}`"
-                class="hover:bg-white hover:text-black"
+                class="hover:bg-white hover:text-black capitalize"
               >
                 {{ item.name }}
               </a>
@@ -63,7 +63,7 @@
             >
               <a
                 :href="`/product/${item.slug}`"
-                class="hover:bg-white hover:text-black"
+                class="hover:bg-white hover:text-black capitalize" 
               >
                 {{ item.name }}
               </a>
@@ -115,7 +115,7 @@ const fetchData = async () => {
 
       dataMostFind.value = [...dataProduct].sort(
         (a, b) => b.sold_out - a.sold_out
-      );
+      ).slice(0,4);
     } else {
       console.warn("Không có dữ liệu hợp lệ từ IndexedDB.");
     }

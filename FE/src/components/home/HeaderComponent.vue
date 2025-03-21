@@ -3,8 +3,12 @@
   <a-flex class="flex-1 relative justify-between p-[20px] gap-[30px] a">
     <a-flex class="justify-center items-center">
       <router-link to="/">
-        <img
+        <!-- <img
           src="https://livotec.com/wp-content/uploads/2024/08/logo-livotec.png"
+        /> -->
+        <img
+          src="https://img.pikbest.com/wp/202405/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483.jpg!w700wp"
+          class="h-[100px]"
         />
       </router-link>
     </a-flex>
@@ -37,7 +41,7 @@
               <a
                 v-for="itemChil in item.item"
                 :key="`${item.id}-${itemChil.id}`"
-                class="text-black cursor-pointer"
+                class="text-black cursor-pointer capitalize hover:bg-white"
                 @click="handleChangeToProductDetails(itemChil)"
               >
                 {{ itemChil.name }}
