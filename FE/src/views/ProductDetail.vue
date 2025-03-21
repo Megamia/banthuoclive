@@ -179,7 +179,7 @@
 
 <script setup>
 import { MdLocalShipping, AnFilledSetting } from "@kalimahapps/vue-icons";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ProductSpecifications from "@/components/ProductSpecifications.vue";
 import ProductPosts from "@/components/ProductPosts.vue";
@@ -194,7 +194,7 @@ const activeImage = ref(null);
 const activeKey = ref("1");
 const compare = ref(false);
 
-onMounted(async () => {
+const fetchData = async () => {
   try {
     const { slug } = route.params;
 
@@ -218,7 +218,19 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error fetching product:", error);
   }
+};
+onMounted(() => {
+  fetchData(route.params.slug);
 });
+
+watch(
+  () => route.params.slug,
+  (newSlug) => {
+    if (newSlug) {
+      fetchData(newSlug);
+    }
+  }
+);
 
 const setActiveImage = (path) => {
   activeImage.value = path;

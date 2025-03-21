@@ -53,38 +53,20 @@ const fetchData = async (url) => {
   }
 };
 
-// Kiểm tra sự thay đổi dữ liệu
 const hasDataChanged = (localData, apiData) => {
   if (localData.length !== apiData.length) return true;
-
   const localMap = new Map(localData.map((item) => [item.id, item]));
-
   return apiData.some((apiItem) => {
     const localItem = localMap.get(apiItem.id);
-    if (!localItem) {
-      // console.log(`New item added:`, apiItem);
-      return true;
-    }
-
-    const changes = {};
-    Object.keys(apiItem).forEach((key) => {
-      if (JSON.stringify(localItem[key]) !== JSON.stringify(apiItem[key])) {
-        changes[key] = { old: localItem[key], new: apiItem[key] };
-      }
-    });
-
-    if (Object.keys(changes).length > 0) {
-      // console.log(`Item ID ${apiItem.id} changed:`, changes);
-      return true;
-    }
-
-    return false;
+    if (!localItem) return true;
+    return Object.keys(apiItem).some(
+      (key) => JSON.stringify(localItem[key]) !== JSON.stringify(apiItem[key])
+    );
   });
 };
 
 const updateProductListInState = async (apiProducts) => {
   products.value = apiProducts;
-
   await saveDataToIndexedDB("products", apiProducts);
 };
 
@@ -100,20 +82,11 @@ const updateDataIfNeeded = async () => {
       fetchData(`${import.meta.env.VITE_APP_URL_API_CATEGORY}/allCategory`),
     ]);
 
-    const categoriesWithFilters = apiCategories.map((cat) => ({
-      ...cat,
-      filters: cat.filters || [],
-    }));
-
     const isProductChanged = hasDataChanged(localProducts, apiProducts);
-    const isCategoryChanged = hasDataChanged(
-      localCategories,
-      categoriesWithFilters
-    );
+    const isCategoryChanged = hasDataChanged(localCategories, apiCategories);
 
     if (isProductChanged) await saveDataToIndexedDB("products", apiProducts);
-    if (isCategoryChanged)
-      await saveDataToIndexedDB("category", categoriesWithFilters);
+    if (isCategoryChanged) await saveDataToIndexedDB("category", apiCategories);
 
     if (isProductChanged || isCategoryChanged) {
       localStorage.setItem("lastUpdated", Date.now());
@@ -130,12 +103,9 @@ const updateDataIfNeeded = async () => {
 onMounted(() => {
   handleToken();
   updateDataIfNeeded();
-
-  dataUpdateInterval = setInterval(updateDataIfNeeded, 1 * 60 * 100);
+  dataUpdateInterval = setInterval(updateDataIfNeeded, 60000);
 
   echoChannel.listen("ProductUpdated", (event) => {
-    // console.log("ProductUpdated event:", event.product);
-
     messages.value.push(event.product);
     updateProductListInState([event.product]);
   });
