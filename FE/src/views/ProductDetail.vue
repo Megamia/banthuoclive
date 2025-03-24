@@ -70,13 +70,17 @@
           </div>
           <div class="flex flex-1 justify-evenly items-center">
             <div class="flex flex-col justify-center items-center gap-2">
-              <MdLocalShipping class="w-[60px] h-[60px] text-[#2268DE] cursor-default" />
+              <MdLocalShipping
+                class="w-[60px] h-[60px] text-[#2268DE] cursor-default"
+              />
               <span class="font-medium text-sm"
                 >Miễn phí vận chuyển toàn quốc</span
               >
             </div>
             <div class="flex flex-col justify-center items-center gap-2">
-              <AnFilledSetting class="w-[60px] h-[60px] text-[#2268DE] cursor-default" />
+              <AnFilledSetting
+                class="w-[60px] h-[60px] text-[#2268DE] cursor-default"
+              />
               <span class="font-medium text-sm"
                 >Miễn phí lắp đặt toàn quốc</span
               >
@@ -164,18 +168,32 @@
         <a-tabs v-model:activeKey="activeKey" size="large">
           <a-tab-pane key="1" tab="Bài viết liên quan">
             <ProductPosts v-if="product.post != null" :items="product.post" />
+            <a-flex v-else>Không có bài viết</a-flex>
           </a-tab-pane>
           <a-tab-pane key="2" tab="Thông số sản phẩm" force-render>
             <ProductSpecifications
               v-if="product.thongso != null"
               :items="product.thongso"
             />
+            <a-flex v-else>Không có thông số</a-flex>
           </a-tab-pane>
           <a-tab-pane key="3" tab="Thành phần">
-            <UseIngredientsComponent :product="product.id" />
+            <UseIngredientsComponent
+              :product="product.id"
+              v-if="
+                product.ingredients_and_instructions?.[0]?.ingredients != null
+              "
+            />
+            <a-flex v-else>Không có thành phần</a-flex>
           </a-tab-pane>
           <a-tab-pane key="4" tab="Hướng dẫn sử dụng">
-            <InstructionsComponent :product="product.id" />
+            <InstructionsComponent
+              :product="product.id"
+              v-if="
+                product.ingredients_and_instructions?.[0]?.instructions != null
+              "
+            />
+            <a-flex v-else>Không có hướng dẫn sử dụng</a-flex>
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -264,8 +282,6 @@ const handleAddToCart = async (data) => {
   store.commit("product/setDataStoreCart", {
     dataStoreCart: updatedCart,
   });
-
-  // console.log("Giỏ hàng sau khi cập nhật:", updatedCart);
 };
 
 const addToComparison = (product) => {
