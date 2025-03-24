@@ -381,80 +381,47 @@ const showSearch = () => {
 const searchInput = ref("");
 const allProducts = ref([]);
 const data1 = ref([
-  {
-    id: 1,
-    title: "Tìm kiếm nhanh",
-    item: [
-      {
-        id: 1,
-        name: "Viên nhai Borne Mineral New Nordic hỗ trợ phát triển xương, giúp tăng chiều cao, tăng đề kháng (120 viên)",
-        slug: "vien-nhai-borne-mineral-new-nordic-ho-tro-phat-trien-xuong-giup-tang-chieu-cao-tang-de-khang-120-vien",
-      },
-      {
-        id: 2,
-        name: "Siro brauer baby kids d3+k2 high potency mk-7 drops 10ml bổ sung vitamin d3 và vitamin k2",
-        slug: "siro-brauer-baby-kids-d3k2-high-potency-mk-7-drops-10ml-bo-sung-vitamin-d3-va-vitamin-k2",
-      },
-      {
-        id: 3,
-        name: "Hỗn dịch uống phospha gaspain bidiphar điều trị những bệnh lý về tiêu hóa (20 gói x 20g)",
-        slug: "hon-dich-uong-biviantac-khang-acid-10ml-reliv-dieu-tri-khong-tieu-day-hoi-20-goi",
-      },
-      {
-        id: 4,
-        name: "khẩu trang 4d kids niva thoáng khí, ngăn chặn vi khuẩn, giọt bắn (25 cái)",
-        slug: "khau-trang-4d-kids-niva-thoang-khi-ngan-chan-vi-khuan-giot-ban-25-cai",
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Từ khóa tìm kiếm nhiều",
-    item: [
-      {
-        id: 1,
-        name: "Túi chườm lạnh y tế Greetmed hỗ trợ chườm lạnh giảm đau vùng chấn thương (1 cái)",
-      },
-      {
-        id: 2,
-        name: "Hỗn dịch uống Biviantac Kháng Acid 10ml Reliv điều trị ăn không tiêu, đầy hơi (20 gói)",
-      },
-      {
-        id: 3,
-        name: "Mặt nạ Placen Lanolin Mask JMsolution dưỡng ẩm và cung cấp độ ẩm trên da (30ml)",
-      },
-      {
-        id: 4,
-        name: "Viên uống Ironmen Ocavill hỗ trợ tăng cường sinh lý nam giới (60 viên)",
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "Từ khóa tìm kiếm nhiều",
-    item: [
-      {
-        id: 1,
-        name: "Túi chườm lạnh y tế Greetmed hỗ trợ chườm lạnh giảm đau vùng chấn thương (1 cái)",
-      },
-      {
-        id: 2,
-        name: "Hỗn dịch uống Biviantac Kháng Acid 10ml Reliv điều trị ăn không tiêu, đầy hơi (20 gói)",
-      },
-      {
-        id: 3,
-        name: "Mặt nạ Placen Lanolin Mask JMsolution dưỡng ẩm và cung cấp độ ẩm trên da (30ml)",
-      },
-      {
-        id: 4,
-        name: "Viên uống Ironmen Ocavill hỗ trợ tăng cường sinh lý nam giới (60 viên)",
-      },
-    ],
-  },
+  { id: 1, title: "Tìm kiếm nhanh", item: [] },
+  { id: 2, title: "Từ khóa tìm kiếm nhiều", item: [] },
 ]);
 
 onMounted(async () => {
   allProducts.value = await getDataFromIndexedDB("products");
+
+  if (!allProducts.value || allProducts.value.length === 0) return;
+
+  const sortedProducts = allProducts.value
+    .filter((p) => p.sold_out && p.sold_out > 0)
+    .sort((a, b) => b.sold_out - a.sold_out)
+    .slice(0, 4);
+
+  const randomProducts = [...allProducts.value]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 4);
+
+  data1.value = data1.value.map((section) => {
+    if (section.id === 1) {
+      return {
+        ...section,
+        item: randomProducts.map((product) => ({
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+        })),
+      };
+    }
+    if (section.id === 2) {
+      return {
+        ...section,
+        item: sortedProducts.map((product) => ({
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+        })),
+      };
+    }
+    return section;
+  });
 });
 
 const filteredData = computed(() => {
@@ -471,9 +438,7 @@ const filteredData = computed(() => {
     : [];
 });
 const handleChangeToProductDetails = (value) => {
-  // console.log(value);
   router.push(`/product/${value.slug}`);
-  // alert("Chưa có data để đổi trang");
 };
 
 const handleBlur = () => {
