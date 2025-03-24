@@ -8,9 +8,9 @@
       <h1 class="text-3xl text-[#2268DE] font-bold my-3">Thanh toán</h1>
       <div class="w-full">
         <div class="text-[14px] font-medium">
-          Have a coupon?
+          Có phiếu giảm giá?
           <a class="text-blue-500 font-medium cursor-pointer hover:bg-white"
-            >Click here to enter your code</a
+            >Nhấp vào đây để nhập mã của bạn</a
           >
         </div>
         <a-form
@@ -34,7 +34,7 @@
               <a-flex class="w-full gap-8">
                 <a-form-item ref="phone" name="phone" class="w-full">
                   <template #label>
-                    <span class="text-base">Phone</span>
+                    <span class="text-base">Số điện thoại</span>
                   </template>
                   <a-input
                     v-model:value="formState.phone"
@@ -43,7 +43,7 @@
                 </a-form-item>
                 <a-form-item ref="email" name="email" class="w-full">
                   <template #label>
-                    <span class="text-base">Email address</span>
+                    <span class="text-base">Địa chỉ Email</span>
                   </template>
                   <a-input
                     v-model:value="formState.email"
@@ -114,7 +114,7 @@
                 <a-form-item ref="address" name="address" class="w-full">
                   <template #label>
                     <span class="text-base whitespace-nowrap"
-                      >Street address</span
+                      >Địa chỉ đường</span
                     >
                   </template>
                   <a-input
@@ -127,8 +127,8 @@
             <a-flex vertical class="w-full flex-1">
               <h3>
                 <a-checkbox v-model:checked="formState.differentaddresschecked">
-                  <span class="text-xl font-medium flex gap-2 text-center"
-                    >Ship to a different address?</span
+                  <span class="text-xl font-medium flex gap-2 text-center">
+                    Gửi đến một địa chỉ khác?</span
                   >
                 </a-checkbox>
               </h3>
@@ -146,7 +146,7 @@
                   <a-form-item ref="diffphone" name="diffphone" class="w-full">
                     <template #label>
                       <span class="text-base"
-                        >Số điện thoại người nhận (optional)</span
+                        >Số điện thoại người nhận (không bắt buộc)</span
                       >
                     </template>
                     <a-input
@@ -222,7 +222,7 @@
                   >
                     <template #label>
                       <span class="text-base whitespace-nowrap"
-                        >Street address</span
+                        >Địa chỉ đường</span
                       >
                     </template>
                     <a-input
@@ -234,16 +234,18 @@
               </a-flex>
               <a-form-item name="notes">
                 <template #label>
-                  <span class="text-base">Order notes (optional)</span>
+                  <span class="text-base">Ghi chú đơn hàng (tùy chọn)</span>
                 </template>
                 <a-textarea
                   v-model:value="formState.notes"
-                  placeholder="Notes about your order, e.g. special notes for delivery."
+                  placeholder="Ghi chú về đơn hàng của bạn, ví dụ: ghi chú đặc biệt về việc giao hàng."
                 />
               </a-form-item>
             </a-flex>
           </a-flex>
-          <h3 class="text-black text-xl font-medium my-[20px]">Your order</h3>
+          <h3 class="text-black text-xl font-medium my-[20px]">
+            Đơn hàng của bạn
+          </h3>
           <a-flex class="w-full mb-[20px]"
             ><a-table
               :columns="columns"
@@ -272,7 +274,7 @@
                 <a-table-summary-row>
                   <a-table-summary-cell
                     ><span class="font-semibold"
-                      >Subtotal</span
+                      >Tổng tiền</span
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
@@ -284,17 +286,17 @@
                 <a-table-summary-row>
                   <a-table-summary-cell
                     ><span class="font-semibold"
-                      >Shipping</span
+                      >Vận chuyển</span
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
-                    <span class="font-semibold">Free shipping</span>
+                    <span class="font-semibold">Miễn phí vận chuyển</span>
                   </a-table-summary-cell>
                 </a-table-summary-row>
                 <a-table-summary-row>
                   <a-table-summary-cell
                     ><span class="font-semibold"
-                      >Total</span
+                      >Tổng tiền</span
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
@@ -346,15 +348,15 @@
                   hỗ trợ trải nghiệm của bạn trên trang web này và cho các mục
                   đích khác được mô tả trong phần của chúng tôi.<a
                     class="text-blue-500"
-                    >privacy policy.</a
+                    >chính sách bảo mật.</a
                   >
                 </p>
               </a-form-item>
               <a-form-item name="terms" :rules="rules.terms">
                 <a-checkbox v-model:checked="formState.terms">
-                  I have read and agree to the website
+                  Tôi đã đọc và đồng ý với trang web
                   <a class="text-blue-500 cursor-pointer hover:bg-[#E9E6ED]"
-                    >terms and conditions</a
+                    >điều khoản và điều kiện</a
                   >
                   <span class="text-red-500">*</span>
                 </a-checkbox>
@@ -364,7 +366,7 @@
                   type="primary"
                   @click="onSubmit"
                   v-if="!PayPalButtonRef"
-                  >Place order</a-button
+                  >Đặt hàng</a-button
                 >
                 <PayPalButton
                   v-if="PayPalButtonRef"
@@ -468,7 +470,6 @@ const checkUser = () => {
     onDistrictChange();
     LocateState.subdistrict = user.additional_user?.subdistrict;
     formState.address = user.additional_user?.address;
-    // console.log(LocateState);
   }
 };
 
@@ -489,12 +490,12 @@ const formatCurrency = (value) => {
 const columns = ref([
   {
     key: "name",
-    title: "Product",
+    title: "Sản phẩm",
     dataIndex: "name",
   },
   {
     key: "subtotal",
-    title: "Subtotal",
+    title: "Tổng tiền",
     dataIndex: "subtotal",
   },
 ]);
@@ -752,14 +753,13 @@ const rules = {
       validator: (_, value) =>
         value
           ? Promise.resolve()
-          : Promise.reject("Please accept the terms and conditions."),
-      trigger: "submit", // Chỉ kiểm tra khi ấn Submit
+          : Promise.reject("Vui lòng chấp nhận các điều khoản và điều kiện."),
+      trigger: "submit", 
     },
   ],
 };
 
 const onSubmit = async () => {
-  // console.log(formState, LocateState);
   if (!formState.province) {
     handleProvinceChange(LocateState.province);
   }
@@ -786,10 +786,8 @@ const onSubmit = async () => {
     }
   } catch (error) {
     if (error.errors) {
-      // Lỗi form validation
       console.error("Form validation failed:", error.errors);
     } else {
-      // Lỗi từ request API hoặc lỗi khác
       console.error("Failed to create order:", error);
     }
   }
@@ -797,7 +795,6 @@ const onSubmit = async () => {
 
 const handlePaymentSuccess = async (orderID) => {
   try {
-    // Gửi request API thêm đơn hàng vào cơ sở dữ liệu khi thanh toán thành công
     const response = await axios.post(
       `${import.meta.env.VITE_APP_URL_API_ORDER}/createOrder`,
       JSON.parse(JSON.stringify(formState))

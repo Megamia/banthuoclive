@@ -7,7 +7,7 @@
       <a-flex
         class="mb-[1rem] border-t-[1px] border-b-[1px] border-[#dbe0f0] bg-[#f6f9ff] gap-[24px] w-full"
       >
-        <a-flex class="p-[18px] px-[15px] border-b border-b-[#02b6ac]">
+        <a-flex class="p-[18px] px-[15px] border-b border-b-[#02b6ac] ">
           <h1 class="text-[16px] font-bold text-[#02b6ac] capitalize">
             {{ category[0]?.name }}
           </h1>

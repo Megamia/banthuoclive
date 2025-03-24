@@ -3,7 +3,10 @@
     <a-flex vertical align="center" class="flex-1">
       <div class="w-full relative pt-[20px] justify-center flex">
         <img
-          :src="product.image?.path || 'http://cptudong.vmts.vn/content/images/thumbs/default-image_450.png'"
+          :src="
+            product.image?.path ||
+            'http://cptudong.vmts.vn/content/images/thumbs/default-image_450.png'
+          "
           alt="Product Image"
           class="h-[300px] w-[300px]"
         />
@@ -33,17 +36,19 @@
       </div>
       <a-flex class="px-[10px] w-[70%] h-full text-center">
         <a-flex gap="12" vertical class="flex-1">
-          <span
-            class="text-[16px] font-bold w-[100%] hover:text-[#2268DE] cursor-pointer line-clamp-2 h-[48px] mt-[10px]"
+          <a
+            :href="`/product/${product.slug}`"
+            class="text-[16px] font-bold w-[100%] hover:text-[#2268DE] hover:bg-[#F3F4F6] cursor-pointer line-clamp-2 h-[48px] mt-[10px] capitalize"
           >
             {{ product.name ? product.name : "Chưa có tên" }}
-          </span>
+          </a>
           <span class="text-[16px] font-bold text-[#2268DE]">
             {{ product.price ? formatCurrency(product.price) : "Chưa có giá" }}
           </span>
           <a-flex vertical class="gap-[10px] text-[16px]">
             <button
               class="flex-1 font-bold px-[12px] py-[10px] rounded-[9999px] text-white hover:bg-[#CC020B] bg-[linear-gradient(270deg,_#e20008_0%,_rgba(226,_0,_8,_0.7)_100%,_rgba(226,_0,_8,_0.68)_100%)] shadow-[#ff0000] shadow-sm"
+            @click="handleAddToCart(product)"
             >
               Mua ngay
             </button>
@@ -65,7 +70,8 @@
 import { defineProps } from "vue";
 import { useRouter } from "vue-router";
 import "./ProductComponent.css";
-import "./NavProductComponent.css"; 
+import "./NavProductComponent.css";
+import store from "@/store/store";
 
 const router = useRouter();
 const props = defineProps({
@@ -80,6 +86,27 @@ const formatCurrency = (value) => {
     style: "currency",
     currency: "VND",
   }).format(value);
+};
+
+const handleAddToCart = async (data) => {
+  const currentCart = store.getters["product/getDataStoreCart"] || [];
+
+  let itemExists = false;
+  const updatedCart = currentCart.map((item) => {
+    if (item.id === data.id) {
+      itemExists = true;
+      return { id: item.id, quantity: (item.quantity || 1) + 1 };
+    }
+    return item;
+  });
+
+  if (!itemExists) {
+    updatedCart.push({ id: data.id, quantity: 1 });
+  }
+
+  store.commit("product/setDataStoreCart", {
+    dataStoreCart: updatedCart,
+  });
 };
 
 const handleProductDetail = (items) => {

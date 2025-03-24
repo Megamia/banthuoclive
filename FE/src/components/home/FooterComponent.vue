@@ -42,7 +42,7 @@
     <a-flex class="flex-1 py-[35px] gap-6">
       <a-flex class="flex-1">
         <a-flex vertical gap="16">
-          <h5 class="text-[16px] font-[600]">CÔNG TY TNHH LIVOTEC</h5>
+          <h5 class="text-[16px] font-[600]">CÔNG TY TNHH LIVE</h5>
           <a-flex class="flex gap-[10px]" vertical>
             <ul class="flex flex-col gap-[10px]">
               <li>
@@ -52,7 +52,7 @@
               <li>
                 Email:
                 <span class="hover:text-[#2268DE] cursor-pointer">
-                  livotecvn@gmail.com
+                  livevn@gmail.com
                 </span>
               </li>
               <li>
@@ -76,9 +76,14 @@
           <a-flex class="flex gap-[10px]" vertical>
             <ul v-for="data in item.data" :key="data.id">
               <li>
-                <span class="hover:text-[#2268DE] cursor-pointer">
+                <a
+                  :href="
+                    item.id == 1 ? `/category/${data.href}` : `/${data.href}`
+                  "
+                  class="hover:text-[#2268DE] cursor-pointer hover:bg-[#EAEBF4] p-0 text-black"
+                >
                   {{ data.name }}
-                </span>
+                </a>
               </li>
             </ul>
           </a-flex>
@@ -148,7 +153,17 @@ const onSearch = () => {
     alert("Đã nhập: ", register.value);
   }
 };
-
+const toSlug = (name) => {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+};
 const dataFooter = ref([
   {
     id: 1,
@@ -156,11 +171,18 @@ const dataFooter = ref([
     data: [
       {
         id: 1,
-        name: "Máy lọc nước",
+        name: "Thực phẩm chức năng",
+        href: `${toSlug("Thực phẩm chức năng")}`,
       },
       {
         id: 2,
-        name: "Bếp từ",
+        name: "Thiết bị y tế",
+        href: `${toSlug("Thiết bị y tế")}`,
+      },
+      {
+        id: 3,
+        name: "Dược mỹ phẩm",
+        href: `${toSlug("Dược mỹ phẩm")}`,
       },
     ],
   },
@@ -170,19 +192,22 @@ const dataFooter = ref([
     data: [
       {
         id: 1,
-        name: "Giới thiệu",
+        name: "Tin tức",
+        href: "news",
       },
       {
         id: 2,
-        name: "Tin tức",
+        name: "Giới thiệu",
+        href: "about",
       },
       {
         id: 3,
-        name: "Liên hệ",
+        name: "Bảo hành",
+        href: "guaranteeHome",
       },
       {
         id: 4,
-        name: "Hệ thống cửa hàng Livotec",
+        name: "Thư viện",
       },
     ],
   },

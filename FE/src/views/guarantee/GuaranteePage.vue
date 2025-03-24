@@ -9,17 +9,16 @@
       <a-flex vertical class="a">
         <h2 class="h2Text">Dịch vụ 5 sao, bảo hành tới 36 tháng</h2>
         <span class="text-[16px] font-normal text-black">
-          Livotec là một thương hiệu điện gia dụng đa ngành, được thành lập với
-          sứ mệnh giúp người Việt SỐNG KHỎE MỖI NGÀY. Với tầm nhìn dài hạn,
-          Livotec đầu tư và phát triển để trở thành một thương hiệu điện gia
-          dụng không chỉ đáp ứng nhu cầu của người dân Việt Nam mà còn vươn ra
-          thị trường quốc tế.<br />
-          Livotec định vị là thương hiệu cung cấp các sản phẩm chất lượng tốt
-          mang đến sự chăm sóc sức khỏe và tiện lợi cho khách hàng trong phân
-          khúc phổ thông và cao cấp hơn.<br />
-          Bên cạnh CHẤT LƯỢNG VƯỢT TRỘI, các sản phẩm của Livotec còn chú trọng
-          đến yếu tố AN TOÀN – BỀN BỈ, đồng thời giúp tiết kiệm chi phí, phù hợp
-          với người tiêu dùng có thu nhập phổ thông và trên phổ thông.
+          Live Pharmacy là thương hiệu chuyên cung cấp các sản phẩm chăm sóc
+          sức khỏe và dược phẩm chất lượng cao, với sứ mệnh giúp người Việt SỐNG
+          KHỎE MỖI NGÀY. Chúng tôi cam kết mang đến những sản phẩm an toàn, hiệu
+          quả và phù hợp với nhu cầu chăm sóc sức khỏe của mọi gia đình.<br /><br />
+          Với tầm nhìn dài hạn, Live Pharmacy không ngừng đầu tư và phát
+          triển để trở thành hệ thống nhà thuốc uy tín, không chỉ phục vụ khách
+          hàng trong nước mà còn hướng đến thị trường quốc tế.<br /><br />
+          Chúng tôi cung cấp đa dạng các sản phẩm, từ thuốc kê đơn, thực phẩm
+          chức năng, vitamin, sản phẩm chăm sóc cá nhân đến các thiết bị y tế,
+          đáp ứng nhu cầu từ cơ bản đến nâng cao.
         </span>
       </a-flex>
     </a-flex>
@@ -43,12 +42,12 @@
       <span
         class="text-[#2268DE] text-[32px] font-bold leading-[46px] text-center"
       >
-        MÁY LỌC NƯỚC LIVOTEC
+        Cửa hàng thuốc Live
       </span>
       <span
         class="text-[#2268DE] text-[32px] font-medium leading-[46px] text-center"
       >
-        07 LÝ DO NÊN LỰA CHỌN MÁY LỌC NƯỚC LIVOTEC
+        07 LÝ DO NÊN LỰA CHỌN Cửa hàng thuốc Live
       </span>
       <span class="text-[22px] font-normal mb-71px text-center"
         >Hàng triệu gia đình việt đã lựa chọn và hài lòng</span
@@ -151,11 +150,11 @@
           class="border-[1px] border-l-0 border-[gray] pr-[30px] py-[20px]"
         >
           <span class="text-[18px] font-bold uppercase mb-[20px] family-[Arial]"
-            >Giới thiệu về Livotec
+            >Giới thiệu về Cửa hàng thuốc Live
           </span>
-          <span class="text-[16px] my-[4px]"> Về Livotec </span>
+          <span class="text-[16px] my-[4px]"> Về Live </span>
           <span class="text-[16px] my-[4px]">
-            Chứng nhận Livotec QCVN/BYT
+            Chứng nhận Cửa hàng thuốc Live QCVN/BYT
           </span>
         </a-flex>
         <a-flex
@@ -163,10 +162,10 @@
           class="max-w-[50%] border-[1px] border-x-0 border-[gray] px-[30px] py-[20px]"
         >
           <span class="text-[18px] font-bold uppercase mb-[20px] family-[Arial]"
-            >Máy lọc nước Livotec</span
+            >Cửa hàng thuốc Live</span
           >
           <img
-            src="https://example.sudospaces.com/baohanhlivotec/2024/04/12.png"
+            src="https://img.pikbest.com/wp/202405/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483.jpg!w700wp"
           />
         </a-flex>
       </a-flex>
@@ -175,10 +174,10 @@
       <a-flex class="a flex-1 justify-between footerAfter">
         <a-flex class="max-w-[33%] text-[12px] text-black up">
           <span
-            >CÔNG TY TNHH LIVOTEC<br />
+            >CÔNG TY TNHH LIVE<br />
             Địa chỉ: Tầng 7, số 113 - 115 Đường Lê Duẩn, Phường Cửa Nam, Quận
             Hoàn Kiếm, thành phố Hà Nội<br />
-            Email: livotecvn@gmail.com<br />
+            Email: livevn@gmail.com<br />
             Điện thoại: 1800 2298</span
           >
         </a-flex>
@@ -312,7 +311,7 @@ const handleChangeItem = (value) => {
   padding-top: 81px;
   padding-bottom: 27px;
   text-align: center;
-  color: #2268DE;
+  color: #2268de;
   font-size: 32px;
   font-weight: 600;
   text-transform: uppercase;

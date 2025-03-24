@@ -10,7 +10,7 @@
         <p
           class="mt-3 font-bold text-[30px] text-center text-gray-600 dark:text-gray-200"
         >
-          Sign Up
+          Đăng ký
         </p>
 
         <form
@@ -58,10 +58,10 @@
               <label
                 class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
                 for="loggingPassword"
-                >Password</label
+                >Mật khẩu</label
               >
               <p v-if="!isPasswordValid" class="text-red-500 text-sm mb-2">
-                must be at least 8 characters.
+                bao gồm ít nhất 8 ký tự.
               </p>
             </div>
 
@@ -81,10 +81,10 @@
               <label
                 class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
                 for="loggingPassword"
-                >Password Confirmation</label
+                >Xác thực mật khẩu</label
               >
               <p v-if="!isPasswordConfirmed" class="text-red-500 text-sm mb-2">
-                does not match.
+                không chính xác.
               </p>
             </div>
 
@@ -104,7 +104,7 @@
               type="submit"
               class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
             >
-              Sign Up
+              Đăng ký
             </button>
           </div>
         </form>
@@ -114,8 +114,8 @@
           <a
             href="#"
             @click="toggleForm"
-            class="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline"
-            >or sign in</a
+            class="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline hover:bg-white"
+            >hoặc đăng nhập</a
           >
 
           <span class="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
@@ -129,7 +129,7 @@
           '-translate-x-0': isSignIn,
         }"
         style="
-          background-image: url('https://images.unsplash.com/photo-1606660265514-358ebbadc80d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1575&q=80');
+          background-image: url('https://images.baodantoc.vn/uploads/2021/Th%C3%A1ng%207/Ng%C3%A0y_29/Thanh/nha-thuoc-ha-noi.jpg');
         "
       ></div>
 
@@ -140,7 +140,7 @@
         <p
           class="mt-3 font-bold text-[30px] text-center text-gray-600 dark:text-gray-200"
         >
-          Sign In
+          Đăng nhập
         </p>
 
         <form
@@ -153,7 +153,7 @@
             <label
               class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
               for="LoggingEmailAddress"
-              >Email Address</label
+              >Địa chỉ Email</label
             >
             <input
               type="email"
@@ -171,12 +171,12 @@
               <label
                 class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
                 for="loggingPassword"
-                >Password</label
+                >Mật khẩu</label
               >
               <a
                 href="#"
                 class="text-xs text-gray-500 dark:text-gray-300 hover:underline"
-                >Forget Password?</a
+                >Quên mật khẩu?</a
               >
             </div>
 
@@ -196,7 +196,7 @@
               type="submit"
               class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
             >
-              Sign In
+              Đăng nhập
             </button>
           </div>
         </form>
@@ -206,8 +206,8 @@
           <a
             href="#"
             @click="toggleForm"
-            class="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline"
-            >or sign up</a
+            class="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline hover:bg-white"
+            >Hoặc đăng ký</a
           >
 
           <span class="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
@@ -243,7 +243,6 @@ const toggleForm = () => {
   isSignUp.value = !isSignUp.value;
 };
 
-let firstAttemptFailed = true;
 let lastLoginAttempt = 0;
 let isLoggingIn = false;
 let retryDelay = 2000;
@@ -268,8 +267,7 @@ const login = async () => {
       { withCredentials: true }
     );
 
-    if (response.status === 205 || firstAttemptFailed) {
-      firstAttemptFailed = false;
+    if (response.status === 205) {
       alert("Sai tài khoản hoặc mật khẩu!");
       retryDelay = Math.min(retryDelay);
       return;
@@ -297,8 +295,8 @@ const signup = async () => {
     alert("Đăng ký thành công!");
     toggleForm();
   } catch (error) {
-    console.error("Sign up failed:", error.response?.data || error.message);
-    let errorMessage = "Sign up failed! Please check your credentials.";
+    console.error("Đăng ký failed:", error.response?.data || error.message);
+    let errorMessage = "Đăng ký failed! Please check your credentials.";
     if (error.response && error.response.data) {
       errorMessage =
         error.response.data.error ||

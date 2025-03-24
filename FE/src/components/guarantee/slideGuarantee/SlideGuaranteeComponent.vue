@@ -47,7 +47,7 @@
           >
             <a-flex
               vertical
-              class="rounded-[26px] min-w-[100%] w-[400px]  border border-[#01b6ac] border-t-[8px] bg-white shadow-md shadow-black/20 p-5 flex flex-col items-center justify-center ml-[7px] m-2"
+              class="rounded-[26px] min-w-[100%] w-[400px]  border border-[#2268DE] border-t-[8px] bg-white shadow-md shadow-black/20 p-5 flex flex-col items-center justify-center ml-[7px] m-2"
             >
               <a-flex vertical align="center" class="flex-1">
                 <div class="w-full relative py-[20px] justify-center flex">
@@ -183,13 +183,13 @@ const breakpoints = {
   text-decoration: underline solid;
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
-  color: #01b6ac;
+  color: #2268DE;
 }
 .liActive:hover {
   transition: all 0.3s ease-in-out;
   text-decoration: underline solid;
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
-  color: #01b6ac;
+  color: #2268DE;
 }
 </style>

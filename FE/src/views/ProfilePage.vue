@@ -8,7 +8,7 @@
         class="sticky flex flex-row max-md:justify-center md:flex-col gap-2 p-4 text-sm md:border-r max-md:border-b border-indigo-100 top-12"
       >
         <h2 class="hidden md:flex pl-3 max-md:mb-4 text-2xl font-semibold">
-          Settings
+          Cài đặt
         </h2>
         <button
           href="#"
@@ -191,7 +191,7 @@
                   <label
                     for="address"
                     class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
-                    >Street address</label
+                    >Địa chỉ đường</label
                   >
                   <input
                     type="text"
@@ -211,7 +211,7 @@
                     type="submit"
                     class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
                   >
-                    Save
+                    Lưu
                   </button>
                 </div>
                 <div class="flex justify-end">

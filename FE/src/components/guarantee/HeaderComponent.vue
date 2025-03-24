@@ -3,13 +3,13 @@
     <a-flex>
       <router-link to="/">
         <img
-          src="https://livotec.com/wp-content/uploads/2024/08/logo-livotec.png "
-          class="w-[126px] min-w-[126px] imgLivo"
+          src="https://img.pikbest.com/wp/202405/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483.jpg!w700wp "
+          class="w-[126px] min-w-[126px] imgLivo "
         />
       </router-link>
     </a-flex>
 
-    <a-flex class="flex-1 justify-center gap-[100px] content">
+    <a-flex class="flex-1 justify-center gap-[100px] content items-center">
       <span
         :class="{
           'active-liText': liActive === '1',

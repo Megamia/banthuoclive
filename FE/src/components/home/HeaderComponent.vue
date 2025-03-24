@@ -58,7 +58,11 @@
         >
           <a
             class="ant-dropdown-link"
-            :href="`/category/${item.category.slug}`"
+            :href="
+              item.products?.length
+                ? `/category/${item.category.slug}`
+                : `/${item.category.slug}`
+            "
           >
             {{ item.category.name }}
             <AnFilledCaretDown v-if="item.products.length >= 1" />
@@ -134,14 +138,14 @@
             <RouterLink
               to="/profile"
               class="hover:bg-[#2268DE] hover:text-white px-3"
-              >Profile</RouterLink
+              >Tài khoản</RouterLink
             >
             <RouterLink
               to="#"
               @click="showLogoutConfirm"
               class="hover:bg-[#2268DE] hover:text-white px-3"
             >
-              Logout
+              Đăng xuất
             </RouterLink>
           </div>
         </a-flex>

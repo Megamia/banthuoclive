@@ -45,11 +45,11 @@
           <li v-for="(chat, index) in chatHistory" :key="index">
             <p
               v-if="chat.answer !== null"
-              class="text-purple-600 whitespace-pre-line"
+              class="text-purple-600 whitespace-pre-line capitalize"
             >
               <strong>Chatbot:</strong> {{ chat.answer }}
             </p>
-            <p class="text-blue-600 text-end">
+            <p class="text-blue-600 text-end capitalize">
               <strong>Bạn:</strong> {{ chat.question }}
             </p>
           </li>

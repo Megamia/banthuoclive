@@ -70,13 +70,13 @@
           </div>
           <div class="flex flex-1 justify-evenly items-center">
             <div class="flex flex-col justify-center items-center gap-2">
-              <MdLocalShipping class="w-[60px] h-[60px] text-[#2268DE]" />
+              <MdLocalShipping class="w-[60px] h-[60px] text-[#2268DE] cursor-default" />
               <span class="font-medium text-sm"
                 >Miễn phí vận chuyển toàn quốc</span
               >
             </div>
             <div class="flex flex-col justify-center items-center gap-2">
-              <AnFilledSetting class="w-[60px] h-[60px] text-[#2268DE]" />
+              <AnFilledSetting class="w-[60px] h-[60px] text-[#2268DE] cursor-default" />
               <span class="font-medium text-sm"
                 >Miễn phí lắp đặt toàn quốc</span
               >
@@ -162,16 +162,20 @@
       </div>
       <div class="my-4">
         <a-tabs v-model:activeKey="activeKey" size="large">
-          <a-tab-pane key="1" tab="Đặc điểm nổi bật"
-            ><ProductPosts v-if="product.post != null" :items="product.post"
-          /></a-tab-pane>
-          <a-tab-pane key="2" tab="Thông số sản phẩm" force-render
-            ><ProductSpecifications
+          <a-tab-pane key="1" tab="Bài viết liên quan">
+            <ProductPosts v-if="product.post != null" :items="product.post" />
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="Thông số sản phẩm" force-render>
+            <ProductSpecifications
               v-if="product.thongso != null"
               :items="product.thongso"
-          /></a-tab-pane>
-          <a-tab-pane key="3" tab="Thành phần và HDSD">
-            <UseIngredientsAndInstructionsComponent />
+            />
+          </a-tab-pane>
+          <a-tab-pane key="3" tab="Thành phần">
+            <UseIngredientsComponent :product="product.id" />
+          </a-tab-pane>
+          <a-tab-pane key="4" tab="Hướng dẫn sử dụng">
+            <InstructionsComponent :product="product.id" />
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -187,9 +191,10 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ProductSpecifications from "@/components/ProductSpecifications.vue";
 import ProductPosts from "@/components/ProductPosts.vue";
-import UseIngredientsAndInstructionsComponent from "../components/UseIngredientsAndInstructionsComponent.vue";
+import UseIngredientsComponent from "../components/UseIngredientsComponent.vue";
 import store from "@/store/store";
 import { getDataFromIndexedDB } from "@/store/indexedDB";
+import InstructionsComponent from "@/components/InstructionsComponent.vue";
 const route = useRoute();
 const router = useRouter();
 const product = ref(null);

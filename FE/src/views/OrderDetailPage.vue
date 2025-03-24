@@ -5,16 +5,16 @@
       </div>
       <div>
         <h1 class="text-3xl text-[#2268DE] font-bold my-3">Thanh toán</h1>
-        <p class="font-medium">Thank you. Your order has been received.</p>
+        <p class="font-medium">Cảm ơn bạn. Đơn hàng của bạn đã được nhận.</p>
         <div v-if="IsorderCode" class="flex flex-col gap-4">
           <div class="flex flex-col gap-5 md:flex-row items-center my-4 mx-8">
             <div class="flex flex-col items-center md:items-start mb-4 md:mb-0">
-              <span class="text-[10px] font-bold">ORDER NUMBER:</span>
+              <span class="text-[10px] font-bold">SỐ ĐẶT HÀNG:</span>
               <span class="font-bold">{{ OrderData.id }}</span>
             </div>
             <div class="separator hidden md:flex"></div>
             <div class="flex flex-col items-center md:items-start mb-4 md:mb-0">
-              <span class="text-[10px] font-bold">DATE:</span>
+              <span class="text-[10px] font-bold">NGÀY:</span>
               <span class="font-bold">{{
                 formatDate(OrderData.created_at)
               }}</span>
@@ -28,7 +28,8 @@
             </div>
             <div class="separator hidden md:flex"></div>
             <div class="flex flex-col items-center md:items-start">
-              <span class="text-[10px] font-bold">PAYMENT METHOD:</span>
+              <span class="text-[10px] font-bold">
+                PHƯƠNG THỨC THANH TOÁN:</span>
               <span class="font-bold">{{
                 OrderData.property?.paymenttype == 1
                   ? "Chuyển khoản ngân hàng"
@@ -36,14 +37,14 @@
               }}</span>
             </div>
           </div>
-          <h2 class="text-2xl font-medium">Our bank details</h2>
+          <h2 class="text-2xl font-medium">Chi tiết ngân hàng của chúng tôi</h2>
           <div class="mb-4">
             <p class="font-bold">{{ bankUsername }}:</p>
             <div class="flex flex-col md:flex-row items-center my-1 mx-8 gap-5">
               <div
                 class="flex flex-col items-center md:items-start mb-4 md:mb-0"
               >
-                <span class="text-[10px] font-bold">BANK:</span>
+                <span class="text-[10px] font-bold">Ngân hàng:</span>
                 <span class="font-bold">{{ bankName }}</span>
               </div>
               <div class="separator hidden md:flex"></div>
@@ -51,13 +52,14 @@
                 class="flex flex-col items-center md:items-start mb-4 md:mb-0"
               >
                 <span class="text-[10px] font-bold uppercase"
-                  >Account number:</span
+                  >
+                  Số tài khoản:</span
                 >
                 <span class="font-bold">{{ bankNumber }}</span>
               </div>
             </div>
           </div>
-          <h2 class="text-2xl font-medium">Order details</h2>
+          <h2 class="text-2xl font-medium">Chi tiết đặt hàng</h2>
           <a-flex class="w-full mb-[20px]"
             ><a-table
               :columns="columns"
@@ -87,7 +89,7 @@
                 <a-table-summary-row>
                   <a-table-summary-cell
                     ><span class="font-semibold"
-                      >Subtotal:</span
+                      >Tổng:</span
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
@@ -99,17 +101,17 @@
                 <a-table-summary-row>
                   <a-table-summary-cell
                     ><span class="font-semibold"
-                      >Shipping:</span
+                      >Vận chuyển:</span
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
-                    <span class="font-semibold">Free shipping</span>
+                    <span class="font-semibold">Miễn phí vận chuyển</span>
                   </a-table-summary-cell>
                 </a-table-summary-row>
                 <a-table-summary-row>
                   <a-table-summary-cell
                     ><span class="font-semibold"
-                      >Payment method:</span
+                      >Phương thức thanh toán:</span
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
@@ -119,7 +121,7 @@
                 <a-table-summary-row>
                   <a-table-summary-cell
                     ><span class="font-semibold"
-                      >Total:</span
+                      >Tổng:</span
                     ></a-table-summary-cell
                   >
                   <a-table-summary-cell>
@@ -152,12 +154,12 @@ const IsorderCode = ref(false);
 const columns = ref([
   {
     key: "name",
-    title: "Product",
+    title: "Sản phẩm",
     dataIndex: "name",
   },
   {
     key: "subtotal",
-    title: "Total",
+    title: "Tổng",
     dataIndex: "subtotal",
   },
 ]);

@@ -13,10 +13,10 @@
           <tr>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Subtotal</th>
+            <th>Sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Tổng</th>
           </tr>
         </thead>
         <tbody>
@@ -72,13 +72,13 @@
             <td class="text-right" colspan="6">
               <div class="float-left">
                 <input
-                  placeholder="Coupon code"
+                  placeholder="Mã phiếu giảm giá"
                   class="border-[1px] border-black mr-1 px-[6px] py-[5px] w-[80px]"
                 />
                 <button
                   class="text-nowrap rounded-[3px] font-bold text-[#515151] p-[6px] bg-[#e9e6ed]"
                 >
-                  Apply coupon
+                  Áp dụng phiếu giảm giá
                 </button>
               </div>
               <a-button
@@ -89,7 +89,7 @@
                 @click="handleUpdateCart()"
                 :disabled="changeQuantity"
               >
-                <span class="font-bold"> Update cart </span>
+                <span class="font-bold"> Cập nhật giỏ hàng </span>
               </a-button>
             </td>
           </tr>
@@ -99,17 +99,17 @@
         class="bg-[#3fb696] p-4 text-white text-center flex-1 cursor-pointer mt-[50px]"
         @click="handlePayment"
       >
-        <span class="text-lg font-bold">Proceed to checkout</span>
+        <span class="text-lg font-bold">Tiến hành thanh toán</span>
       </div>
     </div>
     <a-flex v-else vertical class="my-[20px]" gap="3">
-      <span class="font-semibold">Your cart is currently empty.</span>
+      <span class="font-semibold">Giỏ hàng của bạn hiện đang trống.</span>
       <p>
         <button
           @click="handleHome"
           class="justify-start flex bg-[#DCD7E3] px-4 py-[0.618em] rounded-[3px] font-bold text-[#515151]"
         >
-          Return to shop
+          Quay lại cửa hàng
         </button>
       </p>
     </a-flex>

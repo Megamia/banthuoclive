@@ -17,18 +17,15 @@ tabs:
                         label: 'Giá trị'
                         span: auto
                         type: text
-secondaryTabs:
-    fields:
-        instructions:
-            label: 'Hướng dẫn sử dụng'
-            size: large
-            span: full
-            type: richeditor
-            tab: 'Tab 1'
 fields:
     product:
         label: 'Sản phẩm'
         nameFrom: name
         descriptionFrom: description
-        span: auto
+        span: full
         type: relation
+    instructions:
+        label: 'Hướng dẫn sử dụng'
+        size: large
+        span: full
+        type: richeditor
