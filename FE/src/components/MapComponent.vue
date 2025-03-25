@@ -176,7 +176,6 @@ onMounted(() => {
 
 .app {
   background: rgba(255, 255, 255, 0.9);
-  padding: 15px;
   border-radius: 8px;
   text-align: center;
 }
