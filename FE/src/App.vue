@@ -11,7 +11,10 @@ const messages = ref([]);
 const echoChannel = echo.channel("products");
 
 const route = useRoute();
-const layout = computed(() => layouts[route.meta.layout] || layouts.default);
+const layout = computed(() => {
+  return route.meta.layout ? layouts[route.meta.layout] : null;
+});
+
 
 let timeoutId;
 let dataUpdateInterval;
@@ -120,9 +123,10 @@ onUnmounted(() => {
 
 <template>
   <a-config-provider :theme="{ token: { colorPrimary: '#2267DF' } }">
-    <component :is="layout">
-      <router-view />
-    </component>
+    <component :is="layout" v-if="layout">
+    <router-view />
+  </component>
+  <router-view v-else />
   </a-config-provider>
 </template>
 
