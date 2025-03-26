@@ -43,7 +43,7 @@
             <a-flex vertical align="center" class="flex-1">
               <div class="w-full relative pt-[20px] justify-center flex">
                 <img
-                  class="w-[300px] h-[300px] max-w-none"
+                  class="w-[300px] h-[300px] max-w-[100%]"
                   :src="
                     itemChil.image?.path ||
                     'http://cptudong.vmts.vn/content/images/thumbs/default-image_450.png'

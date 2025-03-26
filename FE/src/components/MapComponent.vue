@@ -19,11 +19,13 @@ let map = null;
 let platform = null;
 let userMarker = null;
 let markers = [];
-const HERE_API_KEY = "iu6ELc4bhBvcXDbWVBlhwo_qdiy--KNCHr3IrskEptA";
 
 const loadMap = async () => {
   await nextTick();
-  platform = new H.service.Platform({ apikey: HERE_API_KEY });
+  platform = new H.service.Platform({
+    apikey: import.meta.env.VITE_MAP_API_KEY,
+  });
+
   const defaultLayers = platform.createDefaultLayers();
 
   map = new H.Map(mapContainer.value, defaultLayers.vector.normal.map, {
@@ -111,7 +113,9 @@ const initUserMarker = (lat, lon) => {
 };
 
 const searchPharmacies = async (lat, lon) => {
-  const url = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&q=pharmacy&limit=10&apikey=${HERE_API_KEY}`;
+  const url = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&q=pharmacy&limit=10&apikey=${
+    import.meta.env.VITE_MAP_API_KEY
+  }`;
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Lỗi tải dữ liệu từ API");
