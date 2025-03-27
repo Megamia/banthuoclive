@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col gap-6">
+    <h1 class="text-center font-bold text-[30px]">TÌM KIẾM SẢN PHẨM</h1>
     <input type="file" @change="handleFileUpload" />
     <input
       type="text"
@@ -15,18 +16,18 @@
     </button>
 
     <div v-if="error" class="text-red-500">{{ error }}</div>
-
+    <p v-if="isLoading" class="text-blue-500 text-center">Đang nhận diện hình ảnh...</p>
     <div
-      v-if="result && filteredConcepts.length > 0"
+      v-else-if="isAnalyzed && result && filteredConcepts.length > 0"
       class="gap-[30px] flex flex-col"
     >
-      <a-flex vertical class="gap-[10px]">
+      <a-flex vertical class="text-[30px] gap-[10px]">
         <h3>Tên sản phẩm:</h3>
         <ul v-if="filteredConcepts.length > 0">
           <li
             v-for="(concept, index) in filteredConcepts"
             :key="index"
-            class="capitalize"
+            class="capitalize text-[15px]"
           >
             {{ concept.name || "Không tìm thấy" }} ({{
               (concept.value * 100).toFixed(2)
@@ -34,7 +35,7 @@
           </li>
         </ul>
       </a-flex>
-      <a-flex vertical class="gap-[10px]">
+      <a-flex vertical class="text-[30px] gap-[20px]">
         <h3>Sản phẩm tương tự:</h3>
         <div v-if="similarProducts.length > 0" class="flex flex-wrap gap-4">
           <div
@@ -42,17 +43,24 @@
             :key="product.id"
             class="text-center flex-1"
           >
-            <img
-              :src="product.imageUrl"
-              alt="Similar Product"
-              class="w-24 h-24 object-cover"
-            />
-            <p class="text-sm">{{ product.name }}</p>
+            <a-flex
+              vertical
+              class="items-center gap-[10px] border-[1px] p-[10px] h-[200px] overflow-hidden"
+            >
+              <img
+                :src="product.imageUrl"
+                alt="Similar Product"
+                class="w-24 h-24 object-cover"
+              />
+              <p class="text-sm font-bold">{{ product.name }}</p>
+            </a-flex>
           </div>
         </div>
       </a-flex>
     </div>
-    <p v-else class="text-gray-500">Chưa nhận diện được sản phẩm này!!</p>
+    <p v-else-if="isAnalyzed" class="text-gray-500 text-center">
+      Chưa nhận diện được sản phẩm này!!
+    </p>
   </div>
 </template>
 
@@ -62,6 +70,8 @@ import { ref, computed } from "vue";
 const imageUrl = ref("");
 const result = ref(null);
 const similarProducts = ref([]);
+const isLoading = ref(false);
+const isAnalyzed = ref(false);
 const error = ref(null);
 
 const handleFileUpload = (event) => {
@@ -82,13 +92,20 @@ const analyzeImage = async () => {
     return;
   }
   error.value = null;
+  isLoading.value = true;
+  isAnalyzed.value = true;
   result.value = null;
 
   try {
     let clarifaiResponse = await callClarifaiAPI("thuoc");
 
-    if (!clarifaiResponse || !clarifaiResponse.outputs[0].data.concepts.some(c => c.value >= 0.5)) {
-      clarifaiResponse = await callClarifaiAPI("aaa03c23b3724a16a56b629203edc62c");
+    if (
+      !clarifaiResponse ||
+      !clarifaiResponse.outputs[0].data.concepts.some((c) => c.value >= 0.5)
+    ) {
+      clarifaiResponse = await callClarifaiAPI(
+        "aaa03c23b3724a16a56b629203edc62c"
+      );
     }
 
     if (!clarifaiResponse) {
@@ -96,19 +113,20 @@ const analyzeImage = async () => {
     }
 
     result.value = clarifaiResponse;
-    
+
     const validConcepts = filteredConcepts.value;
     if (validConcepts.length === 0) {
       error.value = "Không tìm thấy sản phẩm hợp lệ.";
       return;
     }
 
-    fetchSimilarProducts(validConcepts.map((c) => c.name));
+    fetchTikiProducts(validConcepts.map((c) => c.name));
   } catch (err) {
     error.value = err.message;
+  } finally {
+    isLoading.value = false;
   }
 };
-
 
 const callClarifaiAPI = async (modelId) => {
   const response = await fetch(
@@ -134,6 +152,7 @@ const callClarifaiAPI = async (modelId) => {
   );
 
   const data = await response.json();
+
   if (
     data.status.code !== 10000 ||
     !data.outputs ||
@@ -151,7 +170,7 @@ const filteredConcepts = computed(() => {
     !result.value.outputs[0].data ||
     !result.value.outputs[0].data.concepts
   ) {
-    alert("❌ Không có concepts nào được nhận diện.");
+    alert("Không có concepts nào được nhận diện.");
     return [];
   }
   return result.value.outputs[0].data.concepts
@@ -160,30 +179,35 @@ const filteredConcepts = computed(() => {
     .slice(0, 3);
 });
 
-const fetchSimilarProducts = async (concepts) => {
-  if (!concepts.length) return;
+const fetchTikiProducts = async (keywords) => {
+  if (!keywords.length) return;
 
-  let keyword = concepts[0];
+  let keyword = keywords[0];
 
   try {
     const response = await fetch(
-      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
+      `https://tiki.vn/api/v2/products?limit=6&q=${encodeURIComponent(
         keyword
-      )}&per_page=6&client_id=${import.meta.env.VITE_UNSPLASH_API_KEY}`
+      )}`,
+      { method: "GET" }
     );
+
     const data = await response.json();
 
-    similarProducts.value = data.results
-      .filter((photo) => !photo.alt_description.includes("person"))
-      .slice(0, 6)
-      .map((photo) => ({
-        id: photo.id,
-        imageUrl: photo.urls.small,
-        name: photo.alt_description || "Ảnh liên quan",
-      }));
+    if (!data || !data.data) throw new Error("Không tìm thấy sản phẩm.");
 
+    similarProducts.value = data.data.map((product) => ({
+      id: product.id,
+      imageUrl:
+        product.thumbnail_url ||
+        "https://img.freepik.com/premium-vector/no-data-concept-illustration_86047-488.jpg?semt=ais_hybrid",
+      name: product.name,
+      price: product.price.toLocaleString() + " VND",
+      link: `https://tiki.vn/${product.url_path}`,
+    }));
   } catch (err) {
-    error.value = "Lỗi khi tìm kiếm ảnh tương tự.";
+    error.value = "Lỗi khi tìm kiếm sản phẩm trên Tiki.";
+    console.error("❌ Lỗi khi fetch sản phẩm từ Tiki:", err);
   }
 };
 </script>
