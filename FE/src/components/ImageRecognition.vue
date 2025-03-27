@@ -1,8 +1,18 @@
 <template>
   <div class="flex flex-col gap-6">
     <input type="file" @change="handleFileUpload" />
-    <input type="text" v-model="imageUrl" placeholder="Enter image URL" />
-    <button @click="analyzeImage">Phân tích hình ảnh</button>
+    <input
+      type="text"
+      v-model="imageUrl"
+      placeholder="Image URL"
+      class="border-[1px] p-[5px]"
+    />
+    <button
+      @click="analyzeImage"
+      class="bg-[#007BFF] p-[10px] rounded-md text-white text-[20px]"
+    >
+      Phân tích hình ảnh
+    </button>
 
     <div v-if="error" class="text-red-500">{{ error }}</div>
 
@@ -68,93 +78,72 @@ const handleFileUpload = (event) => {
 
 const analyzeImage = async () => {
   if (!imageUrl.value) {
-    error.value = "Please provide an image URL or upload a file.";
+    error.value = "Vui lòng cung cấp ảnh!";
     return;
   }
   error.value = null;
+  result.value = null;
 
   try {
-    // Gọi API Clarifai với mô hình "thuoc"
-    const response = await fetch(
-      "https://api.clarifai.com/v2/models/thuoc/outputs",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Key ${import.meta.env.VITE_CLARIFAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: [
-            {
-              data: {
-                image: imageUrl.value.startsWith("data:image")
-                  ? { base64: imageUrl.value.split(",")[1] }
-                  : { url: imageUrl.value },
-              },
-            },
-          ],
-        }),
-      }
-    );
+    let clarifaiResponse = await callClarifaiAPI("thuoc");
 
-    const data = await response.json();
-
-    if (!data.outputs) {
-      // Nếu không có kết quả từ mô hình "thuoc", thử mô hình khác với ID "aaa03c23b3724a16a56b629203edc62c"
-      console.log(
-        "Không tìm thấy kết quả với mô hình 'thuoc'. Thử mô hình 'aaa03c23b3724a16a56b629203edc62c'..."
-      );
-
-      // Gọi mô hình thay thế với ID "aaa03c23b3724a16a56b629203edc62c"
-      const alternativeResponse = await fetch(
-        "https://api.clarifai.com/v2/models/aaa03c23b3724a16a56b629203edc62c/outputs",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Key ${import.meta.env.VITE_CLARIFAI_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            inputs: [
-              {
-                data: {
-                  image: imageUrl.value.startsWith("data:image")
-                    ? { base64: imageUrl.value.split(",")[1] }
-                    : { url: imageUrl.value },
-                },
-              },
-            ],
-          }),
-        }
-      );
-
-      const altData = await alternativeResponse.json();
-      if (!altData.outputs) {
-        throw new Error("Không tìm thấy kết quả từ mô hình thay thế.");
-      }
-
-      result.value = altData; // Sử dụng kết quả từ mô hình thay thế
-    } else {
-      result.value = data; // Sử dụng kết quả từ mô hình ban đầu "thuoc"
+    if (!clarifaiResponse || !clarifaiResponse.outputs[0].data.concepts.some(c => c.value >= 0.5)) {
+      clarifaiResponse = await callClarifaiAPI("aaa03c23b3724a16a56b629203edc62c");
     }
 
-    // Lọc các concepts hợp lệ từ kết quả
-    const validConcepts = filteredConcepts.value;
-    console.log(validConcepts);
+    if (!clarifaiResponse) {
+      throw new Error("Không tìm thấy kết quả từ cả hai mô hình!");
+    }
+
+    result.value = clarifaiResponse;
     
+    const validConcepts = filteredConcepts.value;
     if (validConcepts.length === 0) {
-      error.value = "Không tìm thấy sản phẩm hợp lệ trong kết quả nhận diện.";
+      error.value = "Không tìm thấy sản phẩm hợp lệ.";
       return;
     }
 
-    // Nếu có, gọi hàm tìm kiếm ảnh tương tự từ Unsplash
     fetchSimilarProducts(validConcepts.map((c) => c.name));
   } catch (err) {
     error.value = err.message;
   }
 };
 
-// Xử lý đúng filteredConcepts
+
+const callClarifaiAPI = async (modelId) => {
+  const response = await fetch(
+    `https://api.clarifai.com/v2/models/${modelId}/outputs`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Key ${import.meta.env.VITE_CLARIFAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        inputs: [
+          {
+            data: {
+              image: imageUrl.value.startsWith("data:image")
+                ? { base64: imageUrl.value.split(",")[1] }
+                : { url: imageUrl.value },
+            },
+          },
+        ],
+      }),
+    }
+  );
+
+  const data = await response.json();
+  if (
+    data.status.code !== 10000 ||
+    !data.outputs ||
+    !data.outputs[0].data.concepts
+  ) {
+    return null;
+  }
+  return data;
+};
+
 const filteredConcepts = computed(() => {
   if (
     !result.value ||
@@ -162,11 +151,11 @@ const filteredConcepts = computed(() => {
     !result.value.outputs[0].data ||
     !result.value.outputs[0].data.concepts
   ) {
-    console.log("❌ Không có concepts nào được nhận diện.");
+    alert("❌ Không có concepts nào được nhận diện.");
     return [];
   }
   return result.value.outputs[0].data.concepts
-    .filter((c) => c.value >= 0.9)
+    .filter((c) => c.value >= 0.5)
     .sort((a, b) => b.value - a.value)
     .slice(0, 3);
 });
@@ -193,7 +182,6 @@ const fetchSimilarProducts = async (concepts) => {
         name: photo.alt_description || "Ảnh liên quan",
       }));
 
-    console.log("📸 Kết quả tìm kiếm:", similarProducts.value);
   } catch (err) {
     error.value = "Lỗi khi tìm kiếm ảnh tương tự.";
   }
