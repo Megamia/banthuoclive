@@ -7,8 +7,8 @@
           src="https://livotec.com/wp-content/uploads/2024/08/logo-livotec.png"
         /> -->
         <img
-          src="https://img.pikbest.com/wp/202405/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483.jpg!w700wp"
-          class="h-[100px]"
+          src="/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483-removebg-preview.png"
+          class="h-[80px] "
         />
       </router-link>
     </a-flex>
@@ -93,7 +93,7 @@
                         class="w-[110px] h-[110px]"
                       />
                       <span
-                        class="text-black relative z-10 mt-[10px] max-w-[110px] text-center text-ellipsis overflow-hidden whitespace-nowrap uppercase font-semibold text-[14px] hover:text-[#51c9a9]"
+                        class="text-black relative z-10 mt-[10px] max-w-[110px] text-center text-ellipsis overflow-hidden whitespace-nowrap uppercase font-semibold text-[14px] hover:text-[#007BFF]"
                       >
                         {{ itemChil.name }}
                       </span>

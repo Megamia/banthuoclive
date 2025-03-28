@@ -77,18 +77,22 @@ const pageSize = 6;
 const defaultImage =
   "https://livotec.com/wp-content/uploads/2024/11/Binh-tam-nong-lanh-%E2%80%93-Giai-phap-hoan-hao-cho-ngoi-nha-hien-dai.jpg";
 
-const slugsToFilter = ["kien-thuc", "tin-tuc"];
+const slugsToFilter = ["boc-phot", "tin-tuc"];
 const activeKey = ref(slugsToFilter[0]);
 
 const fetchData = async (value) => {
   if (!value || value == undefined) {
     value = activeKey.value;
   }
+  console.log(value);
+  
   try {
     const response = await axios.get(
       `${import.meta.env.VITE_APP_URL_API_POST}/hotNews/${value}`
     );
     data.value = response.data.data;
+    console.log(data.value);
+    
   } catch (e) {
     console.log(e);
   }

@@ -6,7 +6,7 @@
     >
       <a-flex class="flex-2 justify-center items-center">
         <img
-          src="https://img.pikbest.com/wp/202405/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483.jpg!w700wp"
+          src="/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483-removebg-preview-removebg-preview.png"
           class="h-[100px]"
         />
       </a-flex>

@@ -15,8 +15,17 @@ Route::group(['prefix' => 'apiPost'], function () {
 
     Route::get('post/{slug}', function ($slug) {
         $post = Post::with(['categories', 'user'])->where('slug', $slug)->first();
-        return $post;
+
+        if (!$post) {
+            return response()->json(null);
+        }
+
+        return response()->json([
+            'data' => $post,
+        ]);
     });
+
+
     Route::get('hotNews/{slugCategory}', function ($slugCategory) {
         $hotNews = Post::with(['featured_images', 'categories'])
             ->whereHas('categories', function ($query) use ($slugCategory) {
@@ -25,12 +34,10 @@ Route::group(['prefix' => 'apiPost'], function () {
             ->get();
 
         return response()->json([
-            'data' => $hotNews,
-            'images' => $hotNews->map(function ($post) {
-                return $post->featured_images ?? null; 
-            }),
+            'data' => $hotNews
         ]);
     });
+
 
     Route::get('allPostCategory', function () {
         $allPostCategory = Category::all();

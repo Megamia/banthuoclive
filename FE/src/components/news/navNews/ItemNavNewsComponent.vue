@@ -103,7 +103,7 @@
           :slidesPerView="data.length > 0 ? Math.min(data.length, 4) : 1"
           :spaceBetween="30"
           :modules="modules"
-          :loop="true"
+          :loop="false"
           @swiper="onSwiper"
           :breakpoints="breakpoints"
           :navigation="false"
