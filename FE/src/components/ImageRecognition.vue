@@ -177,7 +177,7 @@ const analyzeImage = async () => {
     );
 
     if (productsFromDB.value.length === 0) {
-      console.log("⚠️ Không tìm thấy sản phẩm trong kho.");
+      console.log("Không tìm thấy sản phẩm trong kho.");
     }
   } catch (err) {
     error.value = err.message;
@@ -259,7 +259,7 @@ const fetchTikiProducts = async (keywords) => {
     }));
   } catch (err) {
     error.value = "Lỗi khi tìm kiếm sản phẩm trên Tiki.";
-    console.error("❌ Lỗi khi fetch sản phẩm từ Tiki:", err);
+    console.error("Lỗi khi fetch sản phẩm từ Tiki:", err);
   }
 };
 

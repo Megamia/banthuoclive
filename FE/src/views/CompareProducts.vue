@@ -105,7 +105,7 @@ const allThongSoTitles = computed(() => {
   const allTitles = new Set();
   dataStore.forEach((item) => {
     item.thongso?.forEach((thongso) => {
-      allTitles.add(thongso.thuoc_tinh.trim()); // Chuẩn hóa key
+      allTitles.add(thongso.thuoc_tinh.trim()); 
     });
   });
 

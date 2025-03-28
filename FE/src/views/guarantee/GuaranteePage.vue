@@ -282,14 +282,6 @@ const selectedItem = ref("");
 const data = ref([]);
 const fetchData = async () => {
   try {
-    // const response = await axios.get(
-    //   `${import.meta.env.VITE_APP_URL_API_CATEGORY}/allCategory`
-    // );
-    // data.value = response.data.data1.slice(0, 4);
-    // selectedItem.value = data.value
-    //   ? data.value[0].name
-    //   : "Chọn 1 loại sản phẩm";
-
     const categoryData = await getDataFromIndexedDB("category");
     data.value = categoryData.slice(0, 4);
     selectedItem.value = data.value

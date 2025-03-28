@@ -38,7 +38,6 @@
     </aside>
     <main class="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
       <div class="p-2 md:p-4">
-        <!-- Thong tin nguoi dung -->
         <div
           v-if="activePage == 0"
           class="w-full px-6 pb-8 md:mt-4 sm:max-w-xl sm:rounded-lg"
@@ -497,7 +496,6 @@ const handleChangeInfo = async () => {
     }
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      // console.log("Bạn chưa đăng nhập. Đang chuyển hướng...");
       alert("Bạn chưa đăng nhập. Đang chuyển hướng...");
       router.push("/login");
     } else {
@@ -546,7 +544,6 @@ const handleChangePassword = async () => {
 onMounted(() => {
   fetchProvinces();
   fetchProfile();
-  // console.log(profile.value);
 });
 </script>
 

@@ -50,11 +50,6 @@
         </a-flex>
         <div v-html="post.data?.content_html" class="a"></div>
       </a-flex>
-      <!-- <a-flex class="flex-2 justify-end w-[500px] pr-[125px] h-[100vh]">
-        <img
-          src="https://livotec.com/wp-content/uploads/2024/05/Bao-hanh_livotec-Mobile.jpg.webp"
-        />
-      </a-flex> -->
     </a-flex>
   </a-flex>
 </template>

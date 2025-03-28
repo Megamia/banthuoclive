@@ -1,6 +1,5 @@
 <template>
   <!-- eslint-disable vue/no-v-model-argument -->
-
   <section class="w-full flex flex-col gap-[30px]">
     <CategorySlideComponent :path="category?.image?.path" />
     <a-flex vertical class="w-full">
@@ -170,25 +169,9 @@
           :key="product.id"
           :product="product"
         />
-        <!-- <ProductItemComponent
-          v-for="product in productCurrentData"
-          :key="product.id"
-          :product="product"
-        />
-        <ProductItemComponent
-          v-for="product in productCurrentData"
-          :key="product.id"
-          :product="product"
-        />
-        <ProductItemComponent
-          v-for="product in productCurrentData"
-          :key="product.id"
-          :product="product"
-        /> -->
       </a-flex>
     </a-flex>
   </section>
-
   <!-- eslint-disable vue/no-v-model-argument -->
 </template>
 
@@ -201,7 +184,6 @@ import {
   AkChevronDownSmall,
   CdTag,
 } from "@kalimahapps/vue-icons";
-
 import axios from "axios";
 import { ref, onMounted, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
@@ -213,12 +195,10 @@ const productCurrentData = ref("");
 
 const selectOption = (filterId, label) => {
   selectedFilter[filterId] = [label];
-  // console.log(selectedFilter);
 };
 
 const rangeOption = (filterId, label, min, max) => {
   selectedFilter[filterId] = [label, min, max];
-  // console.log(selectedFilter);
 };
 
 const clearOption = (filterId) => {
@@ -229,27 +209,23 @@ const clearOption = (filterId) => {
 const applyFilter = async () => {
   const dataProduct = await getDataFromIndexedDB("products");
 
-  // Nếu không có danh mục nào được chọn, không lọc
   if (!category.value || category.value.length === 0) {
     return;
   }
 
-  // Lọc sản phẩm theo danh mục đang chọn
   const categoryIds = category.value.map((cat) => cat.id);
   productCurrentData.value = dataProduct.filter((item) =>
     categoryIds.includes(item.category_id)
   );
 
-  // Nếu không có bộ lọc nào, giữ nguyên danh sách sản phẩm
   if (Object.keys(selectedFilter).length === 0) {
     return;
   }
 
-  // Áp dụng bộ lọc của danh mục hiện tại
   productCurrentData.value = productCurrentData.value.filter((product) => {
     return Object.keys(selectedFilter).every((filterId) => {
       const filterValue = selectedFilter[filterId];
-      if (!filterValue) return true; // Nếu không có giá trị filter, giữ lại sản phẩm
+      if (!filterValue) return true; 
 
       if (filterId === "price") {
         const productValue = product[filterId];
@@ -287,7 +263,6 @@ const applyFilter = async () => {
   });
 };
 
-// Dữ liệu bộ lọc chỉ lấy từ danh mục đang chọn
 const data = ref([]);
 
 onMounted(async () => {
@@ -312,13 +287,11 @@ onMounted(async () => {
       }
     }
 
-    // Chỉ lấy bộ lọc của danh mục đang chọn
     category.value = selectedCategories;
     if (selectedCategories.length > 0) {
       data.value = selectedCategories[0].filters;
     }
 
-    // Lọc sản phẩm thuộc danh mục hiện tại
     const categoryIds = selectedCategories.map((cat) => cat.id);
     productCurrentData.value = dataProduct.filter((item) =>
       categoryIds.includes(item.category_id)
@@ -328,16 +301,14 @@ onMounted(async () => {
   }
 });
 
-// Theo dõi sự thay đổi của danh mục để cập nhật bộ lọc
 watch(category, (newCategory) => {
   if (newCategory.length > 0) {
-    data.value = newCategory[0].filters; // Chỉ lấy bộ lọc của danh mục đầu tiên
+    data.value = newCategory[0].filters; 
   } else {
     data.value = [];
   }
 });
 
-// Theo dõi sự thay đổi của `selectedFilter` để cập nhật sản phẩm
 watch(
   selectedFilter,
   () => {
@@ -397,8 +368,7 @@ const focus = () => {
   console.log("focus");
 };
 const handleChange = (value) => {
-  // console.log(`selected ${value}`);
-  sortProducts(value); // Gọi hàm sắp xếp sản phẩm
+  sortProducts(value); 
 };
 
 const sortProducts = (order) => {
@@ -410,20 +380,17 @@ const sortProducts = (order) => {
       productCurrentData.value.sort((a, b) => b.price - a.price);
       break;
     case "best-sale":
-      // Sắp xếp theo số lượng bán (giả sử có trường `sold_out`)
       productCurrentData.value.sort(
         (a, b) => (b.sold_out || 0) - (a.sold_out || 0)
       );
 
       break;
     case "best-rate":
-      // Giả sử có trường `rating` cho điểm đánh giá
       productCurrentData.value.sort(
         (a, b) => (b.rating || 0) - (a.rating || 0)
       );
       break;
     default:
-      // Sắp xếp mặc định (có thể sắp xếp theo `created_at` hoặc trả về danh sách gốc)
       productCurrentData.value.sort(
         (a, b) => new Date(a.created_at) - new Date(b.created_at)
       );
@@ -436,7 +403,7 @@ const sortProducts = (order) => {
 .sort_item {
   border-color: #e9e9e9;
   padding: 7px 16px;
-  border-radius: 0.375rem /* 6px */;
+  border-radius: 0.375rem ;
   border-width: 1px;
 }
 .sort_item:hover {

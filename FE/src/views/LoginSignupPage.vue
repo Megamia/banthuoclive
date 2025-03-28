@@ -309,4 +309,3 @@ const signup = async () => {
   }
 };
 </script>
-<style scoped></style>

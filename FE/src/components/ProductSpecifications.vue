@@ -21,7 +21,7 @@
 defineProps({
   items: {
     type: Array,
-    required: true, // Đảm bảo props `items` được truyền vào
+    required: true, 
   },
 });
 </script>

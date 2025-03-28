@@ -206,8 +206,6 @@ const handleAddToCart = async (data) => {
   store.commit("product/setDataStoreCart", {
     dataStoreCart: updatedCart,
   });
-
-  // console.log("Giỏ hàng sau khi cập nhật:", updatedCart);
 };
 
 const handleProductDetail = (items) => {

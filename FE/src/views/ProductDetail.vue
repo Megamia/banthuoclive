@@ -206,7 +206,7 @@
 <script setup>
 import { MdLocalShipping, AnFilledSetting } from "@kalimahapps/vue-icons";
 import { onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import ProductSpecifications from "@/components/ProductSpecifications.vue";
 import ProductPosts from "@/components/ProductPosts.vue";
 import UseIngredientsComponent from "../components/UseIngredientsComponent.vue";
@@ -214,7 +214,6 @@ import store from "@/store/store";
 import { getDataFromIndexedDB } from "@/store/indexedDB";
 import InstructionsComponent from "@/components/InstructionsComponent.vue";
 const route = useRoute();
-const router = useRouter();
 const product = ref(null);
 const formattedPrice = ref(null);
 const activeImage = ref(null);

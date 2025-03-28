@@ -114,11 +114,6 @@
               vertical
               class="bg-[#EDEDED] rounded-lg flex-1 h-[500px] w-[300px]"
             >
-              <!-- <a-flex
-            v-for="item in data"
-            :key="item.id"
-            class="w-[100%] max-w-[350px]"
-          > -->
               <a-flex vertical class="w-full">
                 <img
                   :src="item.image_url || defaultImage"
@@ -157,7 +152,6 @@
                   >
                 </a-flex>
               </a-flex>
-              <!-- </a-flex> -->
             </a-flex>
           </swiper-slide>
         </swiper>

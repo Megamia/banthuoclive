@@ -38,8 +38,8 @@ onMounted(async () => {
 
           const data = response.data;
           if (data.status === "success") {
-            console.log("Đã tạo đơn hàng"); // Kiểm tra orderID
-            return data.orderID; // Trả về orderID đúng
+            console.log("Đã tạo đơn hàng"); 
+            return data.orderID; 
           } else {
             console.error("Error creating order:", data.message);
             return null;
