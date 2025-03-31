@@ -1,10 +1,10 @@
 <template>
   <a-flex class="flex-1 relative justify-between p-[20px] gap-[30px] main">
     <a-flex>
-      <router-link to="/">
+      <router-link to="/" class="hover:bg-[#007BFF]">
         <img
-          src="https://img.pikbest.com/wp/202405/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483.jpg!w700wp "
-          class="w-[126px] min-w-[126px] imgLivo "
+          src="/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483-removebg-preview.png "
+          class="w-[80px] imgLivo ml-[50px]"
         />
       </router-link>
     </a-flex>
@@ -67,14 +67,17 @@ const changeLiActive = (value) => {
 
 .liText:hover {
   background-color: white;
-  color: #01b6ac;
+  color: #2268de;
   border-radius: 15px;
 }
 
 .active-liText {
   background-color: white !important;
-  color: #01b6ac !important;
+  color: #2268de !important;
   border-radius: 15px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
 }
 @media only screen and (max-width: 720px) {
   .imgLivo {

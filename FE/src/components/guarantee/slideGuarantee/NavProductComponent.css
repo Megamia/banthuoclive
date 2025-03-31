@@ -17,7 +17,8 @@
 }
 .swiperProduct .swiper-wrapper{
   display: flex;
-  gap:20px
+  gap:20px;
+  padding-inline:10px
 }
 
 .swiper-slide {

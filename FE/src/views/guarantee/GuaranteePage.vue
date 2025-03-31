@@ -2,7 +2,7 @@
   <!-- eslint-disable vue/no-v-model-argument -->
   <a-flex vertical class="flex-1 w-full">
     <img
-      src="https://example.sudospaces.com/baohanhlivotec/2024/06/bao-hanh-livotec-pc.jpg"
+      src="https://getflycrm.com/wp-content/uploads/2023/11/khach-hang-muc-tieu-cua-khach-san-5-sao.webp"
       class="imgGuarantee"
     />
     <a-flex vertical justify="center" class="flex-1 items-center">
@@ -26,7 +26,7 @@
     <a-flex vertical class="contentDiv mb-[66px] flex-1">
       <h2 class="h2Text">Sản phẩm nổi bật</h2>
 
-      <a-flex justify="center" class="flex-1 pb-[77px] max-w-[100%]">
+      <a-flex justify="center" class="flex-1 pb-[77px] max-w-[100%] ">
         <SlideGuaranteeComponent />
       </a-flex>
       <a-flex justify="center">
@@ -62,7 +62,7 @@
           style="flex-basis: calc((100% - 150px) / 5)"
           class="mr-[30px] mb-[120px] items-center"
         >
-          <img :src="item.path" class="w-[186px] h-[186px] mb-[18px]" />
+          <img :src="item.path" class="w-[186px] h-[100%] mb-[18px]" />
           <span
             class="text-center text-[18px] text-black font-normal whitespace-pre-line"
           >
@@ -165,7 +165,7 @@
             >Cửa hàng thuốc Live</span
           >
           <img
-            src="https://img.pikbest.com/wp/202405/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483.jpg!w700wp"
+            src="/medical-drug-grade-manufacturing-on-blue-background-3d-rendering_9827483-removebg-preview-removebg-preview.png"
           />
         </a-flex>
       </a-flex>
@@ -242,41 +242,40 @@ const formState = ref({
 const dataFixed = ref([
   {
     name: "1",
-    path: "https://example.sudospaces.com/baohanhlivotec/2024/06/hieu-suat.png",
-    text: "Gấp 1.5 lần hiệu suất,\n Gấp 1.5 lần tuổi thọ",
+    path: "https://phongsachgmp.vn/wp-content/uploads/2019/05/gmp-who.jpg",
+    text: "Đạt chuẩn GMP - WHO, an toàn & hiệu quả",
   },
   {
     name: "2",
-    path: "https://example.sudospaces.com/baohanhlivotec/2024/06/mang-han-quoc.png",
-    text: "Loại bỏ 99,99% vi khuẩn, chất có hại",
+    path: "https://cdn.nhathuoclongchau.com.vn/unsafe/800x0/filters:quality(95)/https://cms-prod.s3-sgn09.fptcloud.com/cach_phan_biet_duoc_pham_chinh_hang_va_hang_xach_tay_don_gian_ban_can_biet_89393fa38d.jpg",
+    text: "Thuốc & dược phẩm chính hãng, nguồn gốc rõ ràng",
   },
   {
     name: "3",
-    path: "https://example.sudospaces.com/baohanhlivotec/2024/08/icon-livotec-qcvn-new.png",
-    text: "Chuẩn nước uống tinh khiết đóng chai Việt Nam và Quốc tế",
+    path: "https://vienyduocdantoc.com/wp-content/uploads/2021/07/thuc-pham-chuc-nang-ho-tro-chua-benh-tri.jpg",
+    text: "Thực phẩm chức năng hỗ trợ sức khỏe toàn diện",
   },
   {
     name: "4",
-    path: "https://example.sudospaces.com/baohanhlivotec/2024/05/bao-hanh-36-thang.png",
-    text: "Dịch vụ 5 sao bảo hành cao nhất thị trường",
+    path: "https://cdn2.tuoitre.vn/thumb_w/480/2021/6/2/15286388737940828273262951986749102473157648n-1-16226320314851228811282-crop-1622632145661774901212.png",
+    text: "Tư vấn sức khỏe miễn phí từ dược sĩ chuyên môn",
   },
   {
     name: "5",
-    path: "https://example.sudospaces.com/baohanhlivotec/2024/06/artboard-8-copy-9.png",
-    text: "3 Chức năng Nóng - Lạnh - Nguội",
+    path: "https://indochinapost.vn/wp-content/uploads/2017/10/dich-vu-chuyen-phat-cod.jpg",
+    text: "Giao hàng tận nơi nhanh chóng, tiện lợi",
   },
   {
     name: "6",
-    path: "https://example.sudospaces.com/baohanhlivotec/2024/06/thiet-ke-dep.png",
-    text: "Bổ sung khoáng chất và Hydrogen",
+    path: "https://90scoffee.vn/wp-content/uploads/2023/02/chuong-trinh-khuyen-mai-1.jpg",
+    text: "Ưu đãi & khuyến mãi hấp dẫn mỗi tháng",
   },
   {
     name: "7",
-    path: "https://example.sudospaces.com/baohanhlivotec/2024/06/loi-chuc-nang.png",
-    text: "Đẹp - Bền",
+    path: "https://vlink.vn/wp-content/uploads/2024/04/5-yeu-to-quan-trong-khi-trien-khai-ho-tro-24-7.jpg",
+    text: "Dịch vụ tận tâm, chăm sóc khách hàng 24/7",
   },
 ]);
-
 const selectedItem = ref("");
 
 const data = ref([]);

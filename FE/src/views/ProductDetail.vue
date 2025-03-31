@@ -5,11 +5,11 @@
       <div class="py-2 border-b-2">
         <a-breadcrumb>
           <template #separator><span>&gt;</span></template>
-          <a-breadcrumb-item
-            ><RouterLink to="/" class="text-[15px] font-semibold"
-              >Trang chủ</RouterLink
-            ></a-breadcrumb-item
-          >
+          <a-breadcrumb-item>
+            <RouterLink to="/" class="text-[15px] font-semibold">
+              Trang chủ
+            </RouterLink>
+          </a-breadcrumb-item>
           <a-breadcrumb-item v-if="product.category?.parent != null"
             ><RouterLink
               :to="`/category/${product.category.parent?.slug}`"

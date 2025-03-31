@@ -99,7 +99,7 @@
       </a-flex>
     </div>
 
-    <p v-else class="text-gray-500 text-center">
+    <p v-else-if="!first_attempt" class="text-gray-500 text-center">
       Chưa nhận diện được sản phẩm này!!
     </p>
   </div>
@@ -115,6 +115,7 @@ const productsFromDB = ref([]);
 const isLoading = ref(false);
 const isAnalyzed = ref(false);
 const error = ref(null);
+const first_attempt = ref(true);
 
 const handleFileUpload = (event) => {
   const file = event.target.files[0];
@@ -146,7 +147,7 @@ const analyzeImage = async () => {
   isAnalyzed.value = true;
   result.value = null;
   productsFromDB.value = [];
-
+  first_attempt.value = false;
   try {
     const dataProduct = await getDataFromIndexedDB("products");
 

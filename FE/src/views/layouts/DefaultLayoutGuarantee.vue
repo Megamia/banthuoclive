@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-flex
-      class="justify-center bg-[#2268DE] sticky top-0 z-50 border-b-[1px] border-white"
+      class="justify-center bg-[#007BFF] sticky top-0 z-50 border-b-[1px] border-white"
     >
       <HeaderComponent />
     </a-flex>
