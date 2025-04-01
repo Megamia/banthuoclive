@@ -117,7 +117,7 @@
               <a-flex vertical class="w-full">
                 <img
                   :src="item.image_url || defaultImage"
-                  class="w-[100%] h-[270px] object-cover"
+                  class="min-w-[250px] w-[100%] h-[100%] object-cover"
                 />
                 <a-flex
                   vertical
@@ -185,7 +185,7 @@ const modules = [Navigation];
 const data = ref([]);
 const dataFake = ref([]);
 const defaultImage =
-  "https://livotec.com/wp-content/uploads/2024/11/Binh-tam-nong-lanh-%E2%80%93-Giai-phap-hoan-hao-cho-ngoi-nha-hien-dai.jpg";
+  "https://img.freepik.com/premium-photo/hot-news-words-world-map-background_764664-25568.jpg?semt=ais_hybrid";
 
 const fetchData = async () => {
   try {
@@ -193,6 +193,7 @@ const fetchData = async () => {
       `${import.meta.env.VITE_APP_URL_API_POST}/allPost`
     );
     data.value = response.data.data;
+    console.log(data.value);
   } catch (e) {
     console.log("Error: ", e);
   }

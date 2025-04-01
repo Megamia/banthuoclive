@@ -21,7 +21,7 @@
           <a-flex vertical class="w-full">
             <img
               :src="item.image_url || defaultImage"
-              class="w-[100%] h-[270px] object-cover"
+              class="min-w-[250px] w-[100%] h-[100%] object-cover"
             />
             <a-flex vertical class="w-[100%] p-[15px] gap-[10px] bg-[#ededed]">
               <a-flex class="text-[#6d6d6d] items-center gap-[3px] h-[20px]">
@@ -75,7 +75,7 @@ const data = ref([]);
 const currentPage = ref(1);
 const pageSize = 6;
 const defaultImage =
-  "https://livotec.com/wp-content/uploads/2024/11/Binh-tam-nong-lanh-%E2%80%93-Giai-phap-hoan-hao-cho-ngoi-nha-hien-dai.jpg";
+  "https://img.freepik.com/premium-photo/hot-news-words-world-map-background_764664-25568.jpg?semt=ais_hybrid";
 
 const slugsToFilter = ["boc-phot", "tin-tuc"];
 const activeKey = ref(slugsToFilter[0]);
@@ -85,14 +85,13 @@ const fetchData = async (value) => {
     value = activeKey.value;
   }
   console.log(value);
-  
+
   try {
     const response = await axios.get(
       `${import.meta.env.VITE_APP_URL_API_POST}/hotNews/${value}`
     );
     data.value = response.data.data;
     console.log(data.value);
-    
   } catch (e) {
     console.log(e);
   }
@@ -197,7 +196,7 @@ const filterData = (data) => {
 }
 
 :deep(.tabList .ant-tabs-tab-active) {
-  background-color: #2268DE;
+  background-color: #2268de;
   transition: all 0.5s ease-in-out;
 }
 
