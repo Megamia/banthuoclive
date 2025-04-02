@@ -754,7 +754,7 @@ const rules = {
         value
           ? Promise.resolve()
           : Promise.reject("Vui lòng chấp nhận các điều khoản và điều kiện."),
-      trigger: "submit", 
+      trigger: "submit",
     },
   ],
 };
@@ -782,6 +782,7 @@ const onSubmit = async () => {
       );
       store.dispatch("product/clearDataStoreCart");
       alert("Order created successfully");
+
       router.push(`/payment/order-received/${response.data.order_code}`);
     }
   } catch (error) {
@@ -804,6 +805,8 @@ const handlePaymentSuccess = async (orderID) => {
     Modal.success({
       title: "Thanh toán đơn hàng thành công!",
     });
+    console.log(response);
+
     router.push(`/payment/order-received/${response.data.order_code}`);
   } catch (error) {
     console.error("Error adding order to database:", error);

@@ -5,7 +5,6 @@ use Betod\Livotec\Models\Orders;
 use Betod\Livotec\Models\Product;
 use Betod\Livotec\Models\Category;
 use Betod\Livotec\Controllers\PayPalController;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'apiProduct'], function () {
@@ -20,75 +19,65 @@ Route::group(['prefix' => 'apiProduct'], function () {
     // });
     Route::get("allProduct", function () {
         $allProduct = Product::with(['gallery', 'image', 'category.parent', 'post', 'ingredientsAndInstructions'])->get();
-        
+
         return response()->json([
             'allProduct' => $allProduct,
             'status' => $allProduct->isNotEmpty() ? 1 : 0
         ]);
     });
-    
+
     Route::get('navProducts/{slug}', function ($slug) {
-        return Cache::remember("nav_products_{$slug}", 3600, function () use ($slug) {
-            $category = Category::with(['children'])->where('slug', $slug)->first();
+        $category = Category::with(['children'])->where('slug', $slug)->first();
 
-            if (!$category) {
-                return response()->json(['status' => 0, 'message' => 'No data']);
-            }
+        if (!$category) {
+            return response()->json(['status' => 0, 'message' => 'No data']);
+        }
 
-            $categoryIds = $category->getAllChildrenAndSelf()->pluck('id');
-            $products = Product::with(['image', 'category'])
-                ->whereIn('category_id', $categoryIds)
-                ->get();
+        $categoryIds = $category->getAllChildrenAndSelf()->pluck('id');
+        $products = Product::with(['image', 'category'])
+            ->whereIn('category_id', $categoryIds)
+            ->get();
 
-            return response()->json([
-                'category' => $category,
-                'products' => $products,
-                'status' => 1
-            ]);
-        });
+        return response()->json([
+            'category' => $category,
+            'products' => $products,
+            'status' => 1
+        ]);
     });
 
     Route::get('product/{slug}', function ($slug) {
-        return Cache::remember("category_products_{$slug}", 3600, function () use ($slug) {
-            $category = Category::where('slug', $slug)->first();
+        $category = Category::where('slug', $slug)->first();
 
-            if (!$category) {
-                return response()->json(['message' => 'Category not found'], 404);
-            }
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
 
-            return Product::with(['gallery', 'image', 'category.parent', 'post'])
-                ->where('category_id', $category->id)
-                ->get();
-        });
+        return Product::with(['gallery', 'image', 'category.parent', 'post'])
+            ->where('category_id', $category->id)
+            ->get();
     });
 
     Route::get('detailProduct/{slug}', function ($slug) {
-        return Cache::remember("detail_product_{$slug}", 3600, function () use ($slug) {
-            $product = Product::with(['gallery', 'image', 'category.parent', 'post'])->where('slug', $slug)->first();
-            return $product ?: response()->json(['message' => 'Product not found'], 404);
-        });
+        $product = Product::with(['gallery', 'image', 'category.parent', 'post'])->where('slug', $slug)->first();
+        return $product ?: response()->json(['message' => 'Product not found'], 404);
     });
 });
 
 Route::group(['prefix' => 'apiCategory'], function () {
     Route::get('allCategory', function () {
-        return Cache::remember('all_categories', 3600, function () {
-            $allCategory = Category::with(['image', 'filters', 'children'])->get();
-            return response()->json([
-                'allCategory' => $allCategory,
-                'status' => $allCategory->isNotEmpty() ? 1 : 0
-            ]);
-        });
+        $allCategory = Category::with(['image', 'filters', 'children'])->get();
+        return response()->json([
+            'allCategory' => $allCategory,
+            'status' => $allCategory->isNotEmpty() ? 1 : 0
+        ]);
     });
 
     Route::get('allCategoryParent', function () {
-        return Cache::remember('all_category_parents', 3600, function () {
-            $allCategoryParent = Category::whereNull('parent_id')->get();
-            return response()->json([
-                'allCategoryParent' => $allCategoryParent,
-                'status' => $allCategoryParent->isNotEmpty() ? 1 : 0
-            ]);
-        });
+        $allCategoryParent = Category::whereNull('parent_id')->get();
+        return response()->json([
+            'allCategoryParent' => $allCategoryParent,
+            'status' => $allCategoryParent->isNotEmpty() ? 1 : 0
+        ]);
     });
 });
 
@@ -96,9 +85,7 @@ Route::group(['prefix' => 'apiOrder'], function () {
     Route::post('createOrder', 'Betod\Livotec\Controllers\OrderController@createOrder');
 
     Route::get('order/{order_code}', function ($order_code) {
-        return Cache::remember("order_{$order_code}", 3600, function () use ($order_code) {
-            return Orders::with('orderdetail.product')->where('order_code', $order_code)->first();
-        });
+        return Orders::with('orderdetail.product')->where('order_code', $order_code)->first();
     });
 });
 

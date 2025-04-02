@@ -34,6 +34,18 @@
         >
           Đổi mật khẩu
         </button>
+        <button
+          href="#"
+          class="flex items-center px-3 py-2.5 hover:text-indigo-900 rounded-full"
+          @click="handleChangeActivePage(2)"
+          :class="
+            activePage == 1
+              ? 'bg-slate-200 text-indigo-900 font-bold'
+              : 'bg-white font-semibold'
+          "
+        >
+          Đơn hàng của bạn
+        </button>
       </div>
     </aside>
     <main class="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
@@ -360,6 +372,61 @@
             </form>
           </div>
         </div>
+        <div
+          v-if="activePage == 2"
+          class="w-full px-6 pb-8 md:mt-4 sm:max-w-xl sm:rounded-lg"
+        >
+          <a-flex vertical>
+            <a-flex>
+              <input
+                placeholder="Mã"
+                class="border border-black p-2"
+                v-model="GHN_Code"
+              />
+              <button @click="find">Tìm kiếm</button>
+            </a-flex>
+            <a-flex vertical v-if="dataGHN">
+              <p>Thông tin đơn hàng</p>
+              <a-flex vertical>
+                <span
+                  >Người gửi: {{ dataGHN.from_name }} -
+                  {{ dataGHN.from_phone }}</span
+                >
+                <span
+                  >Người nhận: {{ dataGHN.to_name }} -
+                  {{ dataGHN.to_phone }}</span
+                >
+                <span>Tên sản phẩm: {{ dataGHN.content }}</span>
+                <span
+                  >Địa chỉ:
+                  {{
+                    addressInfor
+                      ? addressInfor.ward +
+                        ", " +
+                        addressInfor.district +
+                        ", " +
+                        addressInfor.province
+                      : "Đang tải..."
+                  }}</span
+                >
+                <span
+                  >Loại thanh toán:
+                  {{ formatPaymentType(dataGHN.payment_type_ids[0]) }}</span
+                >
+                <span>Tiền cod: {{ formatCurrency(dataGHN.cod_amount) }}</span>
+                <span>Ghi chú: {{ dataGHN.required_note }}</span>
+                <span
+                  >Thời gian giao hàng dự kiến:
+                  {{ formatDate(dataGHN.leadtime) }}
+                </span>
+                <span>
+                  Trạng thái vận chuyển:
+                  {{ dataGHN.transportation_status }}</span
+                >
+              </a-flex>
+            </a-flex>
+          </a-flex>
+        </div>
       </div>
     </main>
   </div>
@@ -371,6 +438,7 @@ import { onMounted, ref, resolveDirective, watch } from "vue";
 import { useRouter } from "vue-router";
 import { CdEye, CdEyeClosed } from "@kalimahapps/vue-icons";
 import axios from "axios";
+import { Header } from "ant-design-vue/es/layout/layout";
 const router = useRouter();
 
 const provinces = ref([]);
@@ -378,6 +446,122 @@ const districts = ref([]);
 const wards = ref([]);
 const activePage = ref(0);
 const editMode = ref(false);
+const GHN_Code = ref("");
+const dataGHN = ref("");
+const addressInfor = ref(null);
+const find = async () => {
+  try {
+    const response = await axios.get(
+      `https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail?order_code=${GHN_Code.value}`,
+      {
+        headers: {
+          Token: import.meta.env.VITE_GHN_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.status === 200) {
+      dataGHN.value = response.data.data;
+      if (dataGHN.value.to_district_id) {
+        await getAddressInfor(
+          dataGHN.value.to_district_id,
+          dataGHN.value.to_ward_code
+        );
+      } else {
+        alert("Không có thông tin về quận/huyện.");
+      }
+    } else {
+      alert(`Không tìm thấy thông tin của đơn hàng với mã ${GHN_Code.value}`);
+    }
+  } catch (e) {
+    console.error("Error:", e.response ? e.response.data : e.message);
+  }
+};
+
+const formatDate = (value) => {
+  const date = new Date(value);
+  return date.toLocaleDateString("vi-VN");
+};
+
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(value);
+};
+const formatPaymentType = (value) => {
+  if (value === 1) {
+    return "Thanh toán khi nhận hàng (COD)";
+  } else if (value === 2) {
+    return "Thanh toán trước (online payment)";
+  } else if (value === 3) {
+    return "Thanh toán qua ví điện tử, thẻ ngân hàng, ...";
+  }
+};
+const getAddressInfor = async (districtId, ward_code) => {
+  try {
+    // Lấy thông tin quận/huyện
+    const response = await axios.get(
+      `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district`,
+      {
+        headers: {
+          Token: import.meta.env.VITE_GHN_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const districtData = response.data.data.find(
+      (item) => item.DistrictID === districtId
+    );
+    console.log("District Information: ", districtData.DistrictName);
+
+    // Lấy thông tin tỉnh
+    const response2 = await axios.get(
+      `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province`,
+      {
+        headers: {
+          Token: import.meta.env.VITE_GHN_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const provinceData = response2.data.data.find(
+      (item) => item.ProvinceID === districtData.ProvinceID
+    );
+    console.log("Province: ", provinceData.NameExtension[0]);
+
+    // Lấy thông tin phường/xã
+    const response3 = await axios.get(
+      `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`,
+      {
+        headers: {
+          Token: import.meta.env.VITE_GHN_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const wardData = response3.data.data.find(
+      (item) => item.WardCode === ward_code
+    );
+    console.log("Ward Information: ", wardData.WardName);
+
+    return (addressInfor.value = {
+      province: provinceData.NameExtension[0],
+      district: districtData.DistrictName,
+      ward: wardData.WardName,
+    });
+  } catch (error) {
+    console.error(
+      "Có lỗi xảy ra khi tìm thông tin địa chỉ:",
+      error.response ? error.response.data : error.message
+    );
+    return null;
+  }
+};
+
 const profile = ref({
   first_name: "",
   last_name: "",

@@ -114,3 +114,9 @@ fields:
         disabled: 1
         readOnly: 1
         type: number
+    ghn_order_code:
+        label: 'Mã GHN'
+        span: auto
+        disabled: 1
+        readOnly: 0
+        type: text
