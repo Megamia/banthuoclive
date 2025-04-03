@@ -393,19 +393,22 @@
                   {{ dataGHN.from_phone }}</span
                 >
                 <span
-                  >Người nhận: {{ dataGHN.to_name }} -
-                  {{ dataGHN.to_phone }}</span
+                  >Người nhận:
+                  {{ dataInfor ? dataInfor.name : "Chưa có thông tin" }} -
+                  {{ dataInfor ? dataInfor.phone : "Chưa có thông tin" }}</span
                 >
                 <span>Tên sản phẩm: {{ dataGHN.content }}</span>
                 <span
                   >Địa chỉ:
                   {{
-                    addressInfor
-                      ? addressInfor.ward +
+                    dataInfor
+                      ? dataInfor.address +
                         ", " +
-                        addressInfor.district +
+                        dataInfor.ward +
                         ", " +
-                        addressInfor.province
+                        dataInfor.district +
+                        ", " +
+                        dataInfor.province
                       : "Đang tải..."
                   }}</span
                 >
@@ -421,7 +424,11 @@
                 </span>
                 <span>
                   Trạng thái vận chuyển:
-                  {{ dataGHN.transportation_status }}</span
+                  {{
+                    dataInfor
+                      ? formatShippingStatus(dataInfor.shipping_status)
+                      : "Chưa có thông tin"
+                  }}</span
                 >
               </a-flex>
             </a-flex>
@@ -448,7 +455,7 @@ const activePage = ref(0);
 const editMode = ref(false);
 const GHN_Code = ref("");
 const dataGHN = ref("");
-const addressInfor = ref(null);
+const dataInfor = ref(null);
 const find = async () => {
   try {
     const response = await axios.get(
@@ -462,14 +469,21 @@ const find = async () => {
     );
     if (response.status === 200) {
       dataGHN.value = response.data.data;
-      if (dataGHN.value.to_district_id) {
-        await getAddressInfor(
-          dataGHN.value.to_district_id,
-          dataGHN.value.to_ward_code
-        );
-      } else {
-        alert("Không có thông tin về quận/huyện.");
-      }
+
+      //Lấy địa chỉ theo GHN
+      // if (dataGHN.value.to_district_id) {
+      //   await getAddressInforGHN(
+      //     dataGHN.value.to_district_id,
+      //     dataGHN.value.to_ward_code
+      //   );
+      // } else {
+      //   alert("Không có thông tin về quận/huyện.");
+      // }
+      //Lấy địa chỉ theo GHN
+
+      //Lấy dữ liệu theo order_code
+      await getDataOrder(dataGHN.value.client_order_code);
+      //Lấy dữ liệu theo order_code
     } else {
       alert(`Không tìm thấy thông tin của đơn hàng với mã ${GHN_Code.value}`);
     }
@@ -498,67 +512,105 @@ const formatPaymentType = (value) => {
     return "Thanh toán qua ví điện tử, thẻ ngân hàng, ...";
   }
 };
-const getAddressInfor = async (districtId, ward_code) => {
+const formatShippingStatus = (value) => {
+  if (value === 0) {
+    return "Chưa giao";
+  } else if (value === 1) {
+    return "Đang giao hàng";
+  } else if (value === 2) {
+    return "Giao hàng thành công";
+  }
+};
+// const getAddressInforGHN = async (districtId, ward_code) => {
+//   try {
+//     const response = await axios.get(
+//       `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district`,
+//       {
+//         headers: {
+//           Token: import.meta.env.VITE_GHN_API_KEY,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+
+//     const districtData = response.data.data.find(
+//       (item) => item.DistrictID === districtId
+//     );
+//     console.log("District Information: ", districtData.DistrictName);
+
+//     const response2 = await axios.get(
+//       `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province`,
+//       {
+//         headers: {
+//           Token: import.meta.env.VITE_GHN_API_KEY,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+
+//     const provinceData = response2.data.data.find(
+//       (item) => item.ProvinceID === districtData.ProvinceID
+//     );
+//     console.log("Province: ", provinceData.NameExtension[0]);
+
+//     const response3 = await axios.get(
+//       `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`,
+//       {
+//         headers: {
+//           Token: import.meta.env.VITE_GHN_API_KEY,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+
+//     const wardData = response3.data.data.find(
+//       (item) => item.WardCode === ward_code
+//     );
+//     console.log("Ward Information: ", wardData.WardName);
+
+//     return (addressInfor.value = {
+//       address: dataGHN.value.to_address ? dataGHN.value.to_address : "",
+//       province: /Thành phố|Tỉnh/.test(provinceData.NameExtension[0])
+//         ? provinceData.NameExtension[0]
+//         : "Tỉnh " + provinceData.NameExtension[0],
+
+//       district: /Huyện|Quận|Thành phố/.test(districtData.DistrictName)
+//         ? districtData.DistrictName
+//         : "Huyện " + districtData.DistrictName,
+
+//       ward: /Xã|Phường|Thị trấn/.test(wardData.WardName)
+//         ? wardData.WardName
+//         : "Xã " + wardData.WardName,
+//     });
+//   } catch (error) {
+//     console.error(
+//       "Có lỗi xảy ra khi tìm thông tin địa chỉ:",
+//       error.response ? error.response.data : error.message
+//     );
+//     return null;
+//   }
+// };
+
+const getDataOrder = async (order_code) => {
   try {
-    // Lấy thông tin quận/huyện
     const response = await axios.get(
-      `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district`,
-      {
-        headers: {
-          Token: import.meta.env.VITE_GHN_API_KEY,
-          "Content-Type": "application/json",
-        },
-      }
+      `${import.meta.env.VITE_APP_URL_API_ORDER}/order/${order_code}`
     );
+    // console.log(response.data);
 
-    const districtData = response.data.data.find(
-      (item) => item.DistrictID === districtId
-    );
-    console.log("District Information: ", districtData.DistrictName);
-
-    // Lấy thông tin tỉnh
-    const response2 = await axios.get(
-      `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province`,
-      {
-        headers: {
-          Token: import.meta.env.VITE_GHN_API_KEY,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const provinceData = response2.data.data.find(
-      (item) => item.ProvinceID === districtData.ProvinceID
-    );
-    console.log("Province: ", provinceData.NameExtension[0]);
-
-    // Lấy thông tin phường/xã
-    const response3 = await axios.get(
-      `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`,
-      {
-        headers: {
-          Token: import.meta.env.VITE_GHN_API_KEY,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const wardData = response3.data.data.find(
-      (item) => item.WardCode === ward_code
-    );
-    console.log("Ward Information: ", wardData.WardName);
-
-    return (addressInfor.value = {
-      province: provinceData.NameExtension[0],
-      district: districtData.DistrictName,
-      ward: wardData.WardName,
-    });
-  } catch (error) {
-    console.error(
-      "Có lỗi xảy ra khi tìm thông tin địa chỉ:",
-      error.response ? error.response.data : error.message
-    );
-    return null;
+    if (response.status === 200) {
+      return (dataInfor.value = {
+        name: response.data.property.name,
+        phone: response.data.property.phone,
+        address: response.data.property.address,
+        ward: response.data.property.subdistrict,
+        district: response.data.property.district,
+        province: response.data.property.province,
+        shipping_status: response.data.status_id,
+      });
+    }
+  } catch (e) {
+    console.log("Error: ", e);
   }
 };
 

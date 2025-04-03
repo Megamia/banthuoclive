@@ -120,3 +120,8 @@ fields:
         disabled: 1
         readOnly: 0
         type: text
+    order_code:
+        label: 'Mã order'
+        span: auto
+        disabled: 1
+        type: text
