@@ -87,6 +87,22 @@ Route::group(['prefix' => 'apiOrder'], function () {
     Route::get('order/{order_code}', function ($order_code) {
         return Orders::with('orderdetail.product')->where('order_code', $order_code)->first();
     });
+    Route::get('allDataOrder/{id}', function ($id) {
+        return Orders::with('orderdetail.product')->where('user_id', $id)->get();
+    });
+    Route::post("/updateStatus/{order_code}", function ($order_code) {
+        $order = Orders::where('order_code', $order_code)->first();
+
+        if ($order) {
+            $order->update(['status_id' => "2"]);
+            return response()->json([
+                "message" => "Cập nhật trạng thái thành công",
+                "data" => $order
+            ], 200);
+        } else {
+            return response()->json(["message" => "Không tìm thấy đơn hàng"], 404);
+        }
+    });
 });
 
 Route::group(['prefix' => 'apiPaypal'], function () {

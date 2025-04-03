@@ -207,13 +207,13 @@ class OrderController extends Controller
             return ['code' => 400, 'message' => 'Invalid ward'];
         }
 
-        $senderProvinceName = 'Thành phố Hà Nội'; 
+        $senderProvinceName = 'Thành phố Hà Nội';
         $senderProvinceID = $this->getProvinceId($senderProvinceName);
 
-        $senderDistrictName = 'Quận Nam Từ Liêm'; 
+        $senderDistrictName = 'Quận Nam Từ Liêm';
         $senderDistrictID = $this->getDistrictId($senderProvinceID, $senderDistrictName);
 
-        $senderWardName = 'Phường Mỹ Đình 1'; 
+        $senderWardName = 'Phường Mỹ Đình 1';
         $senderWardCode = $this->getWardCode($senderDistrictID, $senderWardName);
 
         if (!$senderProvinceID || !$senderDistrictID || !$senderWardCode) {
@@ -223,12 +223,23 @@ class OrderController extends Controller
 
         $orderDetails = OrderDetail::where('order_id', $order->id)->get();
         $items = $orderDetails->map(function ($item) {
+            $product = Product::find($item->product_id);
+
+            if ($product) {
+                return [
+                    'name' => $product->name,  
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                ];
+            }
+
             return [
-                'name' => 'Product Name',
+                'name' => 'Unknown Product',  
                 'quantity' => $item->quantity,
                 'price' => $item->price,
             ];
         })->toArray();
+
 
         $response = Http::withHeaders([
             'Token' => $apiKey,

@@ -21,6 +21,7 @@ class Orders extends Model
         'property',
         'order_code',
         'price',
+        'status_id'
     ];
 
     public $hasMany = [

@@ -39,7 +39,7 @@
           class="flex items-center px-3 py-2.5 hover:text-indigo-900 rounded-full"
           @click="handleChangeActivePage(2)"
           :class="
-            activePage == 1
+            activePage == 2
               ? 'bg-slate-200 text-indigo-900 font-bold'
               : 'bg-white font-semibold'
           "
@@ -378,14 +378,38 @@
         >
           <a-flex vertical>
             <a-flex>
-              <input
+              <a-form
+                :model="formState"
+                @finish="handleFindOrder"
+                class="flex flex-row gap-[30px]"
+              >
+                <a-form-item
+                  label="Code"
+                  name="GHN_Code"
+                  :rules="[
+                    { required: true, message: 'Code không được để trống!' },
+                  ]"
+                >
+                  <a-input v-model:value="formState.GHN_Code" />
+                </a-form-item>
+
+                <a-form-item>
+                  <a-button type="primary" html-type="submit"
+                    >Tìm kiếm</a-button
+                  >
+                  <a-button @click="closeFind" v-if="isFind" class="ml-[10px]"
+                    >Tắt</a-button
+                  >
+                </a-form-item>
+              </a-form>
+              <!-- <input
                 placeholder="Mã"
                 class="border border-black p-2"
                 v-model="GHN_Code"
               />
-              <button @click="find">Tìm kiếm</button>
+              <button @click="handleFindOrder">Tìm kiếm</button> -->
             </a-flex>
-            <a-flex vertical v-if="dataGHN">
+            <a-flex vertical v-if="dataGHN && isFind">
               <p>Thông tin đơn hàng</p>
               <a-flex vertical>
                 <span
@@ -414,7 +438,11 @@
                 >
                 <span
                   >Loại thanh toán:
-                  {{ formatPaymentType(dataGHN.payment_type_ids[0]) }}</span
+                  {{
+                    dataGHN.payment_type_ids
+                      ? formatPaymentType(dataGHN.payment_type_ids[0])
+                      : "Chưa có thông tin"
+                  }}</span
                 >
                 <span>Tiền cod: {{ formatCurrency(dataGHN.cod_amount) }}</span>
                 <span>Ghi chú: {{ dataGHN.required_note }}</span>
@@ -426,10 +454,95 @@
                   Trạng thái vận chuyển:
                   {{
                     dataInfor
-                      ? formatShippingStatus(dataInfor.shipping_status)
+                      ? formatShippingStatus(index, dataInfor.shipping_status)
                       : "Chưa có thông tin"
                   }}</span
                 >
+              </a-flex>
+            </a-flex>
+            <a-flex v-if="!isFind" vertical class="gap-[10px]">
+              <a-flex
+                v-for="(dataOrderItem, index) in dataOrder"
+                :key="dataOrderItem.id"
+                vertical
+                class="gap-[10px]"
+              >
+                <a-flex class="items-center">
+                  <span>
+                    Đơn hàng: {{ dataOrderItem.ghn_order_code }} -
+                    {{
+                      dataOrderItem ? dataOrderItem.name : "Chưa có thông tin"
+                    }}
+                  </span>
+
+                  <a-button
+                    type="link"
+                    @click="toggleDetail(index, dataOrderItem.ghn_order_code)"
+                  >
+                    {{
+                      selectedOrderIndex === index
+                        ? "Ẩn chi tiết"
+                        : "Xem chi tiết"
+                    }}
+                  </a-button>
+                  <a-button
+                    class="border border-[gray]"
+                    type="link"
+                    @click="handleReceived(index, dataOrderItem.order_code)"
+                    :disabled="isReceived[index]"
+                  >
+                    Đã nhận được hàng
+                  </a-button>
+                </a-flex>
+                <a-flex v-if="selectedOrderIndex === index" vertical>
+                  <span
+                    >Người gửi: {{ dataGHN.from_name }} -
+                    {{ dataGHN.from_phone }}</span
+                  >
+                  <span>
+                    Người nhận:
+                    {{ dataGHN ? dataGHN.to_name : "Chưa có thông tin" }}
+                    -
+                    {{ dataGHN ? dataGHN.to_phone : "Chưa có thông tin" }}
+                  </span>
+                  <span>Tên sản phẩm: {{ dataGHN.content }}</span>
+                  <span>
+                    Địa chỉ:
+                    {{
+                      dataOrderItem
+                        ? dataOrderItem.property.address +
+                          ", " +
+                          dataOrderItem.property.subdistrict +
+                          ", " +
+                          dataOrderItem.property.province
+                        : "Đang tải..."
+                    }}
+                  </span>
+                  <span
+                    >Loại thanh toán:
+                    {{
+                      dataGHN.payment_type_ids
+                        ? formatPaymentType(dataGHN.payment_type_ids[0])
+                        : "Chưa có thông tin"
+                    }}</span
+                  >
+                  <span
+                    >Tiền COD: {{ formatCurrency(dataGHN.cod_amount) }}</span
+                  >
+                  <span>Ghi chú: {{ dataGHN.required_note }}</span>
+                  <span
+                    >Thời gian giao hàng dự kiến:
+                    {{ formatDate(dataGHN.leadtime) }}</span
+                  >
+                  <span>
+                    Trạng thái vận chuyển:
+                    {{
+                      dataOrderItem
+                        ? formatShippingStatus(dataOrderItem.status_id)
+                        : "Chưa có thông tin"
+                    }}
+                  </span>
+                </a-flex>
               </a-flex>
             </a-flex>
           </a-flex>
@@ -441,7 +554,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, resolveDirective, watch } from "vue";
+import { onMounted, reactive, ref, resolveDirective, watch } from "vue";
 import { useRouter } from "vue-router";
 import { CdEye, CdEyeClosed } from "@kalimahapps/vue-icons";
 import axios from "axios";
@@ -454,12 +567,57 @@ const wards = ref([]);
 const activePage = ref(0);
 const editMode = ref(false);
 const GHN_Code = ref("");
+const formState = reactive({
+  GHN_Code: "",
+});
 const dataGHN = ref("");
 const dataInfor = ref(null);
-const find = async () => {
+const dataOrder = ref("");
+const isFind = ref(false);
+const isReceived = ref([]);
+const selectedOrderIndex = ref(null);
+
+const toggleDetail = (index, code) => {
+  if (selectedOrderIndex.value === index) {
+    selectedOrderIndex.value = null;
+  } else {
+    selectedOrderIndex.value = index;
+    find(code);
+    isFind.value = false;
+  }
+};
+const handleFindOrder = () => {
+  if (!formState.GHN_Code.trim()) {
+    alert("Vui lòng nhập mã đơn hàng!");
+    return;
+  }
+
+  find(formState.GHN_Code);
+  isFind.value = true;
+};
+
+const handleReceived = async (index, order_code) => {
+  if (confirm("Hành động này sẽ không thể hoàn tác")) {
+    alert("Xác nhận thành công");
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_APP_URL_API_ORDER}/updateStatus/${order_code}`
+      );
+      isReceived.value[index] = true;
+      console.log(isReceived.value[index]);
+      
+    } catch (e) {
+      console.log("Error: ", e);
+    }
+  } else {
+    alert("Xác nhận thất bại");
+  }
+};
+
+const find = async (code) => {
   try {
     const response = await axios.get(
-      `https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail?order_code=${GHN_Code.value}`,
+      `https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/detail?order_code=${code}`,
       {
         headers: {
           Token: import.meta.env.VITE_GHN_API_KEY,
@@ -492,6 +650,10 @@ const find = async () => {
   }
 };
 
+const closeFind = () => {
+  isFind.value = false;
+};
+
 const formatDate = (value) => {
   const date = new Date(value);
   return date.toLocaleDateString("vi-VN");
@@ -512,15 +674,17 @@ const formatPaymentType = (value) => {
     return "Thanh toán qua ví điện tử, thẻ ngân hàng, ...";
   }
 };
-const formatShippingStatus = (value) => {
+const formatShippingStatus = (index, value) => {
   if (value === 0) {
     return "Chưa giao";
   } else if (value === 1) {
     return "Đang giao hàng";
   } else if (value === 2) {
+    isReceived.value[index] = true; 
     return "Giao hàng thành công";
   }
 };
+
 // const getAddressInforGHN = async (districtId, ward_code) => {
 //   try {
 //     const response = await axios.get(
@@ -596,7 +760,6 @@ const getDataOrder = async (order_code) => {
     const response = await axios.get(
       `${import.meta.env.VITE_APP_URL_API_ORDER}/order/${order_code}`
     );
-    // console.log(response.data);
 
     if (response.status === 200) {
       return (dataInfor.value = {
@@ -608,6 +771,21 @@ const getDataOrder = async (order_code) => {
         province: response.data.property.province,
         shipping_status: response.data.status_id,
       });
+    }
+  } catch (e) {
+    console.log("Error: ", e);
+  }
+};
+
+const getAllDataOrder = async (id) => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_APP_URL_API_ORDER}/allDataOrder/${id}`
+    );
+    if (response.status === 200) {
+      dataOrder.value = response.data;
+      console.log(dataOrder.value);
+      isReceived.value = dataOrder.value.map((order) => order.status_id === 2);
     }
   } catch (e) {
     console.log("Error: ", e);
@@ -711,6 +889,7 @@ const fetchProfile = () => {
     onDistrictChange(profile.value.district);
     profile.value.subdistrict = user.additional_user?.subdistrict || null;
     profile.value.address = user.additional_user?.address || "";
+    getAllDataOrder(user.id);
   }
 };
 const handleChangeInfo = async () => {
