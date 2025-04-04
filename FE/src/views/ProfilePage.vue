@@ -454,7 +454,7 @@
                   Trạng thái vận chuyển:
                   {{
                     dataInfor
-                      ? formatShippingStatus(index, dataInfor.shipping_status)
+                      ? formatShippingStatus(dataInfor.shipping_status)
                       : "Chưa có thông tin"
                   }}</span
                 >
@@ -488,7 +488,13 @@
                   <a-button
                     class="border border-[gray]"
                     type="link"
-                    @click="handleReceived(index, dataOrderItem.order_code)"
+                    @click="
+                      handleReceived(
+                        index,
+                        dataOrderItem.order_code,
+                        dataOrderItem.id
+                      )
+                    "
                     :disabled="isReceived[index]"
                   >
                     Đã nhận được hàng
@@ -536,11 +542,7 @@
                   >
                   <span>
                     Trạng thái vận chuyển:
-                    {{
-                      dataOrderItem
-                        ? formatShippingStatus(dataOrderItem.status_id)
-                        : "Chưa có thông tin"
-                    }}
+                    {{ formatShippingStatus(dataOrderItem.status_id) }}
                   </span>
                 </a-flex>
               </a-flex>
@@ -572,7 +574,7 @@ const formState = reactive({
 });
 const dataGHN = ref("");
 const dataInfor = ref(null);
-const dataOrder = ref("");
+const dataOrder = ref([]);
 const isFind = ref(false);
 const isReceived = ref([]);
 const selectedOrderIndex = ref(null);
@@ -596,7 +598,7 @@ const handleFindOrder = () => {
   isFind.value = true;
 };
 
-const handleReceived = async (index, order_code) => {
+const handleReceived = async (index, order_code, id) => {
   if (confirm("Hành động này sẽ không thể hoàn tác")) {
     alert("Xác nhận thành công");
     try {
@@ -604,8 +606,7 @@ const handleReceived = async (index, order_code) => {
         `${import.meta.env.VITE_APP_URL_API_ORDER}/updateStatus/${order_code}`
       );
       isReceived.value[index] = true;
-      console.log(isReceived.value[index]);
-      
+      dataOrder.value[index].status_id = 2;
     } catch (e) {
       console.log("Error: ", e);
     }
@@ -644,6 +645,7 @@ const find = async (code) => {
       //Lấy dữ liệu theo order_code
     } else {
       alert(`Không tìm thấy thông tin của đơn hàng với mã ${GHN_Code.value}`);
+      return;
     }
   } catch (e) {
     console.error("Error:", e.response ? e.response.data : e.message);
@@ -667,20 +669,20 @@ const formatCurrency = (value) => {
 };
 const formatPaymentType = (value) => {
   if (value === 1) {
-    return "Thanh toán khi nhận hàng (COD)";
-  } else if (value === 2) {
     return "Thanh toán trước (online payment)";
-  } else if (value === 3) {
-    return "Thanh toán qua ví điện tử, thẻ ngân hàng, ...";
+  } else if (value === 2) {
+    return "Thanh toán khi nhận hàng (COD)";
+  } else {
+    return "Hình thức thanh toán khác...";
   }
 };
-const formatShippingStatus = (index, value) => {
+const formatShippingStatus = (value) => {
   if (value === 0) {
     return "Chưa giao";
   } else if (value === 1) {
     return "Đang giao hàng";
   } else if (value === 2) {
-    isReceived.value[index] = true; 
+    // isReceived.value[index] = true;
     return "Giao hàng thành công";
   }
 };
@@ -784,7 +786,6 @@ const getAllDataOrder = async (id) => {
     );
     if (response.status === 200) {
       dataOrder.value = response.data;
-      console.log(dataOrder.value);
       isReceived.value = dataOrder.value.map((order) => order.status_id === 2);
     }
   } catch (e) {

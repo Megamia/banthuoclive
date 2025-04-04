@@ -7,6 +7,7 @@ use Betod\Livotec\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Betod\Livotec\Models\Orders;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
@@ -73,12 +74,16 @@ class OrderController extends Controller
 
         $ghnResponse = $this->createGhnOrder($order);
 
-        if (isset($ghnResponse['code']) && $ghnResponse['code'] === 200) {
+        if (is_array($ghnResponse) && isset($ghnResponse['code']) && $ghnResponse['code'] === 200) {
             $order->ghn_order_code = $ghnResponse['data']['order_code'] ?? 'DEFAULT_CODE';
             $order->save();
+        } elseif ($ghnResponse instanceof JsonResponse) {
+            $responseData = $ghnResponse->getData(true);
+            if (isset($responseData['message'])) {
+                return response()->json(['code' => 400, 'message' => $responseData['message']], 400);
+            }
         } else {
-            $order->ghn_order_code = 'DEFAULT_CODE';
-            $order->save();
+            return response()->json(['code' => 400, 'message' => 'Tạo đơn hàng thất bại. Vui lòng thử lại sau.'], 400);
         }
 
         UpdateOrderStatusJob::dispatch($order->id)->delay(now()->addMinutes(5));
@@ -178,6 +183,29 @@ class OrderController extends Controller
         return null;
     }
 
+    private function isValidShippingArea($provinceName, $districtName, $subdistrictName)
+    {
+        $provinceID = $this->getProvinceId($provinceName);
+        if (!$provinceID) {
+            \Log::error("Province not found: " . $provinceName);
+            return false;
+        }
+
+        $districtID = $this->getDistrictId($provinceID, $districtName);
+        if (!$districtID) {
+            \Log::error("District not found: " . $districtName);
+            return false;
+        }
+
+        $wardCode = $this->getWardCode($districtID, $subdistrictName);
+        if (!$wardCode) {
+            \Log::error("Ward not found: " . $subdistrictName);
+            return false;
+        }
+
+        return true;
+    }
+
     private function createGhnOrder($order)
     {
         \Log::info('Order Data:', $order->toArray());
@@ -186,39 +214,51 @@ class OrderController extends Controller
         $property = $order->property;
 
         $provinceName = trim($property['province']);
-        $provinceID = $this->getProvinceId($provinceName);
         $districtName = trim($property['district']);
         $subdistrictName = trim($property['subdistrict']);
 
+        if (!$this->isValidShippingArea($provinceName, $districtName, $subdistrictName)) {
+            \Log::error("Invalid shipping area for order: " . $order->order_code);
+            return response()->json(['code' => 400, 'message' => 'Invalid shipping area'], 400);
+        }
+
+        $provinceID = $this->getProvinceId($provinceName);
         if (!$provinceID) {
             \Log::error("GHN Province ID not found for: " . $provinceName);
-            return ['code' => 400, 'message' => 'Invalid province'];
+            return response()->json(['code' => 400, 'message' => 'Invalid province'], 400);
         }
 
         $districtID = $this->getDistrictId($provinceID, $districtName);
         if (!$districtID) {
             \Log::error("GHN District ID not found for: " . $districtName);
-            return ['code' => 400, 'message' => 'Invalid district'];
+            return response()->json(['code' => 400, 'message' => 'Invalid district'], 400);
         }
 
         $wardCode = $this->getWardCode($districtID, $subdistrictName);
         if (!$wardCode) {
             \Log::error("GHN Ward Code not found for: " . $subdistrictName);
-            return ['code' => 400, 'message' => 'Invalid ward'];
+            return response()->json(['code' => 400, 'message' => 'Invalid ward'], 400);
         }
 
         $senderProvinceName = 'Thành phố Hà Nội';
         $senderProvinceID = $this->getProvinceId($senderProvinceName);
+        if (!$senderProvinceID) {
+            \Log::error("Sender Province ID not found: " . $senderProvinceName);
+            return response()->json(['code' => 400, 'message' => 'Sender province invalid'], 400);
+        }
 
         $senderDistrictName = 'Quận Nam Từ Liêm';
         $senderDistrictID = $this->getDistrictId($senderProvinceID, $senderDistrictName);
+        if (!$senderDistrictID) {
+            \Log::error("Sender District ID not found: " . $senderDistrictName);
+            return response()->json(['code' => 400, 'message' => 'Sender district invalid'], 400);
+        }
 
         $senderWardName = 'Phường Mỹ Đình 1';
         $senderWardCode = $this->getWardCode($senderDistrictID, $senderWardName);
-
-        if (!$senderProvinceID || !$senderDistrictID || !$senderWardCode) {
-            \Log::error("Sender's address details are invalid.");
-            return ['code' => 400, 'message' => 'Sender address details are invalid.'];
+        if (!$senderWardCode) {
+            \Log::error("Sender Ward Code not found: " . $senderWardName);
+            return response()->json(['code' => 400, 'message' => 'Sender ward invalid'], 400);
         }
 
         $orderDetails = OrderDetail::where('order_id', $order->id)->get();
@@ -227,25 +267,24 @@ class OrderController extends Controller
 
             if ($product) {
                 return [
-                    'name' => $product->name,  
+                    'name' => $product->name,
                     'quantity' => $item->quantity,
                     'price' => $item->price,
                 ];
             }
 
             return [
-                'name' => 'Unknown Product',  
+                'name' => 'Unknown Product',
                 'quantity' => $item->quantity,
                 'price' => $item->price,
             ];
         })->toArray();
 
-
         $response = Http::withHeaders([
             'Token' => $apiKey,
             'Content-Type' => 'application/json',
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create', [
-                    'payment_type_id' => 1,
+                    'payment_type_id' => $order->property['paymenttype'],
                     'note' => $property['notes'] ?? '',
                     'to_name' => $property['name'],
                     'to_phone' => $property['phone'],
@@ -269,11 +308,17 @@ class OrderController extends Controller
                     'service_type_id' => 2,
                     'items' => $items,
                 ]);
+        \Log::error('GHN API response: ' . $response);
 
-        $ghnResponse = $response->json();
-        \Log::info('GHN API Response:', $ghnResponse);
-
-        return $ghnResponse;
+        if ($response->failed()) {
+            \Log::error('GHN API response error: ' . $response->body());
+            return response()->json(['code' => 400, 'message' => 'Khu vực này hiện tại đang quá tải không thể tạo đơn, mong quý khách thông cảm và tạo lại sau!'], 400);
+        } else {
+            \Log::info('GHN order created successfully: ' . $response->json());
+            return $response->json();
+        }
     }
+
+
 
 }

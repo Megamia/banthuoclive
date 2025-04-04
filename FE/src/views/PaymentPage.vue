@@ -21,7 +21,7 @@
         >
           <a-flex class="w-full gap-10 content">
             <a-flex vertical class="flex-wrap w-full flex-1">
-              <h3 class="text-xl font-medium">Billing details</h3>
+              <h3 class="text-xl font-medium">Chi tiết thanh toán</h3>
               <a-form-item ref="name" name="name" class="w-full">
                 <template #label>
                   <span class="text-base">Họ và tên</span>
@@ -39,6 +39,7 @@
                   <a-input
                     v-model:value="formState.phone"
                     placeholder="Nhập số điện thoại"
+                    class="min-w-[200px]"
                   />
                 </a-form-item>
                 <a-form-item ref="email" name="email" class="w-full">
@@ -48,6 +49,7 @@
                   <a-input
                     v-model:value="formState.email"
                     placeholder="Nhập địa chỉ email"
+                    class="min-w-[200px]"
                   />
                 </a-form-item>
               </a-flex>
@@ -62,6 +64,7 @@
                     v-model:value="LocateState.province"
                     @change="onProvinceChange"
                     placeholder="Chọn Tỉnh/Thành phố"
+                    class="min-w-[200px]"
                   >
                     <a-select-option
                       v-for="province in provinces"
@@ -80,6 +83,7 @@
                     v-model:value="LocateState.district"
                     @change="onDistrictChange"
                     placeholder="Chọn Quận/Huyện"
+                    class="min-w-[200px]"
                   >
                     <a-select-option
                       v-for="district in districts"
@@ -101,6 +105,7 @@
                   <a-select
                     v-model:value="LocateState.subdistrict"
                     placeholder="Chọn Xã/Phường/Thị trấn"
+                    class="min-w-[200px]"
                   >
                     <a-select-option
                       v-for="ward in wards"
@@ -120,6 +125,7 @@
                   <a-input
                     v-model:value="formState.address"
                     placeholder="Nhập địa chỉ cụ thể"
+                    class="min-w-[200px]"
                   />
                 </a-form-item>
               </a-flex>
@@ -329,7 +335,7 @@
                       chuyển.
                     </p>
                   </a-card>
-                  <a-radio :style="radioStyle" :value="2"
+                  <a-radio :style="radioStyle" :value="2" @click="test"
                     >Trả tiền mặt khi nhận hàng</a-radio
                   >
                   <a-card
@@ -429,6 +435,10 @@ const LocateState = reactive({
   diffdistrict: null,
   diffsubdistrict: null,
 });
+
+const test = () => {
+  PayPalButtonRef.value = false;
+};
 
 const fetchDataTable = async () => {
   try {
@@ -774,22 +784,30 @@ const onSubmit = async () => {
     if (formState.paymenttype == 1) {
       PayPalButtonRef.value = true;
     }
-    if (formState.paymenttype == 2) {
+    if (formState.paymenttype == 2 && formState) {
       PayPalButtonRef.value = false;
       const response = await axios.post(
         `${import.meta.env.VITE_APP_URL_API_ORDER}/createOrder`,
         formState
       );
-      store.dispatch("product/clearDataStoreCart");
-      alert("Order created successfully");
-
-      router.push(`/payment/order-received/${response.data.order_code}`);
+      console.log(response);
+      
+      if (response.status === 200) {
+        store.dispatch("product/clearDataStoreCart");
+        alert("Tạo đơn hàng thành công");
+        router.push(`/payment/order-received/${response.data.order_code}`);
+      } else {
+        alert("Có lỗi trong quá trình tạo đơn vui lòng thử lại sau");
+      }
+      return;
     }
   } catch (error) {
-    if (error.errors) {
-      console.error("Form validation failed:", error.errors);
+    if (error.status === 400) {
+      alert(error.response.data.message);
+      return;
     } else {
-      console.error("Failed to create order:", error);
+      alert("Có lỗi trong quá trình tạo đơn vui lòng thử lại sau");
+      return;
     }
   }
 };

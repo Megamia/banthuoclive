@@ -49,7 +49,7 @@
               </router-link>
             </td>
             <td>
-              <span class="text-[16px] text-[#02b6ac] font-bold">
+              <span class="text-[16px] text-[#2268DE] font-bold">
                 {{ formatPrice(item.price) }}
               </span>
             </td>
@@ -63,7 +63,7 @@
               />
             </td>
             <td>
-              <span class="text-[16px] text-[#02b6ac] font-bold">
+              <span class="text-[16px] text-[#2268DE] font-bold">
                 {{ formatPrice(item.price * item.quantity) }}
               </span>
             </td>
@@ -96,7 +96,7 @@
         </tbody>
       </table>
       <div
-        class="bg-[#3fb696] p-4 text-white text-center flex-1 cursor-pointer mt-[50px]"
+        class="bg-[#2268DE] p-4 text-white text-center flex-1 cursor-pointer mt-[50px]"
         @click="handlePayment"
       >
         <span class="text-lg font-bold">Tiến hành thanh toán</span>
@@ -183,6 +183,10 @@ const deleteItem = async (itemId) => {
 };
 
 const handlePayment = () => {
+  if (changeQuantity.value == false) {
+    alert("Cập nhật giỏ hàng trước khi thanh toán ");
+    return;
+  }
   router.push("/payment");
 };
 
@@ -191,6 +195,7 @@ const handleUpdateCart = () => {
     dataStoreCart: specs.value,
   });
   changeQuantity.value = true;
+  alert("Cập nhật giỏ hàng thành công!");
   const dataWithNoQuantity = specs.value.filter((item) => item.quantity === 0);
 
   if (dataWithNoQuantity && dataWithNoQuantity.length > 0) {
