@@ -112,4 +112,5 @@ Route::group(['prefix' => 'apiPaypal'], function () {
 
 Route::group(['prefix' => 'apiImport'], function () {
     Route::post('import', [\Betod\Livotec\Controllers\Product\ImportCSV::class, 'importCsv']);
+    Route::post('import-category', [\Betod\Livotec\Controllers\Category\ImportCSV::class, 'importCsv']);
 });

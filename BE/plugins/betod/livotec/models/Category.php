@@ -18,6 +18,18 @@ class Category extends Model
      * @var string table in the database used by the model.
      */
     public $table = 'betod_livotec_category';
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'parent_id',
+        'description',
+        'property',
+        'nest_left',
+        'nest_right',
+        'nest_depth',
+    ];
+    
     public $hasMany = [
         'filters' => ['Betod\Livotec\Models\Filter'],
         'products' => ['Betod\Livotec\Models\Product'],
