@@ -30,3 +30,7 @@ navigation:
                 label: Ingredients_Instructions
                 url: betod/livotec/ingredients_instructions
                 icon: icon-sitemap
+            revenue:
+                label: Revenue
+                url: betod/livotec/revenue
+                icon: icon-sitemap

@@ -180,3 +180,6 @@ v1.0.66:
 v1.0.67:
     - 'Updated table betod_livotec_orders'
     - builder_table_update_betod_livotec_orders_9.php
+v1.0.68:
+    - 'Created table betod_livotec_revenue'
+    - builder_table_create_betod_livotec_revenue.php
