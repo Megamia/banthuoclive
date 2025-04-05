@@ -33,4 +33,4 @@ navigation:
             revenue:
                 label: Revenue
                 url: betod/livotec/revenue
-                icon: icon-sitemap
+                icon: icon-signal
