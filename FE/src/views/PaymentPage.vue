@@ -790,11 +790,13 @@ const onSubmit = async () => {
         `${import.meta.env.VITE_APP_URL_API_ORDER}/createOrder`,
         formState
       );
-      console.log(response);
-      
-      if (response.status === 200) {
+      // console.log(response);
+
+      if (response.status === 200 || response.status === 201) {
         store.dispatch("product/clearDataStoreCart");
-        alert("Tạo đơn hàng thành công");
+        Modal.success({
+          title: "Tạo đơn hàng thành công!",
+        });
         router.push(`/payment/order-received/${response.data.order_code}`);
       } else {
         alert("Có lỗi trong quá trình tạo đơn vui lòng thử lại sau");
@@ -820,9 +822,7 @@ const handlePaymentSuccess = async (orderID) => {
     );
 
     store.dispatch("product/clearDataStoreCart");
-    Modal.success({
-      title: "Thanh toán đơn hàng thành công!",
-    });
+
     console.log(response);
 
     router.push(`/payment/order-received/${response.data.order_code}`);

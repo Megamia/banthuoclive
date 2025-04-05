@@ -2,17 +2,22 @@
 namespace Betod\Livotec\Controllers\Revenue;
 
 use Backend\Classes\Controller;
-use Betod\Livotec\Models\Revenue;
+use Betod\Livotec\Models\Orders;
+use Illuminate\Support\Facades\DB;
 
 class RevenueChart extends Controller
 {
     public function chart()
     {
-        $revenueData = Revenue::selectRaw('DATE(sale_date) as sale_day, SUM(total_revenue) as total')
-            ->groupBy('sale_day')
-            ->orderBy('sale_day', 'asc')
-            ->pluck('total', 'sale_day')->toArray();
+        $revenueData = Orders::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(price) as total')
+            ->where('status_id', 2)  
+            ->groupBy(DB::raw('DATE_FORMAT(created_at, "%Y-%m")'))  
+            ->orderBy('month', 'asc') 
+            ->pluck('total', 'month')  
+            ->toArray();
+
         \Log::error('data: ', $revenueData);
+
         if ($revenueData) {
             return response()->json($revenueData);
         } else {

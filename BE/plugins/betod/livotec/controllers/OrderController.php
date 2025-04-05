@@ -208,8 +208,6 @@ class OrderController extends Controller
 
     private function createGhnOrder($order)
     {
-        \Log::info('Order Data:', $order->toArray());
-
         $apiKey = env('GHN_API_KEY');
         $property = $order->property;
 
@@ -284,7 +282,7 @@ class OrderController extends Controller
             'Token' => $apiKey,
             'Content-Type' => 'application/json',
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create', [
-                    'payment_type_id' => $order->property['paymenttype'],
+                    'payment_type_id' => isset($order->property['paymenttype']) ? $order->property['paymenttype'] : null,
                     'note' => $property['notes'] ?? '',
                     'to_name' => $property['name'],
                     'to_phone' => $property['phone'],
@@ -311,10 +309,11 @@ class OrderController extends Controller
         \Log::error('GHN API response: ' . $response);
 
         if ($response->failed()) {
-            \Log::error('GHN API response error: ' . $response->body());
+            \Log::error('GHN API response: ' . $response);
+
             return response()->json(['code' => 400, 'message' => 'Khu vực này hiện tại đang quá tải không thể tạo đơn, mong quý khách thông cảm và tạo lại sau!'], 400);
         } else {
-            \Log::info('GHN order created successfully: ' . $response->json());
+            \Log::info('GHN order created successfully: ' . $response);
             return $response->json();
         }
     }
