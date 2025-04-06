@@ -23,8 +23,6 @@ _ide_helper.php
 .phpunit.result.cache
 nbproject
 .phpstorm.meta.php
-/storage/*
-!/storage/app/uploads/public/
 
 # Project
 /bootstrap/compiled.php
