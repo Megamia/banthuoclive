@@ -47,7 +47,7 @@
               class="text-center flex-1 border p-4 flex items-center flex-col gap-[10px] min-h-[200px] overflow-hidden"
             >
               <img
-                :src="product.image.path || 'https://via.placeholder.com/100'"
+                :src="product.image?.path || 'https://via.placeholder.com/100'"
                 class="w-24 h-24 object-cover"
               />
               <a
@@ -148,6 +148,7 @@ const analyzeImage = async () => {
   result.value = null;
   productsFromDB.value = [];
   first_attempt.value = false;
+
   try {
     const dataProduct = await getDataFromIndexedDB("products");
 

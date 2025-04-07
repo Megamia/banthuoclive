@@ -289,7 +289,7 @@ const getdata = async () => {
     const allowedCategories = [
       "thuc-pham-chuc-nang",
       "duoc-my-pham",
-      "thuoc",
+      "cham-soc-ca-nhan",
       "thiet-bi-y-te",
     ];
 

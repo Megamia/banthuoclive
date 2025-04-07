@@ -4,7 +4,7 @@
     <NavProductComponent />
     <ProductComponent :categorySlug="'thuc-pham-chuc-nang'" />
     <ProductComponent :categorySlug="'duoc-my-pham'" />
-    <ProductComponent :categorySlug="'thuoc'" />
+    <ProductComponent :categorySlug="'cham-soc-ca-nhan'" />
     <ProductComponent :categorySlug="'thiet-bi-y-te'" />
     <a-flex class="border-[1px] justify-center items-center p-[10px]">
       <ImageRecognition />
