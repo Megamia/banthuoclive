@@ -109,7 +109,7 @@ class OrderController extends Controller
         $provinceList = $response->json();
 
         if (!isset($provinceList['data']) || !is_array($provinceList['data'])) {
-            \Log::error('GHN Province List Fetch Error:', $provinceList);
+            // \Log::error('GHN Province List Fetch Error:', $provinceList);
             return null;
         }
 
@@ -127,7 +127,7 @@ class OrderController extends Controller
             }
         }
 
-        \Log::error("GHN Province ID not found for: " . $provinceName);
+        // \Log::error("GHN Province ID not found for: " . $provinceName);
         return null;
     }
 
@@ -143,7 +143,7 @@ class OrderController extends Controller
         $districtList = $response->json();
 
         if (!isset($districtList['data']) || !is_array($districtList['data'])) {
-            \Log::error('GHN District List Fetch Error:', $districtList);
+            // \Log::error('GHN District List Fetch Error:', $districtList);
             return null;
         }
 
@@ -153,7 +153,7 @@ class OrderController extends Controller
             }
         }
 
-        \Log::error("GHN District ID not found for: " . $districtName);
+        // \Log::error("GHN District ID not found for: " . $districtName);
         return null;
     }
 
@@ -169,7 +169,7 @@ class OrderController extends Controller
         $wardList = $response->json();
 
         if (!isset($wardList['data']) || !is_array($wardList['data'])) {
-            \Log::error('GHN Ward List Fetch Error:', $wardList);
+            // \Log::error('GHN Ward List Fetch Error:', $wardList);
             return null;
         }
 
@@ -179,7 +179,7 @@ class OrderController extends Controller
             }
         }
 
-        \Log::error("GHN Ward Code not found for: " . $wardName);
+        // \Log::error("GHN Ward Code not found for: " . $wardName);
         return null;
     }
 
@@ -187,19 +187,19 @@ class OrderController extends Controller
     {
         $provinceID = $this->getProvinceId($provinceName);
         if (!$provinceID) {
-            \Log::error("Province not found: " . $provinceName);
+            // \Log::error("Province not found: " . $provinceName);
             return false;
         }
 
         $districtID = $this->getDistrictId($provinceID, $districtName);
         if (!$districtID) {
-            \Log::error("District not found: " . $districtName);
+            // \Log::error("District not found: " . $districtName);
             return false;
         }
 
         $wardCode = $this->getWardCode($districtID, $subdistrictName);
         if (!$wardCode) {
-            \Log::error("Ward not found: " . $subdistrictName);
+            // \Log::error("Ward not found: " . $subdistrictName);
             return false;
         }
 
@@ -216,46 +216,46 @@ class OrderController extends Controller
         $subdistrictName = trim($property['subdistrict']);
 
         if (!$this->isValidShippingArea($provinceName, $districtName, $subdistrictName)) {
-            \Log::error("Invalid shipping area for order: " . $order->order_code);
+            // \Log::error("Invalid shipping area for order: " . $order->order_code);
             return response()->json(['code' => 400, 'message' => 'Invalid shipping area'], 400);
         }
 
         $provinceID = $this->getProvinceId($provinceName);
         if (!$provinceID) {
-            \Log::error("GHN Province ID not found for: " . $provinceName);
+            // \Log::error("GHN Province ID not found for: " . $provinceName);
             return response()->json(['code' => 400, 'message' => 'Invalid province'], 400);
         }
 
         $districtID = $this->getDistrictId($provinceID, $districtName);
         if (!$districtID) {
-            \Log::error("GHN District ID not found for: " . $districtName);
+            // \Log::error("GHN District ID not found for: " . $districtName);
             return response()->json(['code' => 400, 'message' => 'Invalid district'], 400);
         }
 
         $wardCode = $this->getWardCode($districtID, $subdistrictName);
         if (!$wardCode) {
-            \Log::error("GHN Ward Code not found for: " . $subdistrictName);
+            // \Log::error("GHN Ward Code not found for: " . $subdistrictName);
             return response()->json(['code' => 400, 'message' => 'Invalid ward'], 400);
         }
 
         $senderProvinceName = 'Thành phố Hà Nội';
         $senderProvinceID = $this->getProvinceId($senderProvinceName);
         if (!$senderProvinceID) {
-            \Log::error("Sender Province ID not found: " . $senderProvinceName);
+            // \Log::error("Sender Province ID not found: " . $senderProvinceName);
             return response()->json(['code' => 400, 'message' => 'Sender province invalid'], 400);
         }
 
         $senderDistrictName = 'Quận Nam Từ Liêm';
         $senderDistrictID = $this->getDistrictId($senderProvinceID, $senderDistrictName);
         if (!$senderDistrictID) {
-            \Log::error("Sender District ID not found: " . $senderDistrictName);
+            // \Log::error("Sender District ID not found: " . $senderDistrictName);
             return response()->json(['code' => 400, 'message' => 'Sender district invalid'], 400);
         }
 
         $senderWardName = 'Phường Mỹ Đình 1';
         $senderWardCode = $this->getWardCode($senderDistrictID, $senderWardName);
         if (!$senderWardCode) {
-            \Log::error("Sender Ward Code not found: " . $senderWardName);
+            // \Log::error("Sender Ward Code not found: " . $senderWardName);
             return response()->json(['code' => 400, 'message' => 'Sender ward invalid'], 400);
         }
 
@@ -306,14 +306,14 @@ class OrderController extends Controller
                     'service_type_id' => 2,
                     'items' => $items,
                 ]);
-        \Log::error('GHN API response: ' . $response);
+        // \Log::error('GHN API response: ' . $response);
 
         if ($response->failed()) {
-            \Log::error('GHN API response: ' . $response);
+            // \Log::error('GHN API response: ' . $response);
 
             return response()->json(['code' => 400, 'message' => 'Khu vực này hiện tại đang quá tải không thể tạo đơn, mong quý khách thông cảm và tạo lại sau!'], 400);
         } else {
-            \Log::info('GHN order created successfully: ' . $response);
+            // \Log::info('GHN order created successfully: ' . $response);
             return $response->json();
         }
     }

@@ -16,7 +16,7 @@ class RevenueChart extends Controller
             ->pluck('total', 'month')  
             ->toArray();
 
-        \Log::error('data: ', $revenueData);
+        // \Log::error('data: ', $revenueData);
 
         if ($revenueData) {
             return response()->json($revenueData);

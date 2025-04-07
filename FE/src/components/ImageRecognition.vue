@@ -130,7 +130,7 @@ const handleFileUpload = (event) => {
 };
 
 const categoryMapping = {
-  Vitamin: "Vitamin & Khoáng chất",
+  "vitamin": "Vitamin & Khoáng chất",
   "Cải thiện chức năng tăng cường": "Cải thiện tăng cường chức năng",
   "Thuốc tiêu hóa gan mật": "Thuốc tiêu hoá & gan mật",
   "Cơ xương khớp": "Cơ-xương-khớp",
@@ -168,15 +168,21 @@ const analyzeImage = async () => {
     }
 
     result.value = clarifaiResponse;
-
     let detectedCategory = result.value.outputs[0].data.concepts[0].name.trim();
 
     detectedCategory = detectedCategory.replace(/\s+/g, " ");
+
+    detectedCategory = detectedCategory.toLowerCase();
+
     detectedCategory = categoryMapping[detectedCategory] || detectedCategory;
 
-    productsFromDB.value = dataProduct.filter(
-      (item) => item.category?.name === detectedCategory
-    );
+    productsFromDB.value = dataProduct.filter((item) => {
+      const categoryName = item.category?.name
+        .trim()
+        .replace(/\s+/g, " ")
+        .toLowerCase();
+      return categoryName === detectedCategory;
+    });
 
     if (productsFromDB.value.length === 0) {
       console.log("Không tìm thấy sản phẩm trong kho.");

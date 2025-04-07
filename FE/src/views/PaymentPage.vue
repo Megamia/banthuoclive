@@ -823,7 +823,7 @@ const handlePaymentSuccess = async (orderID) => {
 
     store.dispatch("product/clearDataStoreCart");
 
-    console.log(response);
+    //console.log(response);
 
     router.push(`/payment/order-received/${response.data.order_code}`);
   } catch (error) {
