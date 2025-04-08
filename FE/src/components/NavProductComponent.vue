@@ -7,7 +7,7 @@
     <a-flex class="max-w-[100%]">
       <a-tabs
         v-model:data="activeKey"
-        class="nav max-w-[100%]"
+        class="nav max-w-[100%] "
         @change="changeData"
       >
         <a-tab-pane
