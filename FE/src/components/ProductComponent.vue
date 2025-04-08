@@ -43,14 +43,14 @@
             <a-flex vertical align="center" class="flex-1">
               <div class="w-full relative pt-[20px] justify-center flex">
                 <img
-                  class="w-[300px] h-[300px] max-w-[100%]"
+                  class="w-[100%] px-[10px] bg-white h-[300px] max-w-[100%]"
                   :src="
                     itemChil.image?.path ||
                     'http://cptudong.vmts.vn/content/images/thumbs/default-image_450.png'
                   "
                 />
                 <div
-                  v-if="itemChil.sold_out >= 10"
+                  v-if="itemChil.sold_out >= 100"
                   class="absolute bg-[#ffdc37] top-[20px] right-0 rounded-l-md z-10 bestseller"
                 >
                   <span class="text-black"

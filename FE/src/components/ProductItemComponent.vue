@@ -11,7 +11,7 @@
           class="h-[300px] w-[300px]"
         />
         <div
-          v-if="product.sold_out >= 10"
+          v-if="product.sold_out >= 100"
           class="absolute bg-[#ffdc37] top-[20px] right-0 rounded-l-md z-10 bestseller"
         >
           <span class="text-black"

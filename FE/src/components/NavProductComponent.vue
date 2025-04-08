@@ -56,9 +56,19 @@
                     itemChil?.image?.path ||
                     'http://cptudong.vmts.vn/content/images/thumbs/default-image_450.png'
                   "
-                  class="justify-center items-center w-[300px] h-[300px] max-w-full max-h-full object-cover"
+                  class="justify-center items-center w-[100%] px-[10px] bg-white h-[300px] max-w-[300px] max-h-full object-cover"
                 />
                 <div
+                  v-if="itemChil.sold_out >= 100"
+                  class="absolute bg-[#ffdc37] top-[20px] right-0 rounded-l-md z-10 bestseller"
+                >
+                  <span class="text-black"
+                    >Bán chạy <br />
+                    nhất</span
+                  >
+                </div>
+                <div
+                  v-else
                   class="absolute bg-[#e20008] top-[20px] right-0 rounded-l-md label z-10 title"
                 >
                   <span class="text-[20px] text-white">Mới nhất</span>
@@ -124,10 +134,7 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  onMounted,
-} from "vue";
+import { ref, onMounted } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -157,7 +164,7 @@ const validateCategory = ref([]);
 const categoryOrder = {
   "thuc-pham-chuc-nang": 1,
   "duoc-my-pham": 2,
-  "thuoc": 3,
+  thuoc: 3,
   "thiet-bi-y-te": 4,
   "cham-soc-ca-nhan": 5,
 };
@@ -278,7 +285,6 @@ const prevSlide = () => {
 const nextSlide = () => {
   if (swiperInstance.value) swiperInstance.value.slideNext();
 };
-
 </script>
 
 <style scoped>
@@ -311,6 +317,31 @@ const nextSlide = () => {
     width: 200px;
     height: 200px;
   }
+}
+.bestseller span::after {
+  content: "";
+  display: block;
+  width: 0;
+  height: 0;
+  border-right: 10px solid #e3c849;
+  border-bottom: 10px solid transparent;
+  position: absolute;
+  bottom: -10px;
+  right: 0;
+}
+
+.bestseller span {
+  text-align: center;
+  font-size: 14px;
+  line-height: 13px;
+  font-weight: 700;
+  min-height: 38px;
+  justify-content: center;
+  display: flex;
+  padding: 7px 10px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  position: relative;
 }
 </style>
 
