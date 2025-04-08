@@ -19,6 +19,7 @@ function handleProductFind($message)
     });
 
     if ($products->isNotEmpty()) {
+        $products=$products->sortBy('price');
         $reply = "🔍 Danh sách sản phẩm phù hợp:\n";
         foreach ($products as $index => $product) {
             $reply .= sprintf(
