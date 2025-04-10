@@ -82,7 +82,7 @@
                 class="w-[60px] h-[60px] text-[#2268DE] cursor-default"
               />
               <span class="font-medium text-sm"
-                >Miễn phí lắp đặt toàn quốc</span
+                >Miễn phí hỗ trợ toàn quốc</span
               >
             </div>
           </div>

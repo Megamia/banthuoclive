@@ -220,6 +220,7 @@
 import { ref, computed } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { Modal } from "ant-design-vue";
 
 const router = useRouter();
 
@@ -268,12 +269,18 @@ const login = async () => {
     );
 
     if (response.status === 205) {
-      alert("Sai tài khoản hoặc mật khẩu!");
+      // alert("Sai tài khoản hoặc mật khẩu!");
+      Modal.error({
+          title: "Sai tài khoản hoặc mật khẩu!",
+        });
       retryDelay = Math.min(retryDelay);
       return;
     } else if (response.data) {
       sessionStorage.setItem("user", JSON.stringify(response.data.user));
-      alert("Đăng nhập thành công!");
+      // alert("Đăng nhập thành công!");
+      Modal.success({
+          title: "Đăng nhập thành công!",
+        });
       retryDelay = 2000;
       router.push("/");
     }

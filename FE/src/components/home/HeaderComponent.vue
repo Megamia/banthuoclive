@@ -54,7 +54,7 @@
           class="flex flex-row items-center gap-1 font-semibold hover:text-white text-nowrap basis-1/7"
         >
           <a
-            class="ant-dropdown-link hover:bg-[#007BFF]"
+            class="ant-dropdown-link hover:bg-[#007BFF] capitalize"
             :href="
               item.products?.length
                 ? `/category/${item.category.slug}`
