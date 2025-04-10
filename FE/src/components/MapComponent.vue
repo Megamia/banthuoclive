@@ -19,6 +19,7 @@ let map = null;
 let platform = null;
 let userMarker = null;
 let markers = [];
+let currentRoute = null;
 
 const loadMap = async () => {
   await nextTick();
@@ -140,10 +141,26 @@ const searchPharmacies = async (lat, lon) => {
       );
 
       marker.addEventListener("tap", () => {
-        alert(
-          `Tên: ${pharmacy.title}\nĐịa chỉ: ${pharmacy.address.label}\nKhoảng cách: ${pharmacy.distance}m`
-        );
+        if (!userMarker) {
+          alert("Bạn cần lấy vị trí hiện tại trước!");
+          return;
+        }
+
+        if (
+          confirm(
+            `Tên: ${pharmacy.title}\nĐịa chỉ: ${pharmacy.address.label}\nKhoảng cách: ${pharmacy.distance}m\n\nBạn có muốn chỉ đường đến đây không?`
+          )
+        ) {
+          const userPosition = userMarker.getGeometry();
+          drawRoute(
+            userPosition.lat,
+            userPosition.lng,
+            pharmacy.position.lat,
+            pharmacy.position.lng
+          );
+        }
       });
+
       marker.addEventListener("pointerenter", () => {
         map.getElement().style.cursor = "pointer";
       });
@@ -160,6 +177,40 @@ const searchPharmacies = async (lat, lon) => {
     error.value = "Không thể tải dữ liệu từ API.";
     console.error("Lỗi API:", err);
     loading.value = false;
+  }
+};
+const drawRoute = async (startLat, startLng, endLat, endLng) => {
+  if (currentRoute) {
+    map.removeObject(currentRoute); 
+    currentRoute = null;
+  }
+
+  const routeUrl = `https://router.hereapi.com/v8/routes?transportMode=car&origin=${startLat},${startLng}&destination=${endLat},${endLng}&return=polyline&apikey=${
+    import.meta.env.VITE_MAP_API_KEY
+  }`;
+
+  try {
+    const response = await fetch(routeUrl);
+    const data = await response.json();
+
+    if (data.routes.length === 0) {
+      error.value = "Không tìm được đường đi.";
+      return;
+    }
+
+    const routeShape = data.routes[0].sections[0].polyline;
+
+    const linestring = H.geo.LineString.fromFlexiblePolyline(routeShape);
+
+    currentRoute = new H.map.Polyline(linestring, {
+      style: { strokeColor: "red", lineWidth: 4 },
+    });
+
+    map.addObject(currentRoute);
+    map.getViewModel().setLookAtData({ bounds: currentRoute.getBoundingBox() });
+  } catch (err) {
+    console.error("Lỗi vẽ đường:", err);
+    error.value = "Không thể vẽ đường đi.";
   }
 };
 
