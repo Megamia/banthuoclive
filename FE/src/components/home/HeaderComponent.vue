@@ -229,8 +229,6 @@ const getUserSession = () => {
 };
 
 const checkUserSession = () => {
-  console.log(getUserSession());
-
   if (getUserSession() == true) {
     getUser();
   } else {
@@ -421,14 +419,13 @@ onMounted(async () => {
     return section;
   });
 });
-
 const filteredData = computed(() => {
   if (!searchInput.value.trim()) {
     return data1.value;
   }
 
   const result = allProducts.value.filter((product) =>
-    product.name.toLowerCase().includes(searchInput.value.toLowerCase())
+    product.name?.toLowerCase().includes(searchInput.value.toLowerCase())
   );
 
   return result.length
