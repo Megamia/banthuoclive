@@ -16,11 +16,11 @@
 </template>
 
 <script setup>
-import HomeHeroSlideComponent from "@/components/HomeHeroSlideComponent.vue";
-import NavProductComponent from "@/components/NavProductComponent.vue";
-import ProductComponent from "@/components/ProductComponent.vue";
-import MapComponent from "@/components/MapComponent.vue";
-import ImageRecognition from "@/components/ImageRecognition.vue";
+import HomeHeroSlideComponent from "../components/HomeHeroSlideComponent.vue";
+import NavProductComponent from "../components/NavProductComponent.vue";
+import ProductComponent from "../components/ProductComponent.vue";
+import MapComponent from "../components/MapComponent.vue";
+import ImageRecognition from "../components/ImageRecognition.vue";
 </script>
 
 <style scoped></style>

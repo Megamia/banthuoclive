@@ -1,6 +1,7 @@
 <?php
 namespace Betod\Livotec\Models;
 
+use App\Events\ProductUpdated;
 use Illuminate\Support\Facades\Cache;
 use Model;
 
@@ -56,19 +57,26 @@ class Product extends Model
      * @var array rules for validation.
      */
     public $rules = [];
-    // protected static function boot()
-    // {
-    //     parent::boot();
+    protected static function bootProduct()
+    {
+        parent::boot();
 
-    //     static::saved(function ($product) {
-    //         Cache::forget('all_products');
-    //         \Log::info("🔥 Cache all_products đã bị xóa do cập nhật sản phẩm: " . $product->id);
-    //     });
+        static::created(function ($product) {
+            event(new ProductUpdated($product));
+        });
 
-    //     static::deleted(function ($product) {
-    //         Cache::forget('all_products');
-    //         \Log::info("🔥 Cache all_products đã bị xóa do xóa sản phẩm: " . $product->id);
-    //     });
+        static::updated(function ($product) {
+            event(new ProductUpdated($product));
+        });
 
-    // }
+        static::deleted(function ($product) {
+            event(new ProductUpdated($product));
+        });
+
+
+    }
+    public function beforeValidate()
+    {
+        $this->available = $this->stock > 0 ? true : false;
+    }
 }

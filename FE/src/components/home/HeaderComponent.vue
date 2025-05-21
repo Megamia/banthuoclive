@@ -229,7 +229,9 @@ const getUserSession = () => {
 };
 
 const checkUserSession = () => {
-  if (!getUserSession()) {
+  console.log(getUserSession());
+
+  if (getUserSession() == true) {
     getUser();
   } else {
     return;

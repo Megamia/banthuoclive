@@ -21,24 +21,20 @@ class Product extends Controller
         parent::__construct();
         BackendMenu::setContext('Betod.Livotec', 'main-menu-item', 'side-menu-item');
     }
-    protected static function boot()
+    public function listExtendQuery($query)
     {
-        parent::boot();
-
-        // Khi sản phẩm được cập nhật
-        static::updated(function ($product) {
-            event(new ProductUpdated($product)); // Phát sự kiện khi sản phẩm được cập nhật
-        });
-
-        // Khi sản phẩm được tạo mới
-        static::created(function ($product) {
-            event(new ProductUpdated($product)); // Phát sự kiện khi sản phẩm mới được tạo
-        });
-
-        // Khi sản phẩm bị xóa
-        static::deleted(function ($product) {
-            event(new ProductUpdated($product)); // Phát sự kiện khi sản phẩm bị xóa
-        });
+        if ($status = input('filter_status')) {
+            switch ($status) {
+                case 'out_of_stock':
+                    $query->where('stock', 0);
+                    break;
+                case 'best_seller':
+                    $query->where('sold_out', '>', 100); 
+                    break;
+                case 'in_stock':
+                    $query->where('stock', '>', 0);
+                    break;
+            }
+        }
     }
-
 }
