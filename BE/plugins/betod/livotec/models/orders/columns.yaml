@@ -27,3 +27,6 @@ columns:
         searchable: true
         sortable: true
         path: ~/plugins/betod/livotec/partials/_paymenttype_column.php
+    ghn_order_code:
+        label: 'GHN CODE'
+        type: text

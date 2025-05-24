@@ -68,10 +68,10 @@
                   >
                     <a-select-option
                       v-for="province in provinces"
-                      :key="province.code"
-                      :value="province.code"
+                      :key="province.ProvinceID"
+                      :value="province.ProvinceID"
                     >
-                      {{ province.name }}
+                      {{ province.ProvinceName }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
@@ -87,10 +87,10 @@
                   >
                     <a-select-option
                       v-for="district in districts"
-                      :key="district.code"
-                      :value="district.code"
+                      :key="district.DistrictID"
+                      :value="district.DistrictID"
                     >
-                      {{ district.name }}
+                      {{ district.DistrictName }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
@@ -109,10 +109,10 @@
                   >
                     <a-select-option
                       v-for="ward in wards"
-                      :key="ward.code"
-                      :value="ward.code"
+                      :key="ward.WardCode"
+                      :value="ward.WardCode"
                     >
-                      {{ ward.name }}
+                      {{ ward.WardName }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
@@ -175,10 +175,10 @@
                     >
                       <a-select-option
                         v-for="province in diffprovinces"
-                        :key="province.code"
-                        :value="province.code"
+                        :key="province.ProvinceID"
+                        :value="province.ProvinceID"
                       >
-                        {{ province.name }}
+                        {{ province.ProvinceName }}
                       </a-select-option>
                     </a-select>
                   </a-form-item>
@@ -193,10 +193,10 @@
                     >
                       <a-select-option
                         v-for="district in diffdistricts"
-                        :key="district.code"
-                        :value="district.code"
+                        :key="district.DistrictID"
+                        :value="district.DistrictID"
                       >
-                        {{ district.name }}
+                        {{ district.DistrictName }}
                       </a-select-option>
                     </a-select>
                   </a-form-item>
@@ -214,10 +214,10 @@
                     >
                       <a-select-option
                         v-for="ward in diffwards"
-                        :key="ward.code"
-                        :value="ward.code"
+                        :key="ward.WardCode"
+                        :value="ward.WardCode"
                       >
-                        {{ ward.name }}
+                        {{ ward.WardName }}
                       </a-select-option>
                     </a-select>
                   </a-form-item>
@@ -526,32 +526,50 @@ const radioStyle = reactive({
   lineHeight: "30px",
 });
 
-const host = "https://provinces.open-api.vn/api/";
+const host = import.meta.env.VITE_APP_URL_API_GHN;
 
 const fetchProvinces = async () => {
   try {
-    const response = await axios.get(`${host}?depth=1`);
-    provinces.value = response.data;
-    diffprovinces.value = response.data;
+    const token = localStorage.getItem("vuex");
+    if (!token) {
+      console.warn("Token not found");
+      return;
+    }
+
+    const response = await axios.get(`${host}/ghn/provinces`, {
+      headers: {
+        Token: token,
+      },
+    });
+
+    provinces.value = response.data.data;
+    diffprovinces.value = response.data.data;
   } catch (error) {
-    console.error("Failed to fetch provinces:", error);
+    console.error("Failed to fetch GHN provinces:", error);
   }
 };
 
 const onProvinceChange = async () => {
   const provinceCode = LocateState.province;
   const diffprovinceCode = LocateState.diffprovince;
+  const token = localStorage.getItem("vuex");
+  if (!token) {
+    console.warn("Token not found");
+    return;
+  }
 
   try {
     if (provinceCode) {
-      const response = await axios.get(`${host}p/${provinceCode}?depth=2`);
-      districts.value = response.data.districts;
-      if (
-        districts.value.some(
-          (districts) => districts.code === LocateState.district
-        )
-      ) {
-      } else {
+      const response = await axios.get(
+        `${host}/ghn/districts/${provinceCode}`,
+        {
+          headers: {
+            Token: token,
+          },
+        }
+      );
+      districts.value = response.data.data || [];
+      if (!districts.value.some((d) => d.DistrictID === LocateState.district)) {
         LocateState.district = null;
         wards.value = [];
         LocateState.subdistrict = null;
@@ -559,106 +577,137 @@ const onProvinceChange = async () => {
     }
 
     if (diffprovinceCode) {
-      const response = await axios.get(`${host}p/${diffprovinceCode}?depth=2`);
-      diffdistricts.value = response.data.districts;
+      const response = await axios.get(
+        `${host}/ghn/districts/${diffprovinceCode}`,
+        {
+          headers: {
+            Token: token,
+          },
+        }
+      );
+      diffdistricts.value = response.data.data || [];
+
       if (
-        diffdistricts.value.some(
-          (diffdistricts) => diffdistricts.code === LocateState.diffdistrict
+        !diffdistricts.value.some(
+          (d) => d.DistrictID === LocateState.diffdistrict
         )
       ) {
-      } else {
         LocateState.diffdistrict = null;
         diffwards.value = [];
         LocateState.diffsubdistrict = null;
       }
     }
   } catch (error) {
-    console.error("Failed to fetch districts:", error);
+    console.error("Failed to fetch GHN districts:", error);
   }
 };
 
 const onDistrictChange = async () => {
   const districtCode = LocateState.district;
   const diffdistrictCode = LocateState.diffdistrict;
-
+  const token = localStorage.getItem("vuex");
+  if (!token) {
+    console.warn("Token not found");
+    return;
+  }
   try {
     if (districtCode) {
-      const response = await axios.get(`${host}d/${districtCode}?depth=2`);
-      wards.value = response.data.wards;
-      if (wards.value.some((wards) => wards.code === LocateState.subdistrict)) {
-      } else {
+      const response = await axios.get(`${host}/ghn/wards/${districtCode}`, {
+        headers: {
+          Token: token,
+        },
+      });
+      wards.value = response.data.data || [];
+      if (!wards.value.some((w) => w.WardCode === LocateState.subdistrict)) {
         LocateState.subdistrict = null;
       }
     }
 
     if (diffdistrictCode) {
-      const response = await axios.get(`${host}d/${diffdistrictCode}?depth=2`);
-      diffwards.value = response.data.wards;
+      const response = await axios.get(
+        `${host}/ghn/wards/${diffdistrictCode}`,
+        {
+          headers: {
+            Token: token,
+          },
+        }
+      );
+      diffwards.value = response.data.data || [];
+
       if (
-        diffwards.value.some(
-          (diffwards) => diffwards.code === LocateState.diffsubdistrict
-        )
+        !diffwards.value.some((w) => w.WardCode === LocateState.diffsubdistrict)
       ) {
-      } else {
         LocateState.diffsubdistrict = null;
       }
     }
   } catch (error) {
-    console.error("Failed to fetch wards:", error);
+    console.error("Failed to fetch GHN wards:", error);
   }
 };
 
 function handleProvinceChange(newProvinceCode) {
   const selectedProvince = provinces.value.find(
-    (p) => p.code === newProvinceCode
+    (p) => p.ProvinceID === newProvinceCode
   );
   if (selectedProvince) {
-    formState.province = selectedProvince.name;
+    formState.province = selectedProvince.ProvinceID ?? "";
+  } else {
+    formState.province = "";
   }
 }
-
 function handleDistrictChange(newDistrictCode) {
   const selectedDistrict = districts.value.find(
-    (d) => d.code === newDistrictCode
+    (d) => d.DistrictID === newDistrictCode
   );
   if (selectedDistrict) {
-    formState.district = selectedDistrict.name;
+    formState.district = selectedDistrict.DistrictID ?? "";
+  } else {
+    formState.district = "";
   }
 }
 
 function handleSubdistrictChange(newSubdistrictCode) {
-  const selectedSubdistrict = wards.value.find(
-    (w) => w.code === newSubdistrictCode
+  const selectedWard = wards.value.find(
+    (w) => w.WardCode === newSubdistrictCode
   );
-  if (selectedSubdistrict) {
-    formState.subdistrict = selectedSubdistrict.name;
+  if (selectedWard) {
+    formState.subdistrict = Number(selectedWard.WardCode) ?? "";
+  } else {
+    formState.subdistrict = "";
   }
 }
+
 function handleDiffProvinceChange(newDiffProvinceCode) {
-  const selectedDiffProvince = provinces.value.find(
-    (p) => p.code === newDiffProvinceCode
+  const selectedDiffProvince = diffprovinces.value.find(
+    (p) => p.ProvinceID === newDiffProvinceCode
   );
-  formState.diffprovince = selectedDiffProvince
-    ? selectedDiffProvince.name
-    : "";
+  if (selectedDiffProvince) {
+    formState.diffprovince = selectedDiffProvince.ProvinceID ?? "";
+  } else {
+    formState.diffprovince = "";
+  }
 }
 
 function handleDiffDistrictChange(newDiffDistrictCode) {
   const selectedDiffDistrict = diffdistricts.value.find(
-    (d) => d.code === newDiffDistrictCode
+    (d) => d.DistrictID === newDiffDistrictCode
   );
-  formState.diffdistrict = selectedDiffDistrict
-    ? selectedDiffDistrict.name
-    : "";
+  if (selectedDiffDistrict) {
+    formState.diffdistrict = selectedDiffDistrict.DistrictID ?? "";
+  } else {
+    formState.diffdistrict = "";
+  }
 }
 
 function handleDiffSubdistrictChange(newDiffSubdistrictCode) {
   const selectedDiffSubdistrict = diffwards.value.find(
-    (w) => w.code === newDiffSubdistrictCode
+    (w) => w.WardCode === newDiffSubdistrictCode
   );
-  formState.diffsubdistrict = selectedDiffSubdistrict
-    ? selectedDiffSubdistrict.name
-    : "";
+  if (selectedDiffSubdistrict) {
+    formState.diffsubdistrict = Number(selectedDiffSubdistrict.WardCode) ?? "";
+  } else {
+    formState.diffsubdistrict = "";
+  }
 }
 
 watch(() => LocateState.province, handleProvinceChange);
@@ -790,7 +839,6 @@ const onSubmit = async () => {
         `${import.meta.env.VITE_APP_URL_API_ORDER}/createOrder`,
         formState
       );
-      // console.log(response);
 
       if (response.status === 200 || response.status === 201) {
         store.dispatch("product/clearDataStoreCart");
@@ -799,7 +847,9 @@ const onSubmit = async () => {
         });
         router.push(`/payment/order-received/${response.data.order_code}`);
       } else {
-        alert("Có lỗi trong quá trình tạo đơn vui lòng thử lại sau");
+        Modal.error({
+          title: "Có lỗi trong quá trình tạo đơn vui lòng thử lại sau!",
+        });
       }
       return;
     }
@@ -822,8 +872,6 @@ const handlePaymentSuccess = async (orderID) => {
     );
 
     store.dispatch("product/clearDataStoreCart");
-
-    //console.log(response);
 
     router.push(`/payment/order-received/${response.data.order_code}`);
   } catch (error) {

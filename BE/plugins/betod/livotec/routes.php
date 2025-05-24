@@ -1,5 +1,6 @@
 <?php
 
+use Betod\Livotec\Controllers\GhnController;
 use Betod\Livotec\Models\IngredientsAndInstructions;
 use Betod\Livotec\Models\Orders;
 use Betod\Livotec\Models\Product;
@@ -117,4 +118,10 @@ Route::group(['prefix' => 'apiImport'], function () {
 
 Route::group(['prefix' => 'apiData'], function () {
     Route::get('data', [\Betod\Livotec\Controllers\Revenue\RevenueChart::class, 'chart']);
+});
+
+Route::group(['prefix' => 'apiGHN'], function () {
+    Route::get('/ghn/provinces', [GhnController::class, 'getProvinces']);
+    Route::get('/ghn/districts/{province_id}', [GhnController::class, 'getDistricts']);
+    Route::get('/ghn/wards/{district_id}', [GhnController::class, 'getWards']);
 });

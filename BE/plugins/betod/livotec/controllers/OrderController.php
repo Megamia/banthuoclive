@@ -1,19 +1,28 @@
 <?php
+
 namespace Betod\Livotec\Controllers;
 
 use Betod\Livotec\UpdateOrderStatusJob;
 use Betod\Livotec\Models\OrderDetail;
 use Betod\Livotec\Models\Product;
+use Betod\Livotec\Models\Orders;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Betod\Livotec\Models\Orders;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Betod\Livotec\Controllers\GhnController;
 
 class OrderController extends Controller
 {
+    protected $ghn;
+
+    public function __construct()
+    {
+        $this->ghn = new GhnController();
+    }
+
     public function createOrder(Request $request)
     {
         $validatedData = $request->validate([
@@ -21,21 +30,21 @@ class OrderController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'email' => 'required|email|max:255',
-            'province' => 'required|string|max:255',
-            'district' => 'required|string|max:255',
-            'subdistrict' => 'required|string|max:255',
+            'province' => 'required|integer',
+            'district' => 'required|integer',
+            'subdistrict' => 'required|integer',
             'address' => 'required|string|max:500',
             'diffname' => 'nullable|string|max:255',
             'diffphone' => 'nullable|string|max:20',
-            'diffprovince' => 'nullable|string|max:255',
-            'diffdistrict' => 'nullable|string|max:255',
-            'diffsubdistrict' => 'nullable|string|max:255',
+            'diffprovince' => 'nullable|integer',
+            'diffdistrict' => 'nullable|integer',
+            'diffsubdistrict' => 'nullable|integer',
             'diffaddress' => 'nullable|string|max:500',
             'notes' => 'nullable|string|max:1000',
             'terms' => 'required|boolean',
             'paymenttype' => 'required|integer',
             'differentaddresschecked' => 'required|boolean',
-            'items' => 'required|array',
+            'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|integer',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
@@ -46,11 +55,10 @@ class OrderController extends Controller
         }, 0);
 
         $orderCode = 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(6));
-
         $propertyData = Arr::except($validatedData, ['items', 'differentaddresschecked', 'terms', 'user_id']);
 
         $order = Orders::create([
-            'user_id' => $validatedData['user_id'],
+            'user_id' => $validatedData['user_id'] ?? null,
             'order_code' => $orderCode,
             'price' => $totalPrice,
             'property' => $propertyData,
@@ -63,10 +71,10 @@ class OrderController extends Controller
                 'quantity' => $item['quantity'],
                 'price' => ($item['price'] * $item['quantity']),
             ]);
-            $product = Product::find($item['product_id']);
 
+            $product = Product::find($item['product_id']);
             if ($product) {
-                $product->stock -= $item['quantity'];
+                $product->stock = max(0, $product->stock - $item['quantity']);
                 $product->sold_out += $item['quantity'];
                 $product->save();
             }
@@ -92,114 +100,25 @@ class OrderController extends Controller
             'message' => 'Order created successfully!',
             'order_code' => $order->order_code,
             'ghn_order_code' => $ghnResponse['data']['order_code'] ?? 'DEFAULT_CODE',
-            'data' => $order
+            'data' => $order,
         ], 201);
     }
 
 
-    private function getProvinceId($provinceName)
+    private function isValidShippingArea($provinceId, $districtId, $subdistrictId)
     {
-        $apiKey = env('GHN_API_KEY');
-
-        $response = Http::withHeaders([
-            'Token' => $apiKey,
-            'Content-Type' => 'application/json',
-        ])->get('https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province');
-
-        $provinceList = $response->json();
-
-        if (!isset($provinceList['data']) || !is_array($provinceList['data'])) {
-            // \Log::error('GHN Province List Fetch Error:', $provinceList);
-            return null;
-        }
-
-        foreach ($provinceList['data'] as $province) {
-            if (isset($province['NameExtension']) && is_array($province['NameExtension'])) {
-                foreach ($province['NameExtension'] as $name) {
-                    if (strcasecmp(trim($name), trim($provinceName)) === 0) {
-                        return $province['ProvinceID'];
-                    }
-                }
-            }
-
-            if (isset($province['ProvinceName']) && strcasecmp(trim($province['ProvinceName']), trim($provinceName)) === 0) {
-                return $province['ProvinceID'];
-            }
-        }
-
-        // \Log::error("GHN Province ID not found for: " . $provinceName);
-        return null;
-    }
-
-    private function getDistrictId($provinceId, $districtName)
-    {
-        $apiKey = env('GHN_API_KEY');
-
-        $response = Http::withHeaders([
-            'Token' => $apiKey,
-            'Content-Type' => 'application/json',
-        ])->get("https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id={$provinceId}");
-
-        $districtList = $response->json();
-
-        if (!isset($districtList['data']) || !is_array($districtList['data'])) {
-            // \Log::error('GHN District List Fetch Error:', $districtList);
-            return null;
-        }
-
-        foreach ($districtList['data'] as $district) {
-            if (strcasecmp(trim($district['DistrictName']), trim($districtName)) === 0) {
-                return $district['DistrictID'];
-            }
-        }
-
-        // \Log::error("GHN District ID not found for: " . $districtName);
-        return null;
-    }
-
-    private function getWardCode($districtId, $wardName)
-    {
-        $apiKey = env('GHN_API_KEY');
-
-        $response = Http::withHeaders([
-            'Token' => $apiKey,
-            'Content-Type' => 'application/json',
-        ])->get("https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id={$districtId}");
-
-        $wardList = $response->json();
-
-        if (!isset($wardList['data']) || !is_array($wardList['data'])) {
-            // \Log::error('GHN Ward List Fetch Error:', $wardList);
-            return null;
-        }
-
-        foreach ($wardList['data'] as $ward) {
-            if (strcasecmp(trim($ward['WardName']), trim($wardName)) === 0) {
-                return $ward['WardCode'];
-            }
-        }
-
-        // \Log::error("GHN Ward Code not found for: " . $wardName);
-        return null;
-    }
-
-    private function isValidShippingArea($provinceName, $districtName, $subdistrictName)
-    {
-        $provinceID = $this->getProvinceId($provinceName);
-        if (!$provinceID) {
-            // \Log::error("Province not found: " . $provinceName);
+        $province = $this->ghn->findProvinceById($provinceId);
+        if (!$province) {
             return false;
         }
 
-        $districtID = $this->getDistrictId($provinceID, $districtName);
-        if (!$districtID) {
-            // \Log::error("District not found: " . $districtName);
+        $district = $this->ghn->findDistrictById($provinceId, $districtId);
+        if (!$district) {
             return false;
         }
 
-        $wardCode = $this->getWardCode($districtID, $subdistrictName);
+        $wardCode = $this->ghn->findWardCodeById($districtId, $subdistrictId);
         if (!$wardCode) {
-            // \Log::error("Ward not found: " . $subdistrictName);
             return false;
         }
 
@@ -208,81 +127,49 @@ class OrderController extends Controller
 
     private function createGhnOrder($order)
     {
-        $apiKey = env('GHN_API_KEY');
         $property = $order->property;
 
-        $provinceName = trim($property['province']);
-        $districtName = trim($property['district']);
-        $subdistrictName = trim($property['subdistrict']);
+        $provinceId = (int) trim($property['province']);
+        $districtId = (int) trim($property['district']);
+        $subdistrictId = (int) trim($property['subdistrict']);
 
-        if (!$this->isValidShippingArea($provinceName, $districtName, $subdistrictName)) {
-            // \Log::error("Invalid shipping area for order: " . $order->order_code);
+        if (!$this->isValidShippingArea($provinceId, $districtId, $subdistrictId)) {
             return response()->json(['code' => 400, 'message' => 'Invalid shipping area'], 400);
         }
 
-        $provinceID = $this->getProvinceId($provinceName);
-        if (!$provinceID) {
-            // \Log::error("GHN Province ID not found for: " . $provinceName);
-            return response()->json(['code' => 400, 'message' => 'Invalid province'], 400);
-        }
+        $provinceID = $this->ghn->findProvinceById($provinceId);
+        $districtID = $this->ghn->findDistrictById($provinceID, $districtId);
+        $wardCode = $this->ghn->findWardCodeById($districtID, $subdistrictId);
 
-        $districtID = $this->getDistrictId($provinceID, $districtName);
-        if (!$districtID) {
-            // \Log::error("GHN District ID not found for: " . $districtName);
-            return response()->json(['code' => 400, 'message' => 'Invalid district'], 400);
-        }
+        $senderProvinceId = 201;
+        $senderDistrictId = 3440;
+        $senderWardId = 13004;
 
-        $wardCode = $this->getWardCode($districtID, $subdistrictName);
-        if (!$wardCode) {
-            // \Log::error("GHN Ward Code not found for: " . $subdistrictName);
-            return response()->json(['code' => 400, 'message' => 'Invalid ward'], 400);
-        }
+        $senderProvinceID = $this->ghn->findProvinceById($senderProvinceId);
+        $senderDistrictID = $this->ghn->findDistrictById($senderProvinceID, $senderDistrictId);
+        $senderWardCode = $this->ghn->findWardCodeById($senderDistrictID, $senderWardId);
 
-        $senderProvinceName = 'Thành phố Hà Nội';
-        $senderProvinceID = $this->getProvinceId($senderProvinceName);
-        if (!$senderProvinceID) {
-            // \Log::error("Sender Province ID not found: " . $senderProvinceName);
-            return response()->json(['code' => 400, 'message' => 'Sender province invalid'], 400);
-        }
-
-        $senderDistrictName = 'Quận Nam Từ Liêm';
-        $senderDistrictID = $this->getDistrictId($senderProvinceID, $senderDistrictName);
-        if (!$senderDistrictID) {
-            // \Log::error("Sender District ID not found: " . $senderDistrictName);
-            return response()->json(['code' => 400, 'message' => 'Sender district invalid'], 400);
-        }
-
-        $senderWardName = 'Phường Mỹ Đình 1';
-        $senderWardCode = $this->getWardCode($senderDistrictID, $senderWardName);
-        if (!$senderWardCode) {
-            // \Log::error("Sender Ward Code not found: " . $senderWardName);
-            return response()->json(['code' => 400, 'message' => 'Sender ward invalid'], 400);
+        if (!$senderProvinceID || !$senderDistrictID || !$senderWardCode) {
+            return response()->json(['code' => 400, 'message' => 'Sender address invalid'], 400);
         }
 
         $orderDetails = OrderDetail::where('order_id', $order->id)->get();
         $items = $orderDetails->map(function ($item) {
             $product = Product::find($item->product_id);
-
-            if ($product) {
-                return [
-                    'name' => $product->name,
-                    'quantity' => $item->quantity,
-                    'price' => $item->price,
-                ];
-            }
-
             return [
-                'name' => 'Unknown Product',
+                'name' => $product->name ?? 'Unknown Product',
                 'quantity' => $item->quantity,
                 'price' => $item->price,
             ];
         })->toArray();
 
+        $apiKey = env('GHN_API_KEY');
+
         $response = Http::withHeaders([
             'Token' => $apiKey,
             'Content-Type' => 'application/json',
         ])->post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create', [
-                    'payment_type_id' => isset($order->property['paymenttype']) ? $order->property['paymenttype'] : null,
+                    'payment_type_id' => $property['paymenttype'] ?? null,
                     'note' => $property['notes'] ?? '',
                     'to_name' => $property['name'],
                     'to_phone' => $property['phone'],
@@ -306,18 +193,16 @@ class OrderController extends Controller
                     'service_type_id' => 2,
                     'items' => $items,
                 ]);
-        // \Log::error('GHN API response: ' . $response);
 
         if ($response->failed()) {
-            // \Log::error('GHN API response: ' . $response);
-
-            return response()->json(['code' => 400, 'message' => 'Khu vực này hiện tại đang quá tải không thể tạo đơn, mong quý khách thông cảm và tạo lại sau!'], 400);
-        } else {
-            // \Log::info('GHN order created successfully: ' . $response);
-            return $response->json();
+            return response()->json([
+                'code' => 400,
+                'message' => 'Khu vực này hiện tại đang quá tải không thể tạo đơn, mong quý khách thông cảm và tạo lại sau!'
+            ], 400);
         }
+        \Log::info("response: ", $response->json());
+
+
+        return $response->json();
     }
-
-
-
 }

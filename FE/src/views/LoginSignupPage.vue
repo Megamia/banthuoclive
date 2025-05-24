@@ -253,7 +253,9 @@ const login = async () => {
 
   const now = Date.now();
   if (now - lastLoginAttempt < retryDelay) {
-    alert(`Vui lòng thử lại sau ${retryDelay / 1000} giây!`);
+    Modal.error({
+      title: `Vui lòng thử lại sau ${retryDelay / 1000} giây!`,
+    });
     return;
   }
 
@@ -271,17 +273,16 @@ const login = async () => {
     if (response.status === 205) {
       // alert("Sai tài khoản hoặc mật khẩu!");
       Modal.error({
-          title: "Sai tài khoản hoặc mật khẩu!",
-        });
+        title: "Sai tài khoản hoặc mật khẩu!",
+      });
       retryDelay = Math.min(retryDelay);
       return;
     } else if (response.data) {
-      
       sessionStorage.setItem("user", JSON.stringify(response.data.user));
       // alert("Đăng nhập thành công!");
       Modal.success({
-          title: "Đăng nhập thành công!",
-        });
+        title: "Đăng nhập thành công!",
+      });
       retryDelay = 2000;
       router.push("/");
     }
@@ -300,10 +301,11 @@ const signup = async () => {
       `${import.meta.env.VITE_APP_URL_API}/signup`,
       dataForm.value
     );
-    alert("Đăng ký thành công!");
+    Modal.success({
+      title: "Đăng ký thành công!",
+    });
     toggleForm();
   } catch (error) {
-    console.error("Đăng ký failed:", error.response?.data || error.message);
     let errorMessage = "Đăng ký failed! Please check your credentials.";
     if (error.response && error.response.data) {
       errorMessage =
@@ -313,7 +315,9 @@ const signup = async () => {
     } else if (error.message) {
       errorMessage = error.message;
     }
-    alert(errorMessage);
+    Modal.error({
+      title: `${errorMessage}!`,
+    });
   }
 };
 </script>

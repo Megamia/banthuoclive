@@ -15,7 +15,6 @@ const layout = computed(() => {
   return route.meta.layout ? layouts[route.meta.layout] : null;
 });
 
-
 let timeoutId;
 let dataUpdateInterval;
 
@@ -23,7 +22,7 @@ const handleToken = () => {
   const token = localStorage.getItem("token");
   const tokenTimestamp = localStorage.getItem("tokenTimestamp");
   const currentTime = Date.now();
-  const oneHour = 3600000;
+  const timeExist = 4 * 60 * 60 * 1000;
 
   if (!token) {
     localStorage.removeItem("tokenTimestamp");
@@ -31,7 +30,7 @@ const handleToken = () => {
   }
 
   const timeElapsed = tokenTimestamp ? currentTime - tokenTimestamp : 0;
-  const remainingTime = oneHour - timeElapsed;
+  const remainingTime = timeExist - timeElapsed;
 
   if (remainingTime <= 0) {
     localStorage.removeItem("token");
@@ -124,9 +123,9 @@ onUnmounted(() => {
 <template>
   <a-config-provider :theme="{ token: { colorPrimary: '#2267DF' } }">
     <component :is="layout" v-if="layout">
-    <router-view />
-  </component>
-  <router-view v-else />
+      <router-view />
+    </component>
+    <router-view v-else />
   </a-config-provider>
 </template>
 
