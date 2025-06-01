@@ -110,7 +110,7 @@
                     <a-select-option
                       v-for="ward in wards"
                       :key="ward.WardCode"
-                      :value="ward.WardCode"
+                      :value="Number(ward.WardCode)"
                     >
                       {{ ward.WardName }}
                     </a-select-option>
@@ -372,6 +372,7 @@
                   type="primary"
                   @click="onSubmit"
                   v-if="!PayPalButtonRef"
+                  :disabled="orderButton"
                   >Đặt hàng</a-button
                 >
                 <PayPalButton
@@ -401,6 +402,7 @@ import { Modal } from "ant-design-vue";
 
 const router = useRouter();
 const PayPalButtonRef = ref(false);
+const orderButton = ref(false);
 
 const dataTable = ref([]);
 
@@ -563,16 +565,17 @@ const onProvinceChange = async () => {
       const response = await axios.get(
         `${host}/ghn/districts/${provinceCode}`,
         {
-          headers: {
-            Token: token,
-          },
+          headers: { Token: token },
         }
       );
       districts.value = response.data.data || [];
+
       if (!districts.value.some((d) => d.DistrictID === LocateState.district)) {
         LocateState.district = null;
         wards.value = [];
         LocateState.subdistrict = null;
+      } else {
+        await onDistrictChange();
       }
     }
 
@@ -580,9 +583,7 @@ const onProvinceChange = async () => {
       const response = await axios.get(
         `${host}/ghn/districts/${diffprovinceCode}`,
         {
-          headers: {
-            Token: token,
-          },
+          headers: { Token: token },
         }
       );
       diffdistricts.value = response.data.data || [];
@@ -610,15 +611,19 @@ const onDistrictChange = async () => {
     console.warn("Token not found");
     return;
   }
+
   try {
     if (districtCode) {
       const response = await axios.get(`${host}/ghn/wards/${districtCode}`, {
-        headers: {
-          Token: token,
-        },
+        headers: { Token: token },
       });
       wards.value = response.data.data || [];
-      if (!wards.value.some((w) => w.WardCode === LocateState.subdistrict)) {
+      if (
+        LocateState.subdistrict &&
+        !wards.value.some(
+          (w) => String(w.WardCode) === String(LocateState.subdistrict)
+        )
+      ) {
         LocateState.subdistrict = null;
       }
     }
@@ -627,15 +632,16 @@ const onDistrictChange = async () => {
       const response = await axios.get(
         `${host}/ghn/wards/${diffdistrictCode}`,
         {
-          headers: {
-            Token: token,
-          },
+          headers: { Token: token },
         }
       );
       diffwards.value = response.data.data || [];
 
       if (
-        !diffwards.value.some((w) => w.WardCode === LocateState.diffsubdistrict)
+        LocateState.diffsubdistrict &&
+        !diffwards.value.some(
+          (w) => String(w.WardCode) === String(LocateState.diffsubdistrict)
+        )
       ) {
         LocateState.diffsubdistrict = null;
       }
@@ -668,10 +674,10 @@ function handleDistrictChange(newDistrictCode) {
 
 function handleSubdistrictChange(newSubdistrictCode) {
   const selectedWard = wards.value.find(
-    (w) => w.WardCode === newSubdistrictCode
+    (w) => w.WardCode === String(newSubdistrictCode)
   );
   if (selectedWard) {
-    formState.subdistrict = Number(selectedWard.WardCode) ?? "";
+    formState.subdistrict = selectedWard.WardCode ?? "";
   } else {
     formState.subdistrict = "";
   }
@@ -704,7 +710,7 @@ function handleDiffSubdistrictChange(newDiffSubdistrictCode) {
     (w) => w.WardCode === newDiffSubdistrictCode
   );
   if (selectedDiffSubdistrict) {
-    formState.diffsubdistrict = Number(selectedDiffSubdistrict.WardCode) ?? "";
+    formState.diffsubdistrict = selectedDiffSubdistrict.WardCode ?? "";
   } else {
     formState.diffsubdistrict = "";
   }
@@ -819,6 +825,7 @@ const rules = {
 };
 
 const onSubmit = async () => {
+  orderButton.value = true;
   if (!formState.province) {
     handleProvinceChange(LocateState.province);
   }
@@ -829,17 +836,25 @@ const onSubmit = async () => {
     handleSubdistrictChange(LocateState.subdistrict);
   }
   try {
+    const modal = Modal.info({
+      title: "Đang xử lý đơn hàng...",
+      content: "Vui lòng chờ trong giây lát.",
+      okButtonProps: {
+        disabled: true,
+      },
+    });
     await formRef.value.validate();
     if (formState.paymenttype == 1) {
       PayPalButtonRef.value = true;
     }
     if (formState.paymenttype == 2 && formState) {
       PayPalButtonRef.value = false;
+
       const response = await axios.post(
         `${import.meta.env.VITE_APP_URL_API_ORDER}/createOrder`,
         formState
       );
-
+      modal.destroy();
       if (response.status === 200 || response.status === 201) {
         store.dispatch("product/clearDataStoreCart");
         Modal.success({
@@ -854,6 +869,7 @@ const onSubmit = async () => {
       return;
     }
   } catch (error) {
+    modal.destroy();
     if (error.status === 400) {
       alert(error.response.data.message);
       return;

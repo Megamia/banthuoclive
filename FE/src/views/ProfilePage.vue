@@ -143,11 +143,11 @@
                   >
                     <a-select-option
                       v-for="province in provinces"
-                      :key="province.code"
-                      :value="province.code"
+                      :key="province.ProvinceID"
+                      :value="province.ProvinceID"
                       :disabled="!editMode"
                     >
-                      {{ province.name }}
+                      {{ province.ProvinceName }}
                     </a-select-option>
                   </a-select>
                 </div>
@@ -167,11 +167,11 @@
                   >
                     <a-select-option
                       v-for="district in districts"
-                      :key="district.code"
-                      :value="district.code"
+                      :key="district.DistrictID"
+                      :value="district.DistrictID"
                       :disabled="!editMode"
                     >
-                      {{ district.name }}
+                      {{ district.DistrictName }}
                     </a-select-option>
                   </a-select>
                 </div>
@@ -190,11 +190,11 @@
                   >
                     <a-select-option
                       v-for="ward in wards"
-                      :key="ward.code"
-                      :value="ward.code"
+                      :key="ward.WardCode"
+                      :value="ward.WardCode"
                       :disabled="!editMode"
                     >
-                      {{ ward.name }}
+                      {{ ward.WardName }}
                     </a-select-option>
                   </a-select>
                 </div>
@@ -518,12 +518,15 @@
                       dataOrderItem
                         ? dataOrderItem.property.address +
                           ", " +
-                          dataOrderItem.property.subdistrict +
+                          dataOrderItem.wardName +
                           ", " +
-                          dataOrderItem.property.province
+                          dataOrderItem.districtName +
+                          ", " +
+                          dataOrderItem.provinceName
                         : "Đang tải..."
                     }}
                   </span>
+
                   <span
                     >Loại thanh toán:
                     {{
@@ -556,11 +559,17 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, resolveDirective, watch } from "vue";
+import {
+  onMounted,
+  reactive,
+  ref,
+  resolveDirective,
+  watch,
+  watchEffect,
+} from "vue";
 import { useRouter } from "vue-router";
 import { CdEye, CdEyeClosed } from "@kalimahapps/vue-icons";
 import axios from "axios";
-import { Header } from "ant-design-vue/es/layout/layout";
 const router = useRouter();
 
 const provinces = ref([]);
@@ -687,76 +696,6 @@ const formatShippingStatus = (value) => {
   }
 };
 
-// const getAddressInforGHN = async (districtId, ward_code) => {
-//   try {
-//     const response = await axios.get(
-//       `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district`,
-//       {
-//         headers: {
-//           Token: import.meta.env.VITE_GHN_API_KEY,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-
-//     const districtData = response.data.data.find(
-//       (item) => item.DistrictID === districtId
-//     );
-//     console.log("District Information: ", districtData.DistrictName);
-
-//     const response2 = await axios.get(
-//       `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province`,
-//       {
-//         headers: {
-//           Token: import.meta.env.VITE_GHN_API_KEY,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-
-//     const provinceData = response2.data.data.find(
-//       (item) => item.ProvinceID === districtData.ProvinceID
-//     );
-//     console.log("Province: ", provinceData.NameExtension[0]);
-
-//     const response3 = await axios.get(
-//       `https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=${districtId}`,
-//       {
-//         headers: {
-//           Token: import.meta.env.VITE_GHN_API_KEY,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-
-//     const wardData = response3.data.data.find(
-//       (item) => item.WardCode === ward_code
-//     );
-//     console.log("Ward Information: ", wardData.WardName);
-
-//     return (addressInfor.value = {
-//       address: dataGHN.value.to_address ? dataGHN.value.to_address : "",
-//       province: /Thành phố|Tỉnh/.test(provinceData.NameExtension[0])
-//         ? provinceData.NameExtension[0]
-//         : "Tỉnh " + provinceData.NameExtension[0],
-
-//       district: /Huyện|Quận|Thành phố/.test(districtData.DistrictName)
-//         ? districtData.DistrictName
-//         : "Huyện " + districtData.DistrictName,
-
-//       ward: /Xã|Phường|Thị trấn/.test(wardData.WardName)
-//         ? wardData.WardName
-//         : "Xã " + wardData.WardName,
-//     });
-//   } catch (error) {
-//     console.error(
-//       "Có lỗi xảy ra khi tìm thông tin địa chỉ:",
-//       error.response ? error.response.data : error.message
-//     );
-//     return null;
-//   }
-// };
-
 const getDataOrder = async (order_code) => {
   try {
     const response = await axios.get(
@@ -787,10 +726,51 @@ const getAllDataOrder = async (id) => {
     if (response.status === 200) {
       dataOrder.value = response.data;
       isReceived.value = dataOrder.value.map((order) => order.status_id === 2);
+
+      await loadNamesForOrders();
+    }
+
+    async function loadNamesForOrders() {
+      const promises = dataOrder.value.map(async (order) => {
+        order.provinceName = await fetchProvinceNameById(
+          order.property.province
+        );
+        order.districtName = await fetchDistrictNameById(
+          order.property.province,
+          order.property.district
+        );
+        order.wardName = await fetchWardNameById(
+          order.property.district,
+          order.property.subdistrict
+        );
+      });
+
+      await Promise.all(promises);
     }
   } catch (e) {
     console.log("Error: ", e);
   }
+};
+
+const fetchProvinceNameById = (id) => {
+  const province = provinces.value.find((p) => p.ProvinceID == id);
+  return province ? province.ProvinceName : "";
+};
+
+const fetchDistrictNameById = async (provinceId, districtId) => {
+  if (!districtId) return "";
+  await onProvinceChange(provinceId);
+
+  const district = districts.value.find((d) => d.DistrictID == districtId);
+  return district ? district.DistrictName : "";
+};
+
+const fetchWardNameById = async (districtId, wardCode) => {
+  if (!wardCode) return "";
+  await onDistrictChange(districtId);
+
+  const ward = wards.value.find((w) => String(w.WardCode) === String(wardCode));
+  return ward ? ward.WardName : "";
 };
 
 const profile = ref({
@@ -827,31 +807,56 @@ const handleChangeActivePage = (value) => {
   activePage.value = value;
 };
 
-const host = "https://provinces.open-api.vn/api/";
+const host = import.meta.env.VITE_APP_URL_API_GHN;
 
 const fetchProvinces = async () => {
   try {
-    const response = await axios.get(`${host}?depth=1`);
-    provinces.value = response.data;
+    const token = localStorage.getItem("vuex");
+    if (!token) {
+      console.warn("Token not found");
+      return;
+    }
+
+    const response = await axios.get(`${host}/ghn/provinces`, {
+      headers: {
+        Token: token,
+      },
+    });
+
+    provinces.value = response.data.data || [];
   } catch (error) {
-    console.error("Failed to fetch provinces:", error);
+    console.error("Failed to fetch GHN provinces:", error);
   }
 };
 
 const onProvinceChange = async (provinceCode) => {
   try {
+    const token = localStorage.getItem("vuex");
+    if (!token) {
+      console.warn("Token not found");
+      return;
+    }
     if (provinceCode) {
-      const response = await axios.get(`${host}p/${provinceCode}?depth=2`);
-      districts.value = response.data.districts;
-      if (
-        districts.value.some(
-          (district) => district.code === profile.value.district
-        )
-      ) {
-      } else {
+      const response = await axios.get(
+        `${host}/ghn/districts/${provinceCode}`,
+        {
+          headers: {
+            Token: token,
+          },
+        }
+      );
+      districts.value = response.data.data || [];
+
+      const currentDistrictExists = districts.value.some(
+        (district) => district.ProvinceID === provinceCode
+      );
+
+      if (!currentDistrictExists) {
         profile.value.district = null;
         wards.value = [];
         profile.value.subdistrict = null;
+      } else {
+        await onDistrictChange(profile.value.district);
       }
     }
   } catch (error) {
@@ -861,13 +866,25 @@ const onProvinceChange = async (provinceCode) => {
 
 const onDistrictChange = async (districtCode) => {
   try {
+    const token = localStorage.getItem("vuex");
+    if (!token) {
+      console.warn("Token not found");
+      return;
+    }
+
     if (districtCode) {
-      const response = await axios.get(`${host}d/${districtCode}?depth=2`);
-      wards.value = response.data.wards;
-      if (
-        wards.value.some((wards) => wards.code === profile.value.subdistrict)
-      ) {
-      } else {
+      const response = await axios.get(`${host}/ghn/wards/${districtCode}`, {
+        headers: {
+          Token: token,
+        },
+      });
+
+      wards.value = response.data.data || [];
+      const currentWardExists = wards.value.some(
+        (ward) => ward.DistrictID === districtCode
+      );
+
+      if (!currentWardExists) {
         profile.value.subdistrict = null;
       }
     }
@@ -876,7 +893,7 @@ const onDistrictChange = async (districtCode) => {
   }
 };
 
-const fetchProfile = () => {
+const fetchProfile = async () => {
   const storedUser = sessionStorage.getItem("user");
   if (storedUser) {
     const user = JSON.parse(storedUser);
@@ -885,14 +902,16 @@ const fetchProfile = () => {
     profile.value.email = user.email;
     profile.value.phone = user.additional_user?.phone || null;
     profile.value.province = user.additional_user?.province || null;
-    onProvinceChange(profile.value.province);
     profile.value.district = user.additional_user?.district || null;
-    onDistrictChange(profile.value.district);
-    profile.value.subdistrict = user.additional_user?.subdistrict || null;
+    profile.value.subdistrict = user.additional_user?.subdistrict
+      ? user.additional_user.subdistrict.toString()
+      : null;
+    await onProvinceChange(profile.value.province);
     profile.value.address = user.additional_user?.address || "";
     getAllDataOrder(user.id);
   }
 };
+
 const handleChangeInfo = async () => {
   try {
     const response = await axios.post(
