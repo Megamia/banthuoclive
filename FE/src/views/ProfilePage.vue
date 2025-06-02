@@ -460,6 +460,9 @@
                 >
               </a-flex>
             </a-flex>
+            <a-flex vertical v-else-if="!dataGHN">
+              <span>Bạn chưa có đơn hàng</span>
+            </a-flex>
             <a-flex v-if="!isFind" vertical class="gap-[10px]">
               <a-flex
                 v-for="(dataOrderItem, index) in dataOrder"
@@ -570,6 +573,7 @@ import {
 import { useRouter } from "vue-router";
 import { CdEye, CdEyeClosed } from "@kalimahapps/vue-icons";
 import axios from "axios";
+import { Modal } from "ant-design-vue";
 const router = useRouter();
 
 const provinces = ref([]);
@@ -608,20 +612,52 @@ const handleFindOrder = () => {
 };
 
 const handleReceived = async (index, order_code, id) => {
-  if (confirm("Hành động này sẽ không thể hoàn tác")) {
-    alert("Xác nhận thành công");
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_APP_URL_API_ORDER}/updateStatus/${order_code}`
-      );
-      isReceived.value[index] = true;
-      dataOrder.value[index].status_id = 2;
-    } catch (e) {
-      console.log("Error: ", e);
-    }
-  } else {
-    alert("Xác nhận thất bại");
-  }
+  Modal.confirm({
+    title: "Hành động này sẽ không thể hoàn tác!!",
+    content: "Bạn có chắc chắn muốn xác nhận đã nhận đơn hàng?",
+    async onOk() {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_APP_URL_API_ORDER}/updateStatus/${order_code}`
+        );
+
+        isReceived.value[index] = true;
+        dataOrder.value[index].status_id = 2;
+
+        Modal.success({
+          title: "Xác nhận thành công!",
+          content: "Đơn hàng đã được cập nhật là 'đã nhận'.",
+        });
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      } catch (error) {
+        console.error("Lỗi khi cập nhật trạng thái:", error);
+        Modal.error({
+          title: "Xác nhận thất bại!",
+          content: "Đã xảy ra lỗi khi gửi yêu cầu tới server.",
+        });
+      }
+    },
+    onCancel() {
+      Modal.info({
+        title: "Đã huỷ xác nhận.",
+      });
+    },
+  });
+  // if (confirm("Hành động này sẽ không thể hoàn tác")) {
+  //   alert("Xác nhận thành công");
+  //   try {
+  //     const response = await axios.post(
+  //       `${import.meta.env.VITE_APP_URL_API_ORDER}/updateStatus/${order_code}`
+  //     );
+  //     isReceived.value[index] = true;
+  //     dataOrder.value[index].status_id = 2;
+  //   } catch (e) {
+  //     console.log("Error: ", e);
+  //   }
+  // } else {
+  //   alert("Xác nhận thất bại");
+  // }
 };
 
 const find = async (code) => {
@@ -812,6 +848,8 @@ const host = import.meta.env.VITE_APP_URL_API_GHN;
 const fetchProvinces = async () => {
   try {
     const token = localStorage.getItem("vuex");
+    console.log("token: ",token);
+    
     if (!token) {
       console.warn("Token not found");
       return;

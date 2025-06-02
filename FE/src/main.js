@@ -8,7 +8,7 @@ import "./style.css";
 import global from 'global';
 
 const app = createApp(App);
-store.dispatch("product/startAutoClear");
+store.dispatch("product/initializeAutoClear");
 window.global = global;
 app.use(router);
 app.use(Antd);

@@ -1,4 +1,5 @@
 let autoClearTimeout = null;
+const AUTO_CLEAR_DURATION = 2 * 60 * 60 * 1000; 
 
 const storeProducts = {
   namespaced: true,
@@ -86,16 +87,18 @@ const storeProducts = {
         clearTimeout(autoClearTimeout);
       }
 
-      const clearTime = Date.now() + 3600000; // 1h
+      const clearTime = Date.now() + AUTO_CLEAR_DURATION;
       localStorage.setItem("autoClearTime", clearTime);
 
       autoClearTimeout = setTimeout(() => {
+        // console.log("Clearing cart by timeout...");
         dispatch("clearDataStoreCart");
         dispatch("startAutoClear");
-      }, 3600000);
+      }, AUTO_CLEAR_DURATION);
 
       commit("setAutoClearTimeout", autoClearTimeout);
     },
+
 
     stopAutoClear({ commit, state }) {
       if (state.autoClearTimeout) {
@@ -106,19 +109,23 @@ const storeProducts = {
 
     initializeAutoClear({ dispatch }) {
       const clearTime = localStorage.getItem("autoClearTime");
+      const now = Date.now();
+      const remainingTime = clearTime - now;
+
       if (clearTime) {
-        const remainingTime = clearTime - Date.now();
         if (remainingTime > 0) {
           autoClearTimeout = setTimeout(() => {
-            console.log("Clearing cart...");
+            // console.log("Clearing cart...");
             dispatch("clearDataStoreCart");
             dispatch("startAutoClear");
           }, remainingTime);
         } else {
-          dispatch("clearDataStoreCart"); // Nếu đã hết thời gian, xóa ngay giỏ hàng
+          // console.log("Đã hết thời gian, xóa luôn");
+          dispatch("clearDataStoreCart");
         }
       }
-    },
+    }
+
   },
   getters: {
     getDataStoreProducts: (state) => state.dataStoreProducts,

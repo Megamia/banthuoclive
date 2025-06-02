@@ -13,7 +13,7 @@ class filterProduct extends Controller
         if ($status = input('filter_status')) {
             switch ($status) {
                 case 'out_of_stock':
-                    $query->where('stock', '=', 0);
+                    $query->where('stock', '=<', 0);
                     break;
                 case 'best_seller':
                     $query->where('sold_out', '>', 100);
