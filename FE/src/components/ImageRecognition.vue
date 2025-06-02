@@ -23,24 +23,17 @@
     </p>
 
     <div v-else-if="isAnalyzed">
-      <a-flex vertical class="text-[30px] gap-[10px]">
+      <div class="text-[30px] flex flex-col gap-[10px]">
         <h3>
           Tên sản phẩm:
-          <span v-if="filteredConcepts.length > 0">
-            {{
-              filteredConcepts
-                .map((c) => `${c.name} (${(c.value * 100).toFixed(2)}%)`)
-                .join(", ")
-            }}
-          </span>
-          <span v-else>Không tìm thấy</span>
+          <span>{{ productNamesWithConfidence }}</span>
         </h3>
-      </a-flex>
+      </div>
 
-      <a-flex vertical class="text-[30px] gap-[20px]">
+      <div class="text-[30px] flex flex-col gap-[20px]">
         <div v-if="productsFromDB.length > 0" class="flex flex-col gap-4">
           <h3>Sản phẩm tìm được trong kho:</h3>
-          <a-flex class="gap-4 flex-wrap overflow-hidden">
+          <div class="flex gap-4 flex-wrap overflow-hidden">
             <div
               v-for="product in productsFromDB"
               :key="product.id"
@@ -49,6 +42,7 @@
               <img
                 :src="product.image?.path || 'https://via.placeholder.com/100'"
                 class="w-24 h-24 object-cover"
+                alt="product image"
               />
               <a
                 :href="`product/${product.slug}`"
@@ -59,12 +53,12 @@
                 {{ formatCurrency(product.price) }}
               </p>
             </div>
-          </a-flex>
+          </div>
         </div>
         <div v-else>
           <p>Không tìm thấy sản phẩm trong kho.</p>
         </div>
-      </a-flex>
+      </div>
 
       <button
         @click="fetchTikiProducts(filteredConcepts.map((c) => c.name))"
@@ -73,16 +67,20 @@
         Tìm trên Tiki
       </button>
 
-      <a-flex vertical class="text-[30px] gap-[20px]">
+      <div class="text-[30px] flex flex-col gap-[20px]">
         <div v-if="similarProducts.length > 0" class="flex flex-col">
           <h3 class="mb-[10px]">Sản phẩm tương tự trên Tiki:</h3>
-          <a-flex class="gap-4 flex-wrap overflow-hidden">
+          <div class="flex gap-4 flex-wrap overflow-hidden">
             <div
               v-for="product in similarProducts"
               :key="product.id"
               class="flex flex-col p-4 min-w-[150px] flex-1 min-h-[200px] max-h-[300px] text-center items-center gap-[10px] border"
             >
-              <img :src="product.imageUrl" class="w-24 h-24 object-cover" />
+              <img
+                :src="product.imageUrl"
+                class="w-24 h-24 object-cover"
+                alt="similar product"
+              />
               <p class="text-sm font-bold nameProduct">
                 {{ product.name }}
               </p>
@@ -94,9 +92,9 @@
                 >Xem trên Tiki</a
               >
             </div>
-          </a-flex>
+          </div>
         </div>
-      </a-flex>
+      </div>
     </div>
 
     <p v-else-if="!first_attempt" class="text-gray-500 text-center">
@@ -104,6 +102,7 @@
     </p>
   </div>
 </template>
+
 <script setup>
 import { getDataFromIndexedDB } from "@/store/indexedDB";
 import { ref, computed } from "vue";
@@ -130,11 +129,21 @@ const handleFileUpload = (event) => {
 };
 
 const categoryMapping = {
-  "vitamin": "Vitamin & Khoáng chất",
-  "Cải thiện chức năng tăng cường": "Cải thiện tăng cường chức năng",
-  "Thuốc tiêu hóa gan mật": "Thuốc tiêu hoá & gan mật",
-  "Cơ xương khớp": "Cơ-xương-khớp",
+  Vitamin: "vitamin & khoáng chất",
+  "cải thiện chức năng tăng cường": "cải thiện tăng cường chức năng",
+  "thuốc tiêu hóa gan mật": "thuốc tiêu hoá & gan mật",
+  "cơ xương khớp": "cơ-xương-khớp",
+  medicine: "Thuốc",
+  health: "Sức khỏe",
 };
+
+const normalizeText = (text) =>
+  text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ");
 
 const analyzeImage = async () => {
   if (!imageUrl.value) {
@@ -168,20 +177,16 @@ const analyzeImage = async () => {
     }
 
     result.value = clarifaiResponse;
+
     let detectedCategory = result.value.outputs[0].data.concepts[0].name.trim();
-
     detectedCategory = detectedCategory.replace(/\s+/g, " ");
-
-    detectedCategory = detectedCategory.toLowerCase();
+    detectedCategory = normalizeText(detectedCategory);
 
     detectedCategory = categoryMapping[detectedCategory] || detectedCategory;
 
     productsFromDB.value = dataProduct.filter((item) => {
-      const categoryName = item.category?.name
-        .trim()
-        .replace(/\s+/g, " ")
-        .toLowerCase();
-      return categoryName === detectedCategory;
+      const categoryName = normalizeText(item.category?.name || "");
+      return categoryName.includes(detectedCategory);
     });
 
     if (productsFromDB.value.length === 0) {
@@ -195,38 +200,48 @@ const analyzeImage = async () => {
 };
 
 const callClarifaiAPI = async (modelId) => {
-  const response = await fetch(
-    `https://api.clarifai.com/v2/models/${modelId}/outputs`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Key ${import.meta.env.VITE_CLARIFAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        inputs: [
-          {
-            data: {
-              image: imageUrl.value.startsWith("data:image")
-                ? { base64: imageUrl.value.split(",")[1] }
-                : { url: imageUrl.value },
+  try {
+    const response = await fetch(
+      `https://api.clarifai.com/v2/models/${modelId}/outputs`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Key ${import.meta.env.VITE_CLARIFAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputs: [
+            {
+              data: {
+                image: imageUrl.value.startsWith("data:image")
+                  ? { base64: imageUrl.value.split(",")[1] }
+                  : { url: imageUrl.value },
+              },
             },
-          },
-        ],
-      }),
+          ],
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.statusText}`);
     }
-  );
 
-  const data = await response.json();
+    const data = await response.json();
 
-  if (
-    data.status.code !== 10000 ||
-    !data.outputs ||
-    !data.outputs[0].data.concepts
-  ) {
+    if (
+      data.status.code !== 10000 ||
+      !data.outputs ||
+      !data.outputs[0].data.concepts
+    ) {
+      return null;
+    }
+    return data;
+  } catch (err) {
+    error.value = "Lỗi khi gọi API Clarifai.";
+    console.error(err);
     return null;
   }
-  return data;
 };
 
 const filteredConcepts = computed(() => {
@@ -239,36 +254,88 @@ const filteredConcepts = computed(() => {
     .slice(0, 3);
 });
 
+const productNamesWithConfidence = computed(() => {
+  if (!filteredConcepts.value.length) return "Không tìm thấy";
+  return filteredConcepts.value
+    .map((c) => `${c.name} (${(c.value * 100).toFixed(2)}%)`)
+    .join(", ");
+});
+
 const fetchTikiProducts = async (keywords) => {
-  if (!keywords.length) return;
+  let allProducts = [];
 
-  let keyword = keywords[0];
+  for (const keyword of keywords) {
+    try {
+      const response = await fetch(
+        `https://tiki.vn/api/v2/products?limit=6&q=${encodeURIComponent(
+          keyword
+        )}`,
+        { method: "GET" }
+      );
 
-  try {
-    const response = await fetch(
-      `https://tiki.vn/api/v2/products?limit=6&q=${encodeURIComponent(
-        keyword
-      )}`,
-      { method: "GET" }
-    );
+      if (!response.ok) continue;
 
-    const data = await response.json();
+      const data = await response.json();
+      if (!data?.data) continue;
 
-    if (!data || !data.data) throw new Error("Không tìm thấy sản phẩm.");
+      allProducts.push(...data.data);
+    } catch (err) {
+      console.error("Lỗi khi fetch từ khóa:", keyword, err);
+      continue;
+    }
+  }
 
-    similarProducts.value = data.data.map((product) => ({
+  const uniqueProducts = Array.from(
+    new Map(allProducts.map((p) => [p.id, p])).values()
+  );
+
+  const medicineKeywords = [
+    "thuốc",
+    "viên",
+    "capsule",
+    "tablet",
+    "dược phẩm",
+    "medicine",
+    "thuoc",
+  ];
+
+  const excludedKeywords = [
+    "sách",
+    "book",
+    "guide",
+    "textbook",
+    "paperback",
+    "stories",
+    "novel",
+  ];
+
+  similarProducts.value = uniqueProducts
+    .filter((product) => {
+      const name = product.name.toLowerCase();
+      const categories =
+        product.categories?.map((c) => c.name.toLowerCase()) || [];
+
+      const nameHasMedicine = medicineKeywords.some((kw) => name.includes(kw));
+      const categoryHasMedicine = categories.some((cat) =>
+        medicineKeywords.some((kw) => cat.includes(kw))
+      );
+
+      const isBook = excludedKeywords.some((kw) => name.includes(kw));
+
+      return (nameHasMedicine || categoryHasMedicine) && !isBook;
+    })
+    .map((product) => ({
       id: product.id,
       imageUrl:
         product.thumbnail_url ||
-        "https://img.freepik.com/premium-vector/no-data-concept-illustration_86047-488.jpg?semt=ais_hybrid",
+        "https://img.freepik.com/premium-vector/no-data-concept-illustration_86047-488.jpg",
       name: product.name,
-      price: product.price.toLocaleString() + " VND",
+      price:
+        typeof product.price === "number"
+          ? product.price.toLocaleString() + " VND"
+          : "Liên hệ",
       link: `https://tiki.vn/${product.url_path}`,
     }));
-  } catch (err) {
-    error.value = "Lỗi khi tìm kiếm sản phẩm trên Tiki.";
-    console.error("Lỗi khi fetch sản phẩm từ Tiki:", err);
-  }
 };
 
 const formatCurrency = (value) => {
@@ -278,11 +345,14 @@ const formatCurrency = (value) => {
   }).format(value);
 };
 </script>
+
 <style scoped>
 .nameProduct {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  height: 100%;
+  max-height: 100px;
 }
 </style>

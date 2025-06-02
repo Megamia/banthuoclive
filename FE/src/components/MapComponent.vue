@@ -1,28 +1,45 @@
 <template>
   <div class="app">
-    <button @click="relocateUser">Vị trí hiện tại</button>
-    <button @click="getUserLocation">Tìm nhà thuốc gần đây</button>
+    <button :disabled="loading" @click="relocateUser">Vị trí hiện tại</button>
+    <button :disabled="loading" @click="getUserLocation">
+      Tìm nhà thuốc gần đây
+    </button>
 
     <div id="map" ref="mapContainer" class="map"></div>
+
     <div v-if="loading" class="loading">Đang tải...</div>
     <div v-if="error" class="error">{{ error }}</div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
 
 const mapContainer = ref(null);
 const loading = ref(false);
 const error = ref(null);
+
 let map = null;
 let platform = null;
 let userMarker = null;
 let markers = [];
 let currentRoute = null;
 
+function getCurrentPosition() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("Trình duyệt không hỗ trợ định vị."));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+    });
+  });
+}
+
 const loadMap = async () => {
   await nextTick();
+
   platform = new H.service.Platform({
     apikey: import.meta.env.VITE_MAP_API_KEY,
   });
@@ -37,53 +54,41 @@ const loadMap = async () => {
   new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
   H.ui.UI.createDefault(map, defaultLayers);
 
-  setTimeout(() => map.getViewPort().resize(), 200);
+  window.addEventListener("resize", () => {
+    map.getViewPort().resize();
+  });
+
+  setTimeout(() => {
+    map.getViewPort().resize();
+  }, 200);
 };
 
 const relocateUser = async () => {
   loading.value = true;
   error.value = null;
 
-  if (!navigator.geolocation) {
-    error.value = "Trình duyệt không hỗ trợ định vị.";
+  try {
+    const position = await getCurrentPosition();
+    const { latitude, longitude } = position.coords;
+    initUserMarker(latitude, longitude);
+  } catch (err) {
+    error.value = "Không thể lấy vị trí: " + err.message;
     loading.value = false;
-    return;
   }
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-      initUserMarker(latitude, longitude);
-    },
-    (err) => {
-      error.value = "Không thể lấy vị trí: " + err.message;
-      loading.value = false;
-    },
-    { enableHighAccuracy: true }
-  );
 };
 
 const getUserLocation = async () => {
   loading.value = true;
   error.value = null;
 
-  if (!navigator.geolocation) {
-    error.value = "Trình duyệt không hỗ trợ định vị.";
+  try {
+    const position = await getCurrentPosition();
+    const { latitude, longitude } = position.coords;
+    await searchPharmacies(latitude, longitude);
+  } catch (err) {
+    error.value = "Không thể lấy vị trí: " + err.message;
     loading.value = false;
-    return;
   }
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const { latitude, longitude } = position.coords;
-      searchPharmacies(latitude, longitude);
-    },
-    (err) => {
-      error.value = "Không thể lấy vị trí: " + err.message;
-      loading.value = false;
-    },
-    { enableHighAccuracy: true }
-  );
 };
 
 const initUserMarker = (lat, lon) => {
@@ -97,6 +102,7 @@ const initUserMarker = (lat, lon) => {
     "https://cdn-icons-png.flaticon.com/512/4781/4781517.png",
     { size: { w: 32, h: 32 } }
   );
+
   userMarker = new H.map.Marker({ lat, lng: lon }, { icon: userIcon });
   userMarker.addEventListener("tap", () => {
     alert(`Vị trí của bạn:\nKinh độ: ${lon}\nVĩ độ: ${lat}`);
@@ -104,19 +110,23 @@ const initUserMarker = (lat, lon) => {
   userMarker.addEventListener("pointerenter", () => {
     map.getElement().style.cursor = "pointer";
   });
-
   userMarker.addEventListener("pointerleave", () => {
     map.getElement().style.cursor = "default";
   });
+
   map.addObject(userMarker);
   map.setCenter({ lat, lng: lon });
+
   loading.value = false;
 };
 
 const searchPharmacies = async (lat, lon) => {
+  if (!map) return;
+
   const url = `https://discover.search.hereapi.com/v1/discover?at=${lat},${lon}&q=pharmacy&limit=10&apikey=${
     import.meta.env.VITE_MAP_API_KEY
   }`;
+
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error("Lỗi tải dữ liệu từ API");
@@ -126,7 +136,8 @@ const searchPharmacies = async (lat, lon) => {
     markers = [];
 
     if (!data.items || data.items.length === 0) {
-      error.value = "❌ Không tìm thấy nhà thuốc nào!";
+      error.value = "Không tìm thấy nhà thuốc nào!";
+      loading.value = false;
       return;
     }
 
@@ -168,6 +179,7 @@ const searchPharmacies = async (lat, lon) => {
       marker.addEventListener("pointerleave", () => {
         map.getElement().style.cursor = "default";
       });
+
       markers.push(marker);
       map.addObject(marker);
     });
@@ -179,9 +191,15 @@ const searchPharmacies = async (lat, lon) => {
     loading.value = false;
   }
 };
+
 const drawRoute = async (startLat, startLng, endLat, endLng) => {
+  if (!map) return;
+
+  loading.value = true;
+  error.value = null;
+
   if (currentRoute) {
-    map.removeObject(currentRoute); 
+    map.removeObject(currentRoute);
     currentRoute = null;
   }
 
@@ -191,15 +209,16 @@ const drawRoute = async (startLat, startLng, endLat, endLng) => {
 
   try {
     const response = await fetch(routeUrl);
+    if (!response.ok) throw new Error("Lỗi tải dữ liệu đường đi");
     const data = await response.json();
 
-    if (data.routes.length === 0) {
+    if (!data.routes || data.routes.length === 0) {
       error.value = "Không tìm được đường đi.";
+      loading.value = false;
       return;
     }
 
     const routeShape = data.routes[0].sections[0].polyline;
-
     const linestring = H.geo.LineString.fromFlexiblePolyline(routeShape);
 
     currentRoute = new H.map.Polyline(linestring, {
@@ -211,11 +230,19 @@ const drawRoute = async (startLat, startLng, endLat, endLng) => {
   } catch (err) {
     console.error("Lỗi vẽ đường:", err);
     error.value = "Không thể vẽ đường đi.";
+  } finally {
+    loading.value = false;
   }
 };
 
 onMounted(() => {
   loadMap();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", () => {
+    if (map) map.getViewPort().resize();
+  });
 });
 </script>
 
@@ -233,6 +260,7 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   text-align: center;
+  padding: 12px;
 }
 
 button {
@@ -246,14 +274,21 @@ button {
   margin: 5px;
 }
 
+button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
 .error {
   color: red;
   font-size: 14px;
+  margin-top: 12px;
 }
 
 .loading {
   color: #007bff;
   font-size: 16px;
   font-weight: bold;
+  margin-top: 12px;
 }
 </style>
